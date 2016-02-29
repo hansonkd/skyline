@@ -1,0 +1,2 @@
+defmodule Spotmq do
+end

@@ -1,0 +1,10 @@
+%{"connection": {:hex, :connection, "1.0.2"},
+  "emqttd": {:git, "https://github.com/emqtt/emqttd.git", "4cfa07d774ac825f61d2ea9bb6392807e65839b9", []},
+  "esockd": {:git, "git://github.com/emqtt/esockd.git", "e6c27801bb5331d064081ef6d6af291a2878038c", [branch: "master"]},
+  "gen_logger": {:git, "git://github.com/emqtt/gen_logger.git", "f985723843926f1814818bf63646b3dedf5c9fb3", [branch: "master"]},
+  "goldrush": {:git, "git://github.com/DeadZen/goldrush.git", "212299233c7e7eb63a97be2777e1c05ebaa58dbe", [tag: "0.1.8"]},
+  "gproc": {:hex, :gproc, "0.5.0"},
+  "lager": {:git, "git://github.com/basho/lager.git", "b2cb2735713e3021e0761623ff595d53a545438e", [branch: "master"]},
+  "mochiweb": {:git, "git://github.com/emqtt/mochiweb.git", "f1ce26fe373b2a9b52b0b1a5d2306ebb225af7bd", [branch: "master"]},
+  "ranch": {:hex, :ranch, "1.2.1"},
+  "socket": {:hex, :socket, "0.3.1"}}
