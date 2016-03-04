@@ -4,9 +4,8 @@ defmodule Spotmq.Msg do
 		Defines all simple messages as structs. They contain at most a message id.
 		"""
 		defstruct msg_type: :reserved,
-			msg_id: # 0 :: integer
+			        msg_id: 0
 
-		@type t :: %__MODULE__{}
 	end
 
 	def pub_ack(msg_id) when is_integer(msg_id) do
@@ -48,55 +47,73 @@ defmodule Spotmq.Msg do
     %ConnAck{status: status}
   end
 
-	defmodule FixedHeader do
-		defstruct message_type: :reserved,
-			        duplicate: false,
-			        qos: :fire_and_forget,
-			        retain: false,
-			        length: 0
+  defmodule FixedHeader do
+    defstruct message_type: :reserved,
+              duplicate: false,
+              qos: :fire_and_forget,
+              retain: false,
+              length: 0
+  end
+
+
+	def fixed_header(msg_type \\ :reserved,
+                   dup \\ false,
+                   qos \\ :fire_and_forget,
+			             retain \\ false,
+                   length \\ 0) when
+            		                is_atom(msg_type) and
+                                is_boolean(dup) and
+                                is_atom(qos) and
+            		                is_boolean(retain) and
+                                is_integer(length) and
+                                length >= 0 do
+
+		%FixedHeader{message_type: msg_type,
+                 duplicate: dup,
+			           qos: qos,
+                 retain: retain,
+                 length: length}
 	end
 
-	def fixed_header(msg_type \\ :reserved, dup \\ false, qos \\ :fire_and_forget,
-			retain \\ false, length \\ 0) when
-		is_atom(msg_type) and is_boolean(dup) and is_atom(qos) and
-		is_boolean(retain) and is_integer(length) and length >= 0
-		do
-		%FixedHeader{message_type: msg_type, duplicate: dup,
-			qos: qos, retain: retain, length: length}
-	end
-
-	defmodule Publish do
+  @doc "Client to Server Publish."
+	defmodule ReqPublish do
 		defstruct topic: "",
 			        msg_id: 0,
 			        message: "",
 			        header: %FixedHeader{}
 
-		@doc "Sets the duplicate flag to `dup` in the message"
-		def duplicate(%Publish{header: h} = m, dup \\ true) do
-			new_h = %FixedHeader{h | duplicate: dup}
-			%Publish{m | header: new_h}
-		end
-
-		@doc "Sets the message id"
-		def msg_id(%Publish{} = m, id \\ 0) do
-			%Publish{m | msg_id: id}
-		end
-
-		@doc "Set the retain flag to `retain` in the message"
-		def retain(%Publish{header: h} = m, retain \\ true) do
-			new_h = %FixedHeader{h | retain: retain}
-			%Publish{m | header: new_h}
-		end
-
 	end
 
+  @doc "Server to Client Publish."
+  defmodule ClientPublish do
+    defstruct sub_topic: "", # We have to send back the subscription pattern that picked it up.
+              msg_id: 0,
+              message: "",
+              header: %FixedHeader{},
+              duplicate: false,
+              qos: :fire_and_forget
+  end
+
+  def convert_to_client(sub_topic, qos, msg_id, dup, %ReqPublish{message: msg, header: hdr}) do
+    %ClientPublish{
+      sub_topic: sub_topic,
+      message: msg,
+      qos: hdr.qos,
+      msg_id: msg_id,
+      duplicate: dup
+    }
+  end
+
 	@doc "Creates a new publish message. The message id is not set per default."
-	def publish(topic, message, qos, msg_id \\ 0) do
+	def req_publish(topic, message, qos, msg_id \\ 0) do
 		length = byte_size(message) +
 		         byte_size(topic) + 2 + # with 16 bit size of topic
 		         2 # 16 bit message id
 		h = fixed_header(:publish, false, qos, false, length)
-		%Publish{topic: topic, message: message, msg_id: msg_id, header: h}
+		%ReqPublish{topic: topic,
+             message: message,
+             msg_id: msg_id,
+             header: h}
 	end
 
 
@@ -129,9 +146,8 @@ defmodule Spotmq.Msg do
 
 	defmodule SubAck do
 		defstruct msg_id: 0, # :: pos_integer,
-			granted_qos: [], # :: [pos_integer],
-			header: %FixedHeader{} # :: FixedHeader.t
-		@type t :: %__MODULE__{}
+			        granted_qos: [], # :: [pos_integer],
+			        header: %FixedHeader{} # :: FixedHeader.t
 
 		@doc "Sets the message id"
 		def msg_id(%SubAck{} = m, id \\ 0) do
@@ -145,15 +161,18 @@ defmodule Spotmq.Msg do
 	def sub_ack(granted_qos, msg_id \\ 0) do
 		length = 2 + # 16 bit message id
 			length(granted_qos) # number of bytes per qos
+
 		h = fixed_header(:sub_ack, false, :fire_and_forget, false, length)
-		%SubAck{msg_id: msg_id, granted_qos: granted_qos, header: h }
+
+    %SubAck{msg_id: msg_id,
+            granted_qos: granted_qos,
+            header: h }
 	end
 
 	defmodule Subscribe do
 		defstruct msg_id: 0, # :: pos_integer,
-			header: %FixedHeader{}, # :: FixedHeader.t,
-			topics: [{"", :fire_and_forget}] # :: [{binary, Mqttex.qos_type}]
-		@type t :: %__MODULE__{}
+			        header: %FixedHeader{}, # :: FixedHeader.t,
+			        topics: [{"", :fire_and_forget}] # :: [{binary, Mqttex.qos_type}]
 
 		@doc "Sets the message id"
 		def msg_id(%Subscribe{} = m, id \\ 0) do
@@ -180,38 +199,55 @@ defmodule Spotmq.Msg do
 	defmodule Connection do
 
 		defstruct client_id: "", # :: binary,
-			user_name: "", # :: binary,
-			password: "", # :: binary,
-			keep_alive:  :infinity, # or the keep-alive in milliseconds (=1000*mqtt-keep-alive)
-			# keep_alive_server: :infinity, # or 1.5 * keep-alive in milliseconds (=1500*mqtt-keep-alive)
-			last_will: false, # :: boolean,
-			will_qos: :fire_and_forget, # :: Mqttex.qos_type,
-			will_retain: false, # :: boolean,
-			will_topic: "", # :: binary,
-			will_message: "", # :: binary,
-			clean_session: true, # :: boolean,
-			header: %FixedHeader{} # :: FixedHeader.t
-		@type t :: %__MODULE__{}
-
+      			  user_name: "", # :: binary,
+      			  password: "", # :: binary,
+      			  keep_alive:  :infinity, # or the keep-alive in milliseconds (=1000*mqtt-keep-alive)
+      			  # keep_alive_server: :infinity, # or 1.5 * keep-alive in milliseconds (=1500*mqtt-keep-alive)
+      			  last_will: false, # :: boolean,
+      			  will_qos: :fire_and_forget, # :: Mqttex.qos_type,
+      			  will_retain: false, # :: boolean,
+      			  will_topic: "", # :: binary,
+      			  will_message: "", # :: binary,
+      			  clean_session: true, # :: boolean,
+      			  header: %FixedHeader{} # :: FixedHeader.t
 	end
 
 	@doc """
 	Creates a new connect message.
 	"""
-	def connection(client_id, user_name, password, clean_session, keep_alive \\ :infinity, # keep_alive_server \\ :infinity,
-			last_will \\ false, will_qos \\ :fire_and_forget, will_retain \\ false, will_topic \\ "", will_message \\ "") do
+	def connection(client_id,
+                user_name,
+                password,
+                clean_session,
+                keep_alive \\ :infinity, # keep_alive_server \\ :infinity,
+			          last_will \\ false,
+                will_qos \\ :fire_and_forget,
+                will_retain \\ false,
+                will_topic \\ "",
+                will_message \\ "") do
+
 		length = 12 +  # variable header size
 			byte_size(client_id) + 2 +
 			optional_size(user_name) +
 			optional_size(password) +
 			if (last_will) do
 				byte_size(will_topic) + 2 + byte_size(will_message) + 2
-			else 0 end
+			else
+        0
+      end
+
 		h = fixed_header(:connect, false, :fire_and_forget, false, length)
-		%Connection{client_id: client_id, user_name: user_name, password: password,
-			keep_alive: keep_alive, last_will: last_will, will_qos: will_qos,
-			will_retain: will_retain, will_topic: will_topic,
-			will_message: will_message, clean_session: clean_session, header: h }
+		%Connection{client_id: client_id,
+                user_name: user_name,
+                password: password,
+			          keep_alive: keep_alive,
+                last_will: last_will,
+                will_qos: will_qos,
+			          will_retain: will_retain,
+                will_topic: will_topic,
+			          will_message: will_message,
+                clean_session: clean_session,
+                header: h }
 	end
 
 	def optional_size(""), do: 0

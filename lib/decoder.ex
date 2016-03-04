@@ -5,10 +5,10 @@ defmodule Spotmq.Decoder do
 
   def decode(msg = <<_m :: size(16)>>, readByte, readMsg) do
     header = decode_fixheader(msg, readByte)
-    #Lager.info ("Header = #{inspect header}")
-    IO.inspect "Header = #{inspect header}"
+    IO.puts("\n\n\nHeader = #{inspect header}\n\n\n")
     var_m = readMsg.(header.length)
     #Lager.info("decoding remaing messages #{inspect var_m}")
+    IO.puts("\n\nvar_m = #{inspect var_m}\n\n\n")
     decode_message(var_m, header)
   end
 
@@ -73,8 +73,8 @@ defmodule Spotmq.Decoder do
         {id, content}
     end
     ## create a publish message
-    p = Spotmq.Msg.publish(topic, payload, h.qos)
-    %Spotmq.Msg.Publish{ p | header: h, msg_id: msg_id}
+    p = Spotmq.Msg.req_publish(topic, payload, h.qos)
+    %Spotmq.Msg.ReqPublish{p | header: h, msg_id: msg_id}
   end
 
   def decode_unsubscribe(<<msg_id :: unsigned-integer-size(16), content :: binary>>) do
@@ -168,6 +168,10 @@ defmodule Spotmq.Decoder do
     {content, rest}
   end
 
+  def utf8(nil) do
+    {"", <<>>}
+  end
+
   def binary_to_length(bin, count \\ 4, readByte_fun)
   def binary_to_length(_bin, count = 0, _readByte) do
     raise "Invalid length"
@@ -221,36 +225,5 @@ defmodule Spotmq.Decoder do
       5 -> :not_authorized
     end
   end
-
-
-    #def binary_to_qos(0), do: :fire_and_forget
-    #def binary_to_qos(1), do: :at_least_once
-    #def binary_to_qos(2), do: :exactly_once
-    #def binary_to_qos(3), do: :reserved
-  #def binary_to_msg_type(1), do: :connect
-  #def binary_to_msg_type(2), do: :conn_ack
-  #def binary_to_msg_type(3), do: :publish
-  #def binary_to_msg_type(4), do: :pub_ack
-  #def binary_to_msg_type(5), do: :pub_rec
-  #def binary_to_msg_type(6), do: :pub_rel
-  #def binary_to_msg_type(7), do: :pub_comp
-  #def binary_to_msg_type(8), do: :subscribe
-  #def binary_to_msg_type(9), do: :sub_ack
-  #def binary_to_msg_type(10), do: :unsubscribe
-  #def binary_to_msg_type(11), do: :unsub_ack
-  #def binary_to_msg_type(12), do: :ping_req
-  #def binary_to_msg_type(13), do: :ping_resp
-  #def binary_to_msg_type(14), do: :disconnect
-  #def binary_to_msg_type(0), do: :reserved
-  #def binary_to_msg_type(15), do: :reserved
-
-
-  # def conn_ack_status(0), do: :ok
-  # def conn_ack_status(1), do: :unaccaptable_protocol_version
-  # def conn_ack_status(2), do: :identifier_rejected
-  # def conn_ack_status(3), do: :server_unavailable
-  # def conn_ack_status(4), do: :bad_user
-  # def conn_ack_status(5), do: :not_authorized
-
 
 end
