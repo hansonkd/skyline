@@ -8,24 +8,38 @@ defmodule Spotmq.Listener do
 
     defmodule State do
       defstruct socket: nil,
+                transport: nil,
                 conn_msg: nil,
                 sess_pid: nil
     end
 
-    def start_link(client, _opts \\ []) do
-      state = %State{socket: client}
-      GenServer.start_link(__MODULE__, state)
+    #def start_link(client, _opts \\ []) do
+    #  state = %State{socket: client}
+    #  GenServer.start_link(__MODULE__, state)
+    #end
+
+    def start_link(ref, socket, transport, opts) do
+      #pid = spawn_link(__MODULE__, :init, [ref, socket, transport, opts])
+      IO.puts("Start link!")
+      GenServer.start_link(__MODULE__, {ref, socket, transport, opts})
     end
 
-    def init(client) do
+    def init({ref, socket, transport, _Opts = []}) do
+      IO.puts("Init!")
+      #:ok = :ranch.accept_ack(ref)
+      IO.puts("Accepted!")
       GenServer.cast(self, :listen)
-      {:ok, client}
+      {:ok, %State{socket: socket, transport: transport}}
+    end
+
+    defp recv(%State{socket: socket, transport: transport}, num, timeout \\ :infinity) do
+      transport.recv(socket, num, timeout)
     end
 
     def handle_cast(:listen, %State{socket: socket} = st) do
-      case Socket.Stream.recv(socket, 2) do
+      case recv(st, 2) do
         { :ok, data = <<_m :: size(16)>> } ->
-            msg = Decoder.decode(data, read_byte(socket), fn n -> read_bytes(socket, n) end)
+            msg = Decoder.decode(data, read_byte(st), fn n -> read_bytes(st, n) end)
             case msg do
               %Spotmq.Msg.Connect{} ->
                 GenServer.cast(self, {:authenticate, msg})
@@ -42,9 +56,9 @@ defmodule Spotmq.Listener do
 
     def handle_cast(:verified_loop, %State{socket: socket, sess_pid: sess_pid, conn_msg: conn_msg} = state) do
       #IO.inspect({"timeout", keep_alive})
-      case Socket.Stream.recv(socket, 2, [timeout: conn_msg.keep_alive_server_ms]) do
+      case recv(state, 2, conn_msg.keep_alive_server_ms) do
         { :ok, data = <<_m :: size(16)>> } ->
-            msg = Decoder.decode(data, read_byte(socket), fn n -> read_bytes(socket, n) end)
+            msg = Decoder.decode(data, read_byte(state), fn n -> read_bytes(state, n) end)
             case msg do
               %Spotmq.Msg.Connect{} ->
                   #IO.puts("Only one connect message per connection...")
@@ -66,41 +80,41 @@ defmodule Spotmq.Listener do
                  #authenticated_loop(client, sess_pid, keep_alive)
       end
     end
-    def terminate(reason, %State{socket: socket, sess_pid: sess_pid}) do
-      Socket.close(socket)
-      GenServer.stop(sess_pid, :normal, :infinity)
+    def terminate(reason, %State{socket: socket, transport: transport, sess_pid: sess_pid}) do
+      transport.close(socket)
+      #GenServer.stop(sess_pid, :normal, :infinity)
       :ok
     end
-    def handle_cast({:authenticate, msg}, %State{socket: socket} = state) do
+    def handle_cast({:authenticate, msg}, %State{socket: socket, transport: transport} = state) do
 
-        case Spotmq.Auth.connect(socket, msg) do
+        case Spotmq.Auth.connect(socket, transport, msg) do
           {:ok, smsg, sess_pid} ->
-              Session.send_to_socket(socket, smsg)
+              Session.send_to_socket(socket, transport, smsg)
               new_state = %{state | conn_msg: msg, sess_pid: sess_pid}
               GenServer.cast(self, :verified_loop)
               {:noreply, new_state}
           {:error, emsg} ->
-              Session.send_to_socket(socket, emsg)
+              Session.send_to_socket(socket, transport, emsg)
               {:stop, :normal, state}
         end
     end
 
-  defp read_byte(socket) do
+  defp read_byte(state) do
     fn ->
-      case Socket.Stream.recv(socket, 1) do
-        {:ok, byte} -> {byte, read_byte(socket)}
-        {:error, reason} -> #IO.inspect("read_byte: receiving 1 byte failed with #{inspect reason}")
+      case recv(state, 1) do
+        {:ok, byte} -> {byte, read_byte(state)}
+        {:error, reason} -> IO.inspect("read_byte: receiving 1 byte failed with #{inspect reason}")
       end
     end
   end
 
-  defp read_bytes(socket, 0), do: ""
-  defp read_bytes(socket, nr) do
-      result = case Socket.Stream.recv(socket, nr) do
+  defp read_bytes(state, 0), do: ""
+  defp read_bytes(state, nr) do
+      result = case recv(state, nr) do
         {:ok, bytes} -> bytes
         # {:error, reason} -> Lager.error("read_bytes: receiving #{nr} bytes failed with #{inspect reason}")
         any ->
-          #IO.inspect("Received a strange message: #{inspect any}")
+          IO.inspect("Received a strange message: #{inspect any}")
           any
       end
       result

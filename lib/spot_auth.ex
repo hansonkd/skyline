@@ -7,10 +7,10 @@ defmodule Spotmq.Auth do
       :gen_server.call(server, {:reconnect, connection, client_proc})
     end
 
-    def connect(client, %Connect{} = con) do
+    def connect(client, transport, %Connect{} = con) do
       ##IO.inspect("TCP.do_connect self=#{inspect self} and con = #{inspect con}")
 
-      value = case Session.start_link({client, con}) do
+      value = case Session.start_link({client, transport, con}) do
          {:error, {:already_started, pid}} ->
             ##IO.inspect("Already started") #reconnect(pid, con, client_proc)
             {:ok, pid}

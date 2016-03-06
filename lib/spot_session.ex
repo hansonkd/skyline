@@ -7,6 +7,7 @@ defmodule Spotmq.Session do
 
   defmodule State do
     defstruct socket: nil,
+              transport: nil,
               client_id: nil,
               msg_id: 0,
               subs: %{},
@@ -14,8 +15,8 @@ defmodule Spotmq.Session do
 
   end
 
-  def start_link({socket, %Connect{client_id: client_id} = con}, _opts \\ []) do
-    new_state =  %State{socket: socket, client_id: client_id, con_msg: con}
+  def start_link({socket, transport, %Connect{client_id: client_id} = con}, _opts \\ []) do
+    new_state =  %State{socket: socket, transport: transport, client_id: client_id, con_msg: con}
     GenServer.start_link(__MODULE__, new_state, name: {:global, {__MODULE__, client_id}})
   end
 
@@ -29,21 +30,21 @@ defmodule Spotmq.Session do
   def handle_call(:client_id, _from, %State{client_id: client_id} = state) do
     {:reply, {:ok, client_id}, state}
   end
-  def handle_cast({:msg, msg}, %State{socket: socket} = state) do
-    send_to_socket(socket, msg)
+  def handle_cast({:msg, msg}, %State{socket: socket, transport: transport} = state) do
+    send_to_socket(socket, transport, msg)
     {:noreply, state}
   end
-  def handle_cast({:binary_msg, msg}, %State{socket: socket} = state) do
-    send_binary_to_socket(socket, msg)
+  def handle_cast({:binary_msg, msg}, %State{socket: socket, transport: transport} = state) do
+    send_binary_to_socket(socket, transport, msg)
     {:noreply, state}
   end
 
-  def send_to_socket(socket, msg) do
-    send_binary_to_socket(socket, Encode.encode(msg))
+  def send_to_socket(socket, transport, msg) do
+    send_binary_to_socket(socket, transport, Encode.encode(msg))
   end
-  defp send_binary_to_socket(socket, raw_msg) do
+  defp send_binary_to_socket(socket, transport, raw_msg) do
     ##IO.inspect({"raw", raw_msg, socket})
-    Socket.Stream.send(socket, raw_msg)
+    transport.send(socket, raw_msg)
   end
   defp increment_state(%State{msg_id: msg_id} = state) do
     %State{state | msg_id: msg_id + 1}
