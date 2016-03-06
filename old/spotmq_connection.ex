@@ -1,18 +1,18 @@
-defmodule TCPConnection do
+defmodule TCPConnect do
 
-  use Connection
+  use Connect
 
   def start_link(host, port, opts, timeout \\ 5000) do
-    Connection.start_link(__MODULE__, {host, port, opts, timeout})
+    Connect.start_link(__MODULE__, {host, port, opts, timeout})
   end
 
-  def send(conn, data), do: Connection.call(conn, {:send, data})
+  def send(conn, data), do: Connect.call(conn, {:send, data})
 
   def recv(conn, bytes, timeout \\ 3000) do
-    Connection.call(conn, {:recv, bytes, timeout})
+    Connect.call(conn, {:recv, bytes, timeout})
   end
 
-  def close(conn), do: Connection.call(conn, :close)
+  def close(conn), do: Connect.call(conn, :close)
 
   def init({host, port, opts, timeout}) do
     s = %{host: host, port: port, opts: opts, timeout: timeout, sock: nil}
@@ -33,12 +33,12 @@ defmodule TCPConnection do
     :ok = :gen_tcp.close(sock)
     case info do
       {:close, from} ->
-        Connection.reply(from, :ok)
+        Connect.reply(from, :ok)
       {:error, :closed} ->
-        :error_logger.format("Connection closed~n", [])
+        :error_logger.format("Connect closed~n", [])
       {:error, reason} ->
         reason = :inet.format_error(reason)
-        :error_logger.format("Connection error: ~s~n", [reason])
+        :error_logger.format("Connect error: ~s~n", [reason])
     end
     {:connect, :reconnect, %{s | sock: nil}}
   end

@@ -13,32 +13,32 @@ defmodule SpotApp.Handler do
   end
 
   def handle_info(:timeout, {state, ref, socket, transport}) do
-    IO.inspect "State #{inspect state}"
+    #IO.inspect "State #{inspect state}"
     :ok = :ranch.accept_ack(ref)
     :gproc.reg({:p, :l, :spotmq})
     {:noreply, state}
   end
 
   def handle_info({:loop, socket, transport}, state) do
-    IO.inspect "Loop #{inspect socket} in process #{inspect self()}"
-    IO.inspect "State #{inspect state}"
+    #IO.inspect "Loop #{inspect socket} in process #{inspect self()}"
+    #IO.inspect "State #{inspect state}"
     {:noreply, state, 5000}
   end
 
   def handle_info(args, state) do
-    IO.inspect "Got #{inspect args} in process #{inspect self()}"
-    IO.inspect "State #{inspect state}"
+    #IO.inspect "Got #{inspect args} in process #{inspect self()}"
+    #IO.inspect "State #{inspect state}"
     {:ok, state}
   end
 
   def info(args, state) do
-    IO.inspect "Got #{inspect args} in process #{inspect self()}"
-    IO.inspect "State #{inspect state}"
+    #IO.inspect "Got #{inspect args} in process #{inspect self()}"
+    #IO.inspect "State #{inspect state}"
     {:ok, state}
   end
   def handle_cast(args, state) do
-    IO.inspect "Got #{inspect args} in process #{inspect self()}"
-    IO.inspect "State #{inspect state}"
+    #IO.inspect "Got #{inspect args} in process #{inspect self()}"
+    #IO.inspect "State #{inspect state}"
     {:ok, state}
   end
   def loop(socket, transport) do

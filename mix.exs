@@ -14,7 +14,7 @@ defmodule Spotmq.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger, :connection, :gproc, :socket],
+    [applications: [:logger, :connection, :gproc, :socket, :amnesia, :ranch],
      mod: {SpotApp, []}]
   end
 
@@ -30,6 +30,9 @@ defmodule Spotmq.Mixfile do
   defp deps do
     [{:connection, "1.0.2" },
      {:gproc, "~> 0.5"},
-     {:socket, "~> 0.3"}]
+     {:socket, "~> 0.3"},
+     {:dialyxir, "~> 0.3", only: [:dev]},
+     {:amnesia, github: "meh/amnesia", tag: :master},
+     {:ranch, "~> 1.1"}]
   end
 end
