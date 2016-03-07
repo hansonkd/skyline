@@ -5,6 +5,7 @@ defmodule Spotmq.Subscription do
               client_pid: nil,
               topic: "",
               qos: :fire_and_forget,
+              current_msg: nil,
               msg_queue: :queue.new
   end
 
@@ -46,15 +47,17 @@ defmodule Spotmq.Subscription do
     GenServer.cast(self, :process_queue)
     {:noreply, %{state | msg_queue: new_queue}}
   end
-  def handle_cast(:process_queue, %State{msg_queue: msg_queue} = state) do
-    new_queue = case :queue.out(msg_queue) do
-      {{:value, msg}, new_queue} ->
-        send_message(msg, state)
-        if not :queue.is_empty(new_queue) do
-          GenServer.cast(self, :process_queue)
-        end
-        new_queue
-      _ -> msg_queue
+  def handle_cast(:process_queue, %State{current_msg: cur_msg, msg_queue: msg_queue} = state) do
+    new_queue = case cur_msg do
+      _ -> case :queue.out(msg_queue) do
+              {{:value, msg}, new_queue} ->
+                send_message(msg, state)
+                if not :queue.is_empty(new_queue) do
+                  GenServer.cast(self, :process_queue)
+                end
+                new_queue
+              _ -> msg_queue
+            end
     end
     {:noreply, %{state | msg_queue: new_queue}}
   end

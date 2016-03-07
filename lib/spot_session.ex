@@ -29,6 +29,10 @@ defmodule Spotmq.Session do
   def handle_call(:client_id, _from, %State{client_id: client_id} = state) do
     {:reply, {:ok, client_id}, state}
   end
+  def handle_cast({:pub_qos, msg}, state) do
+
+  end
+
   def handle_cast({:msg, msg}, %State{socket: socket} = state) do
     send_to_socket(socket, msg)
     {:noreply, state}
