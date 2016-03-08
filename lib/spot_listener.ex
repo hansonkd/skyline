@@ -53,7 +53,7 @@ defmodule Spotmq.Listener do
                   #IO.puts("Disconnecting on request of client")
                   {:stop, :normal, state}
               _other ->
-                  Spotmq.Handler.handle_msg(msg, sess_pid)
+                  Spotmq.Handler.handle_msg(msg, sess_pid, conn_msg)
                   GenServer.cast(self, :verified_loop)
                   {:noreply, state}
             end

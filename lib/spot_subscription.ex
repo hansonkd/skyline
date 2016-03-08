@@ -1,22 +1,24 @@
 defmodule Spotmq.Subscription do
-  use GenServer
+
   defmodule State do
     defstruct client_id: nil,
-              client_pid: nil,
+              sess_pid: nil,
               topic: "",
-              qos: :fire_and_forget,
+              qos: nil,
               current_msg: nil,
-              msg_queue: :queue.new
+              msg_queue: :queue.new,
+              qos_pid: nil
   end
 
   import Amnesia
+  use GenServer
   use Spotmq.Persist.Topic.Database
   alias Spotmq.Persist.Topic.Database.{StoredTopic}
   alias Spotmq.Msg.{PublishReq}
 
-  def start_link({client_id, client_pid, topic, qos}, _opts \\ []) do
+  def start_link({client_id, sess_pid, topic, qos}, _opts \\ []) do
     name = {client_id, topic}
-    state = %State{client_id: client_id, client_pid: client_pid, topic: topic, qos: qos}
+    state = %State{client_id: client_id, sess_pid: sess_pid, topic: topic, qos: qos}
     ret = GenServer.start_link(__MODULE__, state, name: {:global, name})
     #IO.puts("Registered #{topic}")
     ret
@@ -41,34 +43,53 @@ defmodule Spotmq.Subscription do
 
   def handle_cast({:publish, %PublishReq{} = msg}, %State{} = state) do
     #IO.inspect({"Cast publish", msg})
-    {:ok, msg_id} = GenServer.call(state.client_pid, :msg_id)
+    {:ok, msg_id} = GenServer.call(state.sess_pid, :msg_id)
     new_msg = PublishReq.convert_to_delivery(state.topic, state.qos, msg_id, false, msg)
     new_queue = :queue.in(new_msg, state.msg_queue)
     GenServer.cast(self, :process_queue)
     {:noreply, %{state | msg_queue: new_queue}}
   end
-  def handle_cast(:process_queue, %State{current_msg: cur_msg, msg_queue: msg_queue} = state) do
-    new_queue = case cur_msg do
-      _ -> case :queue.out(msg_queue) do
-              {{:value, msg}, new_queue} ->
-                send_message(msg, state)
-                if not :queue.is_empty(new_queue) do
-                  GenServer.cast(self, :process_queue)
-                end
-                new_queue
-              _ -> msg_queue
-            end
+  def handle_cast(:process_queue, %State{msg_queue: msg_queue, qos_pid: qos_pid} = state) do
+
+    new_qos_pid = if not is_pid(qos_pid) || not Process.alive?(qos_pid) do
+      case :queue.out(msg_queue) do
+          {{:value, msg}, _new_queue} ->
+            mod = qos_to_qos_mod(state.qos)
+            {:ok, pid} = mod.start(state.sess_pid, self, state.client_id, msg)
+            pid
+          _ -> nil
+        end
+    else
+      nil
     end
-    {:noreply, %{state | msg_queue: new_queue}}
+
+    {:noreply, %{state | qos_pid: new_qos_pid}}
   end
+  def handle_cast({:finish_msg, msg_id},  %State{msg_queue: msg_queue} = state) do
+     new_queue = case :queue.out(msg_queue) do
+        {{:value, msg}, new_queue} ->
+          if msg.msg_id == msg_id do
+            # Only "finish" if it was the right message.
+            new_queue
+          else
+            msg_queue
+          end
+        _ -> msg_queue
+      end
+      if not :queue.is_empty(new_queue) do
+        GenServer.cast(self, :process_queue)
+      end
+      {:noreply, %{state | msg_queue: new_queue}}
+  end
+
   def handle_cast(other, state) do
-    #IO.puts("not matched")
-    #IO.inspect(other)
+    IO.puts("not matched")
+    IO.inspect({other, state})
     {:noreply, state}
   end
 
-  defp send_message(msg, %State{client_pid: client_pid}) do
-    GenServer.cast(client_pid, {:msg, msg})
+  defp send_message(msg, %State{sess_pid: sess_pid}) do
+    GenServer.cast(sess_pid, {:msg, msg})
   end
 
   defp check_for_stored_message(state) do
@@ -80,6 +101,14 @@ defmodule Spotmq.Subscription do
         any -> #IO.inspect({"Mismatch Topics", any})
       end
 
+    end
+  end
+
+  def qos_to_qos_mod(qos) do
+    alias Spotmq.Qos.Sender.{Qos0, Qos1}
+    case qos do
+      :fire_and_forget -> Qos0
+      :at_least_once -> Qos1
     end
   end
 end
