@@ -67,7 +67,7 @@ defmodule Spotmq.Msg.Decode.Utils do
   def binary_to_length(<<overflow :: size(1), len :: size(7)>>, count \\ 4, socket) do
     case overflow do
       1 ->
-        {byte, nextByte} = read_bytes(socket, 1)
+        byte = read_bytes(socket, 1)
         len + (binary_to_length(byte, count - 1, socket) <<< 7)
       0 -> len
     end

@@ -102,6 +102,7 @@ defmodule Spotmq.Subscription do
         %StoredTopic{topic_id: t, message: m} ->
             pub_req = %PublishReq{topic: t, message: m}
             GenServer.cast(self, {:publish, pub_req})
+        nil -> nil
       end
     end
   end

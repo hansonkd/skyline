@@ -1,7 +1,8 @@
 defmodule Spotmq.Router do
 
-    use Spotmq.Amnesia.Tree.Database
+    use Spotmq.Amnesia.Router.TreeDatabase
     require Exquisite
+    require Amnesia
 
     def add_topic_subscription(topic, pid) do
       add_words(edges(topic), pid)
@@ -12,7 +13,9 @@ defmodule Spotmq.Router do
     end
 
     def prune_tree(pid) do
-      Enum.each(TreeEdge.where(subscriber_pid == pid) |> Amnesia.Selection.values, &TreeEdge.delete/1)
+      Amnesia.transaction do  
+        Enum.each(TreeEdge.where(subscriber_pid == pid) |> Amnesia.Selection.values, &TreeEdge.delete/1)
+      end
     end
 
     def collect_pids(topic) do
@@ -41,7 +44,7 @@ defmodule Spotmq.Router do
     end
 
     defp edge_exists(path, word) do
-      pos = TreeEdge.where(
+      pos = TreeEdge.where!(
         node_path == path and child_word == word,
         select: subscriber_pid,
         limit: 1
@@ -53,7 +56,7 @@ defmodule Spotmq.Router do
     end
 
     def select_pids(path, word) do
-      TreeEdge.where(
+      TreeEdge.where!(
         node_path == path and child_word == word and terminal == true,
         select: subscriber_pid
       ) |> Amnesia.Selection.values
@@ -63,7 +66,7 @@ defmodule Spotmq.Router do
     end
 
     defp add_words([{location, w} | tail], pid) do
-      %TreeEdge{node_path: location, child_word: w, subscriber_pid: pid, terminal: tail == []} |> TreeEdge.write
+      %TreeEdge{node_path: location, child_word: w, subscriber_pid: pid, terminal: tail == []} |> TreeEdge.write!
       add_words(tail, pid)
     end
 

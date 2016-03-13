@@ -1,9 +1,9 @@
-defmodule Spotmq.Amnesia.Tree do
+defmodule Spotmq.Amnesia.Router do
   use Amnesia
 
   # defines a database called Database, it's basically a defmodule with
   # some additional magic
-  defdatabase Database do
+  defdatabase TreeDatabase do
 
     # this defines a table with an user_id key and a content attribute, and
     # makes the table a bag; tables are basically records with a bunch of helpers
