@@ -2,9 +2,14 @@ defmodule Spotmq.Qos.Outgoing.Qos0 do
   defstruct msg_queue: :queue.new
 
   def start(sess_pid, sub_id, cliend_id, msg) do
-    GenServer.cast(sess_pid, {:msg, msg})
-    GenServer.cast(sub_id, {:finish_msg, msg.msg_id})
-    {:ok, nil}
+    pid = spawn_link(
+      fn()->
+        GenServer.cast(sess_pid, {:msg, msg})
+        GenServer.cast(sub_id, {:finish_msg, msg.msg_id})
+      end
+    )
+
+    {:ok, pid}
   end
 
 end
@@ -56,9 +61,9 @@ defmodule Spotmq.Qos.Incoming.Qos0 do
   use Incoming
 
   def start(sess_pid, cliend_id, msg) do
-    #pid = spawn_link(fn() ->  bcast_msg(msg) end)
-    bcast_msg(msg)
-    {:ok, nil}
+    pid = spawn_link(fn() ->  bcast_msg(msg) end)
+    #bcast_msg(msg)
+    {:ok, pid}
   end
 
 end
