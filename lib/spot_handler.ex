@@ -18,9 +18,9 @@ defmodule Spotmq.Handler do
     end
     cast_msg(sess_pid, SubAck.create(qos_list, msg_id), false)
   end
-  def handle_msg(%Unsubscribe{topics: topics, msg_id: msg_id} = msg, sess_pid, _conn_msg) do
+  def handle_msg(%Unsubscribe{topics: topics, msg_id: msg_id} = msg, sess_pid, conn_msg) do
     :ok = GenServer.call(sess_pid, {:unsubscribe, topics})
-    {:ok, client_id} = GenServer.call(sess_pid, :client_id)
+    client_id = conn_msg.client_id
 
     for topic <- topics do
       pid = GenServer.whereis({:global, {client_id, topic}})

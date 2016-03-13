@@ -6,6 +6,7 @@ defmodule SpotApp.Worker do
   alias Spotmq.Handler
 
   def start_link(default) do
+<<<<<<< Updated upstream
     pid = spawn_link(fn -> init(8000) end)
     {:ok, pid}
   end
@@ -27,6 +28,11 @@ defmodule SpotApp.Worker do
     {:ok, _pid} = Spotmq.Listener.start_link(client)
 
     do_listen(server)
+=======
+    opts = [port: 8000]
+    IO.puts("Starting rancher")
+    :ranch.start_listener(:Spotmq, 100, :ranch_tcp, opts, Spotmq.Listener, [])
+>>>>>>> Stashed changes
   end
 
 end
