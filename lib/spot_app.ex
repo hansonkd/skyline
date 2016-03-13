@@ -17,7 +17,9 @@ defmodule SpotApp do
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
 
-    :ets.new(:session_msg_ids, [:set, :named_table, :public])
+    :ets.new(:session_msg_ids, [:set, :named_table, :public,
+                                read_concurrency: true, write_concurrency: true
+                                ])
 
     children = [
       worker(SpotApp.Worker, [8000])

@@ -9,9 +9,6 @@ defmodule SpotApp.Worker do
     opts = [port: 8000]
     IO.puts("Starting rancher")
     :ranch.start_listener(:Spotmq, 100, :ranch_tcp, opts, Spotmq.Listener, [])
-
-    #pid = spawn_link(fn -> init(8000) end)
-    #{:ok, pid}
   end
 
 end
