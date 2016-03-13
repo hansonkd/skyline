@@ -16,7 +16,7 @@ defmodule Spotmq.Subscription do
   import Spotmq.Router
   alias Spotmq.Persist.Topic.Database.{StoredTopic}
   alias Spotmq.Msg.{PublishReq}
-  alias Spotmq.Qos.Sender.{Qos0, Qos1}
+  alias Spotmq.Qos.Outgoing.{Qos0, Qos1}
 
   def start_link({client_id, sess_pid, topic, qos}, _opts \\ []) do
     name = {client_id, topic}
@@ -45,9 +45,9 @@ defmodule Spotmq.Subscription do
     check_for_stored_message(state)
     {:noreply, state}
   end
-  def handle_cast({:publish, %PublishReq{} = msg}, %State{} = state) do
+  def handle_cast({:publish, %PublishReq{} = msg}, %State{client_id: client_id} = state) do
     #IO.inspect({"Cast publish", msg})
-    {:ok, msg_id} = GenServer.call(state.sess_pid, :msg_id)
+    msg_id = :ets.update_counter(:session_msg_ids, client_id, 1)
     new_msg = PublishReq.convert_to_delivery(state.topic, state.qos, msg_id, false, msg)
     new_queue = :queue.in(new_msg, state.msg_queue)
     GenServer.cast(self, :process_queue)
@@ -69,7 +69,7 @@ defmodule Spotmq.Subscription do
 
     {:noreply, %{state | qos_pid: new_qos_pid}}
   end
-  def handle_cast({:finish_msg, msg_id},  %State{msg_queue: msg_queue} = state) do
+  def handle_cast({:finish_msg, msg_id}, %State{msg_queue: msg_queue} = state) do
      new_queue = case :queue.out(msg_queue) do
         {{:value, msg}, new_queue} ->
           if msg.msg_id == msg_id do
