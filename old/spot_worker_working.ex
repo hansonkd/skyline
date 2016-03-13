@@ -16,7 +16,7 @@ defmodule SpotApp.WorkerWorking do
   defp do_listen(l_socket) do
     {:ok, socket} = :gen_tcp.accept(l_socket)
 
-    {:ok, pid} = SpotSender.start_link(socket)
+    {:ok, pid} = SpotOutgoing.start_link(socket)
     spawn(fn() -> do_server(socket, pid) end)
 
     do_listen(l_socket)

@@ -1,15 +1,20 @@
-defmodule Spotmq.Qos.Sender.Qos0 do
+defmodule Spotmq.Qos.Outgoing.Qos0 do
   defstruct msg_queue: :queue.new
 
   def start(sess_pid, sub_id, cliend_id, msg) do
-    GenServer.cast(sess_pid, {:msg, msg})
-    GenServer.cast(sub_id, {:finish_msg, msg.msg_id})
-    {:ok, nil}
+    pid = spawn_link(
+      fn()->
+        GenServer.cast(sess_pid, {:msg, msg})
+        GenServer.cast(sub_id, {:finish_msg, msg.msg_id})
+      end
+    )
+
+    {:ok, pid}
   end
 
 end
 
-defmodule Spotmq.Qos.Sender.Qos1 do
+defmodule Spotmq.Qos.Outgoing.Qos1 do
   defmodule Qos1State do
     defstruct msg: nil,
               sess_pid: nil,
@@ -41,7 +46,7 @@ defmodule Spotmq.Qos.Sender.Qos1 do
   end
 end
 
-defmodule Recipient do
+defmodule Incoming do
   defmacro __using__(_opts) do
     quote do
       def bcast_msg(msg) do
@@ -52,23 +57,29 @@ defmodule Recipient do
   end
 end
 
-defmodule Spotmq.Qos.Recipient.Qos0 do
-  use Recipient
+defmodule Spotmq.Qos.Incoming.Qos0 do
+  use Incoming
 
   def start(sess_pid, cliend_id, msg) do
-    bcast_msg(msg)
-    {:ok, nil}
+    pid = spawn_link(fn() ->  bcast_msg(msg) end)
+    #bcast_msg(msg)
+    {:ok, pid}
   end
 
 end
-defmodule Spotmq.Qos.Recipient.Qos1 do
-  use Recipient
+defmodule Spotmq.Qos.Incoming.Qos1 do
+  use Incoming
   alias Spotmq.Msg.PubAck
 
   def start(sess_pid, cliend_id, msg) do
-    bcast_msg(msg)
-    GenServer.cast(sess_pid, {:msg, PubAck.create(msg.msg_id)})
-    {:ok, nil}
+    pid = spawn_link(
+      fn() ->
+        bcast_msg(msg)
+        GenServer.cast(sess_pid, {:msg, PubAck.create(msg.msg_id)})
+      end
+    )
+    #bcast_msg(msg)
+    {:ok, pid}
   end
 
 end

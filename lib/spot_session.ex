@@ -21,13 +21,11 @@ defmodule Spotmq.Session do
     GenServer.start_link(__MODULE__, new_state, name: {:global, {__MODULE__, client_id}})
   end
 
-  def init(state) do
+  def init(%State{client_id: client_id} = state) do
+    :ets.insert(:session_msg_ids, {client_id, 0})
     {:ok, state}
   end
 
-  def handle_call(:msg_id, _from, %State{msg_id: msg_id} = state) do
-    {:reply, {:ok, msg_id}, increment_state(state)}
-  end
   def handle_call(:client_id, _from, %State{client_id: client_id} = state) do
     {:reply, {:ok, client_id}, state}
   end

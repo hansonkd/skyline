@@ -5,14 +5,12 @@ defmodule Spotmq.Handler do
   use Spotmq.Persist.Topic.Database
   alias Spotmq.Persist.Topic.Database.{StoredTopic}
 
-  def handle_msg(%Subscribe{msg_id: msg_id, topics: topics} = msg, sess_pid, _conn_msg) do
-    {:ok, client_id} = GenServer.call(sess_pid, :client_id)
+  def handle_msg(%Subscribe{msg_id: msg_id, topics: topics} = msg, sess_pid, conn_msg) do
+    client_id = conn_msg.client_id
 
     qos_list = for {topic, qos} <- topics do
       case Subscription.start_link({client_id, sess_pid, topic, qos}) do
-        {:ok, pid} ->
-          {:ok, top_qos} = GenServer.call(pid, :get_qos)
-          top_qos
+        {:ok, pid} -> qos
         {:error, {:already_started, pid}} ->
            {:ok, top_qos} = GenServer.call(pid, {:reset, qos})
            top_qos
@@ -64,7 +62,7 @@ defmodule Spotmq.Handler do
     GenServer.cast(sess_pid, {:msg, outgoing})
   end
   def qos_to_qos_mod(qos) do
-    alias Spotmq.Qos.Recipient.{Qos0, Qos1}
+    alias Spotmq.Qos.Incoming.{Qos0, Qos1}
     case qos do
       :fire_and_forget -> Qos0
       :at_least_once -> Qos1
