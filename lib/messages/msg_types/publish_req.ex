@@ -5,6 +5,7 @@ defmodule Spotmq.Msg.PublishReq do
   defstruct topic: "",
             msg_id: 0,
             message: "",
+            qos: nil,
             retain: false
 
   @doc "Creates a new publish request message."
@@ -15,6 +16,7 @@ defmodule Spotmq.Msg.PublishReq do
 		%__MODULE__{topic: topic,
                 message: message,
                 msg_id: msg_id,
+                qos: qos,
                 retain: retain}
 	end
 

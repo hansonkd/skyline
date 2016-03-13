@@ -11,7 +11,8 @@ defmodule Spotmq.Session do
               client_id: nil,
               msg_id: 0,
               subs: %{},
-              con_msg: nil
+              con_msg: nil,
+              qos_queue: :queue.new
 
   end
 
@@ -32,6 +33,7 @@ defmodule Spotmq.Session do
   end
   def handle_cast({:msg, msg}, %State{socket: socket, transport: transport} = state) do
     send_to_socket(socket, transport, msg)
+
     {:noreply, state}
   end
   def handle_cast({:binary_msg, msg}, %State{socket: socket, transport: transport} = state) do
@@ -41,6 +43,7 @@ defmodule Spotmq.Session do
 
   def send_to_socket(socket, transport, msg) do
     send_binary_to_socket(socket, transport, Encode.encode(msg))
+
   end
   defp send_binary_to_socket(socket, transport, raw_msg) do
     ##IO.inspect({"raw", raw_msg, socket})

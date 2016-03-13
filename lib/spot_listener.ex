@@ -1,5 +1,6 @@
 defmodule Spotmq.Listener do
     use GenServer
+
     import Socket
     alias Spotmq.Session
     alias Spotmq.Msg.Decode.Utils, as: Decoder
@@ -36,10 +37,10 @@ defmodule Spotmq.Listener do
       transport.recv(socket, num, timeout)
     end
 
-    def handle_cast(:listen, %State{socket: socket} = st) do
+    def handle_cast(:listen, %State{socket: socket, transport: transport} = st) do
       case recv(st, 2) do
         { :ok, data = <<_m :: size(16)>> } ->
-            msg = Decoder.decode(data, read_byte(st), fn n -> read_bytes(st, n) end)
+            msg = Decoder.decode(data, socket, transport)
             case msg do
               %Spotmq.Msg.Connect{} ->
                 GenServer.cast(self, {:authenticate, msg})
@@ -54,11 +55,11 @@ defmodule Spotmq.Listener do
       end
     end
 
-    def handle_cast(:verified_loop, %State{socket: socket, sess_pid: sess_pid, conn_msg: conn_msg} = state) do
+    def handle_cast(:verified_loop, %State{socket: socket, transport: transport, sess_pid: sess_pid, conn_msg: conn_msg} = state) do
       #IO.inspect({"timeout", keep_alive})
       case recv(state, 2, conn_msg.keep_alive_server_ms) do
         { :ok, data = <<_m :: size(16)>> } ->
-            msg = Decoder.decode(data, read_byte(state), fn n -> read_bytes(state, n) end)
+            msg = Decoder.decode(data, socket, transport)
             case msg do
               %Spotmq.Msg.Connect{} ->
                   #IO.puts("Only one connect message per connection...")
@@ -67,7 +68,7 @@ defmodule Spotmq.Listener do
                   #IO.puts("Disconnecting on request of client")
                   {:stop, :normal, state}
               _other ->
-                  Spotmq.Handler.handle_msg(msg, sess_pid)
+                  Spotmq.Handler.handle_msg(msg, sess_pid, conn_msg)
                   GenServer.cast(self, :verified_loop)
                   {:noreply, state}
             end
@@ -86,7 +87,6 @@ defmodule Spotmq.Listener do
       :ok
     end
     def handle_cast({:authenticate, msg}, %State{socket: socket, transport: transport} = state) do
-
         case Spotmq.Auth.connect(socket, transport, msg) do
           {:ok, smsg, sess_pid} ->
               Session.send_to_socket(socket, transport, smsg)
@@ -98,26 +98,4 @@ defmodule Spotmq.Listener do
               {:stop, :normal, state}
         end
     end
-
-  defp read_byte(state) do
-    fn ->
-      case recv(state, 1) do
-        {:ok, byte} -> {byte, read_byte(state)}
-        {:error, reason} -> IO.inspect("read_byte: receiving 1 byte failed with #{inspect reason}")
-      end
-    end
-  end
-
-  defp read_bytes(state, 0), do: ""
-  defp read_bytes(state, nr) do
-      result = case recv(state, nr) do
-        {:ok, bytes} -> bytes
-        # {:error, reason} -> Lager.error("read_bytes: receiving #{nr} bytes failed with #{inspect reason}")
-        any ->
-          IO.inspect("Received a strange message: #{inspect any}")
-          any
-      end
-      result
-    end
-
 end
