@@ -13,8 +13,10 @@ defmodule Spotmq.Subscription do
   import Amnesia
   use GenServer
   use Spotmq.Persist.Topic.Database
+  import Spotmq.Router
   alias Spotmq.Persist.Topic.Database.{StoredTopic}
   alias Spotmq.Msg.{PublishReq}
+  alias Spotmq.Qos.Sender.{Qos0, Qos1}
 
   def start_link({client_id, sess_pid, topic, qos}, _opts \\ []) do
     name = {client_id, topic}
@@ -26,21 +28,23 @@ defmodule Spotmq.Subscription do
 
   def init(%State{topic: topic} = state) do
     #IO.puts("Registering #{topic}")
-    :gproc.reg({:p, :l, {:topic, topic}})
+    #:gproc.reg({:p, :l, {:topic, topic}})
+    Spotmq.Router.add_topic_subscription(topic, self)
     GenServer.cast(self, :check_for_stored_message)
     {:ok, state}
+  end
+
+  def handle_call({:reset, new_qos}, _from, state) do
+    new_state = %{state | qos: new_qos, msg_queue: :queue.new}
+    {:reply, {:ok, new_qos}, new_state}
+  end
+  def handle_call(:get_qos, _from, %State{qos: qos} = state) do
+    {:reply, {:ok, qos}, state}
   end
   def handle_cast(:check_for_stored_message, state) do
     check_for_stored_message(state)
     {:noreply, state}
   end
-  def handle_call({:reset, new_qos}, _from, state) do
-    {:reply, {:ok, new_qos}, %{state | qos: new_qos, msg_queue: :queue.new}}
-  end
-  def handle_call(:get_qos, _from, %State{qos: qos} = state) do
-    {:reply, {:ok, qos}, state}
-  end
-
   def handle_cast({:publish, %PublishReq{} = msg}, %State{} = state) do
     #IO.inspect({"Cast publish", msg})
     {:ok, msg_id} = GenServer.call(state.sess_pid, :msg_id)
@@ -98,14 +102,11 @@ defmodule Spotmq.Subscription do
         %StoredTopic{topic_id: t, message: m} ->
             pub_req = %PublishReq{topic: t, message: m}
             GenServer.cast(self, {:publish, pub_req})
-        any -> #IO.inspect({"Mismatch Topics", any})
       end
-
     end
   end
 
   def qos_to_qos_mod(qos) do
-    alias Spotmq.Qos.Sender.{Qos0, Qos1}
     case qos do
       :fire_and_forget -> Qos0
       :at_least_once -> Qos1

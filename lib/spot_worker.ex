@@ -25,7 +25,6 @@ defmodule SpotApp.Worker do
     client = server |> Socket.TCP.accept!
 
     {:ok, _pid} = Spotmq.Listener.start_link(client)
-    #spawn(fn() -> wait_for_connection(client) end)
 
     do_listen(server)
   end

@@ -1,5 +1,6 @@
 defmodule Spotmq.Listener do
     use GenServer
+
     import Socket
     alias Spotmq.Session
     alias Spotmq.Msg.Decode.Utils, as: Decoder
@@ -25,7 +26,7 @@ defmodule Spotmq.Listener do
     def handle_cast(:listen, %State{socket: socket} = st) do
       case Socket.Stream.recv(socket, 2) do
         { :ok, data = <<_m :: size(16)>> } ->
-            msg = Decoder.decode(data, read_byte(socket), fn n -> read_bytes(socket, n) end)
+            msg = Decoder.decode(data, socket)
             case msg do
               %Spotmq.Msg.Connect{} ->
                 GenServer.cast(self, {:authenticate, msg})
@@ -44,7 +45,7 @@ defmodule Spotmq.Listener do
       #IO.inspect({"timeout", keep_alive})
       case Socket.Stream.recv(socket, 2, [timeout: conn_msg.keep_alive_server_ms]) do
         { :ok, data = <<_m :: size(16)>> } ->
-            msg = Decoder.decode(data, read_byte(socket), fn n -> read_bytes(socket, n) end)
+            msg = Decoder.decode(data, socket)
             case msg do
               %Spotmq.Msg.Connect{} ->
                   #IO.puts("Only one connect message per connection...")
@@ -72,7 +73,6 @@ defmodule Spotmq.Listener do
       :ok
     end
     def handle_cast({:authenticate, msg}, %State{socket: socket} = state) do
-
         case Spotmq.Auth.connect(socket, msg) do
           {:ok, smsg, sess_pid} ->
               Session.send_to_socket(socket, smsg)
@@ -84,26 +84,4 @@ defmodule Spotmq.Listener do
               {:stop, :normal, state}
         end
     end
-
-  defp read_byte(socket) do
-    fn ->
-      case Socket.Stream.recv(socket, 1) do
-        {:ok, byte} -> {byte, read_byte(socket)}
-        {:error, reason} -> #IO.inspect("read_byte: receiving 1 byte failed with #{inspect reason}")
-      end
-    end
-  end
-
-  defp read_bytes(socket, 0), do: ""
-  defp read_bytes(socket, nr) do
-      result = case Socket.Stream.recv(socket, nr) do
-        {:ok, bytes} -> bytes
-        # {:error, reason} -> Lager.error("read_bytes: receiving #{nr} bytes failed with #{inspect reason}")
-        any ->
-          #IO.inspect("Received a strange message: #{inspect any}")
-          any
-      end
-      result
-    end
-
 end

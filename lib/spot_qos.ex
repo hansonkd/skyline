@@ -18,6 +18,7 @@ defmodule Spotmq.Qos.Sender.Qos1 do
 
   use GenServer
   alias Spotmq.Msg.PubAck
+  import Spotmq.Router
 
   def start(sess_pid, sub_id, client_id, msg) do
     state = %Qos1State{sess_pid: sess_pid, sub_id: sub_id, msg: msg}
@@ -38,14 +39,14 @@ defmodule Spotmq.Qos.Sender.Qos1 do
     GenServer.cast(sess_pid, {:msg, msg})
     {:noreply, state, 15000}
   end
-
 end
 
 defmodule Recipient do
   defmacro __using__(_opts) do
     quote do
       def bcast_msg(msg) do
-        GenServer.cast({:via, :gproc, {:p, :l, {:topic, msg.topic}}}, {:publish, msg})
+        #GenServer.cast({:via, :gproc, {:p, :l, {:topic, }}}, )
+        Spotmq.Router.broadcast_msg(msg.topic, {:publish, msg})
       end
     end
   end
@@ -56,7 +57,7 @@ defmodule Spotmq.Qos.Recipient.Qos0 do
 
   def start(sess_pid, cliend_id, msg) do
     bcast_msg(msg)
-    {:ok, self}
+    {:ok, nil}
   end
 
 end
@@ -67,7 +68,7 @@ defmodule Spotmq.Qos.Recipient.Qos1 do
   def start(sess_pid, cliend_id, msg) do
     bcast_msg(msg)
     GenServer.cast(sess_pid, {:msg, PubAck.create(msg.msg_id)})
-    {:ok, self}
+    {:ok, nil}
   end
 
 end

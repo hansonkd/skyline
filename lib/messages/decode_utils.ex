@@ -3,23 +3,20 @@ defmodule Spotmq.Msg.Decode.Utils do
   alias Spotmq.Msg.FixedHeader
   alias Spotmq.Msg
 
-    def decode(msg = <<_m :: size(16)>>, readByte, readMsg) do
-      header = decode_fixheader(msg, readByte)
-      ##IO.puts("\n\n\nHeader = #{inspect header}\n\n\n")
-      var_m = readMsg.(header.length)
-      #Lager.info("decoding remaing messages #{inspect var_m}")
-      ##IO.puts("\n\nvar_m = #{inspect var_m}\n\n\n")
+    def decode(msg = <<_m :: size(16)>>, socket) do
+      header = decode_fixheader(msg, socket)
+      var_m = read_bytes(socket, header.length)
       decode_message(var_m, header)
     end
 
     def decode_fixheader(<<type :: size(4), dup :: size(1), qos :: size(2),
-                 retain :: size(1), len :: size(8)>>, readByte) do
+                 retain :: size(1), len :: size(8)>>, socket) do
       FixedHeader.create(
         binary_to_msg_type(type),
         (dup == 1),
         binary_to_qos(qos),
         (retain == 1),
-        binary_to_length(<<len>>, readByte)
+        binary_to_length(<<len>>, socket)
       )
     end
 
@@ -64,15 +61,14 @@ defmodule Spotmq.Msg.Decode.Utils do
     {"", <<>>}
   end
 
-  def binary_to_length(bin, count \\ 4, readByte_fun)
   def binary_to_length(_bin, count = 0, _readByte) do
     raise "Invalid length"
   end
-  def binary_to_length(<<overflow :: size(1), len :: size(7)>>, count, readByte) do
+  def binary_to_length(<<overflow :: size(1), len :: size(7)>>, count \\ 4, socket) do
     case overflow do
       1 ->
-        {byte, nextByte} = readByte.()
-        len + (binary_to_length(byte, count - 1, nextByte) <<< 7)
+        {byte, nextByte} = read_bytes(socket, 1)
+        len + (binary_to_length(byte, count - 1, socket) <<< 7)
       0 -> len
     end
   end
@@ -117,4 +113,16 @@ defmodule Spotmq.Msg.Decode.Utils do
       5 -> :not_authorized
     end
   end
+
+  defp read_bytes(socket, 0), do: ""
+  defp read_bytes(socket, nr) do
+      result = case Socket.Stream.recv(socket, nr) do
+        {:ok, bytes} -> bytes
+        # {:error, reason} -> Lager.error("read_bytes: receiving #{nr} bytes failed with #{inspect reason}")
+        any ->
+          #IO.inspect("Received a strange message: #{inspect any}")
+          any
+      end
+      result
+    end
 end

@@ -39,7 +39,6 @@ defmodule Spotmq.Session do
     send_binary_to_socket(socket, msg)
     {:noreply, state}
   end
-
   def send_to_socket(socket, msg) do
     send_binary_to_socket(socket, Encode.encode(msg))
   end
