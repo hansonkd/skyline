@@ -2,7 +2,7 @@ defmodule SpotGproc do
   use GenServer
 
   def init(args) do
-    :gproc.reg({:p, :l, :spotmq}, [], [])
+    :gproc.reg({:p, :l, :Skiline}, [], [])
     {:ok, args[:attrs]}
   end
 

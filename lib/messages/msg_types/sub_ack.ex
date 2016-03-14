@@ -1,4 +1,4 @@
-defmodule Spotmq.Msg.SubAck do
+defmodule Skiline.Msg.SubAck do
   @moduledoc """
   SubAck
 
@@ -6,8 +6,8 @@ defmodule Spotmq.Msg.SubAck do
   """
   defstruct msg_id: nil,
             granted_qos: []
-  @type t :: %__MODULE__{msg_id: pos_integer, granted_qos: [SpotApp.qos_type]}
-  @behaviour Spotmq.Msg.Decode
+  @type t :: %__MODULE__{msg_id: pos_integer, granted_qos: [Skiline.qos_type]}
+  @behaviour Skiline.Msg.Decode
   
   @spec new([Mqttex.qos_type], pos_integer) :: SubAck.t
   def new(granted_qos, msg_id) do
@@ -15,13 +15,13 @@ defmodule Spotmq.Msg.SubAck do
                 granted_qos: granted_qos}
   end
 
-  @spec decode_body(binary, Spotmq.Msg.FixedHeader.t) :: __MODULE__.t
+  @spec decode_body(binary, Skiline.Msg.FixedHeader.t) :: __MODULE__.t
   def decode_body(<<msg_id :: unsigned-integer-size(16), content :: binary>>, _hdr) do
     granted_qos = qos_list(content, [])
     new(granted_qos, msg_id)
   end
 
-  @spec qos_list(binary, [SpotApp.qos_type]):: [SpotApp.qos_type]
+  @spec qos_list(binary, [Skiline.qos_type]):: [Skiline.qos_type]
   defp qos_list(<<>>, acc) do
     Enum.reverse acc
   end
@@ -30,8 +30,8 @@ defmodule Spotmq.Msg.SubAck do
   end
 
 end
-defimpl Spotmq.Msg.Encode, for: Spotmq.Msg.SubAck do
-  alias Spotmq.Msg.Encode.Utils
+defimpl Skiline.Msg.Encode, for: Skiline.Msg.SubAck do
+  alias Skiline.Msg.Encode.Utils
 
   def encode(msg) do
 

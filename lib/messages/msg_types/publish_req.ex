@@ -1,4 +1,4 @@
-defmodule Spotmq.Msg.PublishReq do
+defmodule Skiline.Msg.PublishReq do
   @moduledoc """
   PingReq - Client -> Broker Publish
 
@@ -9,11 +9,11 @@ defmodule Spotmq.Msg.PublishReq do
             message: "",
             qos: nil,
             retain: false
-  @type t :: %__MODULE__{topic: String.t, msg_id: pos_integer, message: String.t, qos: SpotApp.qos_type, retain: boolean}
-  @behaviour Spotmq.Msg.Decode
+  @type t :: %__MODULE__{topic: String.t, msg_id: pos_integer, message: String.t, qos: Skiline.qos_type, retain: boolean}
+  @behaviour Skiline.Msg.Decode
 
-  alias Spotmq.Msg.FixedHeader
-  alias Spotmq.Msg.Decode.Utils
+  alias Skiline.Msg.FixedHeader
+  alias Skiline.Msg.Decode.Utils
 
 
   @doc "Creates a new publish request message."
@@ -25,7 +25,7 @@ defmodule Spotmq.Msg.PublishReq do
                 retain: retain}
 	end
 
-  @spec decode_body(binary, Spotmq.Msg.FixedHeader.t) :: __MODULE__.t
+  @spec decode_body(binary, Skiline.Msg.FixedHeader.t) :: __MODULE__.t
   def decode_body(msg, h) do
     {topic, m1} = Utils.utf8(msg)
     # in m1 is the message id if qos = 1 or 2
@@ -39,9 +39,9 @@ defmodule Spotmq.Msg.PublishReq do
   end
 
   @doc "Convert a PublishReq to a PublishDelivery"
-  @spec convert_to_delivery(binary, SpotApp.qos_type, pos_integer, boolean, __MODULE__.t) :: Spotmq.Msg.PublishDelivery.t
+  @spec convert_to_delivery(binary, Skiline.qos_type, pos_integer, boolean, __MODULE__.t) :: Skiline.Msg.PublishDelivery.t
   def convert_to_delivery(sub_topic, qos, msg_id, dup, %__MODULE__{message: msg}) do
-      Spotmq.Msg.PublishDelivery.new(
+      Skiline.Msg.PublishDelivery.new(
         sub_topic,
         msg,
         qos,

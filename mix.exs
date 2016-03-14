@@ -1,8 +1,8 @@
-defmodule Spotmq.Mixfile do
+defmodule Skiline.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :spotmq,
+    [app: :Skiline,
      version: "0.0.1",
      elixir: "~> 1.2",
      build_embedded: Mix.env == :prod,
@@ -15,7 +15,7 @@ defmodule Spotmq.Mixfile do
   # Type "mix help compile.app" for more information
   def application do
     [applications: [:logger, :connection, :gproc, :socket, :amnesia, :ranch],
-     mod: {SpotApp, []}]
+     mod: {Skiline, []}]
   end
 
   # Dependencies can be Hex packages:

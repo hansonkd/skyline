@@ -1,4 +1,4 @@
-defmodule Spotmq.Amnesia.Router do
+defmodule Skiline.Amnesia.Router do
   use Amnesia
 
   # defines a database called Database, it's basically a defmodule with

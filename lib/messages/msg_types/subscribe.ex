@@ -1,4 +1,4 @@
-defmodule Spotmq.Msg.Subscribe do
+defmodule Skiline.Msg.Subscribe do
   @moduledoc """
   Subscribe
 
@@ -6,22 +6,22 @@ defmodule Spotmq.Msg.Subscribe do
   """
   defstruct msg_id: nil,
             topics: []
-  @type t :: %__MODULE__{msg_id: pos_integer, topics: [{String.t, SpotApp.qos_type}]}
-  @behaviour Spotmq.Msg.Decode
+  @type t :: %__MODULE__{msg_id: pos_integer, topics: [{String.t, Skiline.qos_type}]}
+  @behaviour Skiline.Msg.Decode
 
-  alias Spotmq.Msg.Decode.Utils
+  alias Skiline.Msg.Decode.Utils
 
   def new(topics, msg_id) when is_integer(msg_id) do
 		%__MODULE__{msg_id: msg_id, topics: topics}
 	end
 
-  @spec decode_body(binary, Spotmq.Msg.FixedHeader.t) :: __MODULE__.t
+  @spec decode_body(binary, Skiline.Msg.FixedHeader.t) :: __MODULE__.t
   def decode_body(<<msg_id :: unsigned-integer-size(16), payload :: binary>>, _hdr) do
     topics = topics(payload)
     new(topics, msg_id)
   end
 
-  @spec topics(binary, [{binary, SpotApp.qos_type}]) :: [{binary, SpotApp.qos_type}]
+  @spec topics(binary, [{binary, Skiline.qos_type}]) :: [{binary, Skiline.qos_type}]
   defp topics(<<>>, acc) do
     Enum.reverse acc
   end

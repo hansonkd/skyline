@@ -1,4 +1,4 @@
-defmodule Spotmq.Msg.PingResp do
+defmodule Skiline.Msg.PingResp do
   @moduledoc """
   PingResp
 
@@ -6,9 +6,9 @@ defmodule Spotmq.Msg.PingResp do
   """
   defstruct []
   @type t :: %__MODULE__{}
-  @behaviour Spotmq.Msg.Decode
+  @behaviour Skiline.Msg.Decode
   
-  alias Spotmq.Msg.FixedHeader
+  alias Skiline.Msg.FixedHeader
 
   @doc """
   Creates a new PingResp.
@@ -18,7 +18,7 @@ defmodule Spotmq.Msg.PingResp do
     %__MODULE__{}
   end
 
-  @spec decode_body(binary, Spotmq.Msg.FixedHeader.t) :: __MODULE__.t
+  @spec decode_body(binary, Skiline.Msg.FixedHeader.t) :: __MODULE__.t
   def decode_body(<<>>, %FixedHeader{length: 0}) do
     new()
   end
@@ -26,8 +26,8 @@ defmodule Spotmq.Msg.PingResp do
     # Raise an error about needing 0 length
   end
 end
-defimpl Spotmq.Msg.Encode, for: Spotmq.Msg.PingResp do
-  alias Spotmq.Msg.Encode.Utils
+defimpl Skiline.Msg.Encode, for: Skiline.Msg.PingResp do
+  alias Skiline.Msg.Encode.Utils
 
   def encode(_msg) do
     Utils.encode_basic(:ping_resp)

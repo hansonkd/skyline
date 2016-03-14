@@ -1,6 +1,6 @@
 defmodule Mix.Tasks.TestTree do
   use Mix.Task
-  use Spotmq.Amnesia.Router.TreeDatabase
+  use Skiline.Amnesia.Router.TreeDatabase
   require Exquisite
 
   def run(_) do

@@ -1,4 +1,4 @@
-defmodule Spotmq.Msg.FixedHeader do
+defmodule Skiline.Msg.FixedHeader do
   defstruct message_type: :reserved,
             duplicate: false,
             qos: :fire_and_forget,

@@ -10,11 +10,11 @@ use Mix.Config
 
 # You can configure for your application as:
 #
-#     config :spotmq, key: :value
+#     config :Skiline, key: :value
 #
 # And access this configuration in your application as:
 #
-#     Application.get_env(:spotmq, :key)
+#     Application.get_env(:Skiline, :key)
 #
 # Or configure a 3rd-party app:
 #

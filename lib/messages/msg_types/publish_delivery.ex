@@ -1,4 +1,4 @@
-defmodule Spotmq.Msg.PublishDelivery do
+defmodule Skiline.Msg.PublishDelivery do
   @moduledoc """
   PublishDelivery - Broker -> Client Publish
 
@@ -9,7 +9,7 @@ defmodule Spotmq.Msg.PublishDelivery do
             message: "",
             duplicate: false,
             qos: :fire_and_forget
-  @type t :: %__MODULE__{subscription_topic: String.t, msg_id: pos_integer, message: String.t, qos: SpotApp.qos_type, duplicate: boolean}
+  @type t :: %__MODULE__{subscription_topic: String.t, msg_id: pos_integer, message: String.t, qos: Skiline.qos_type, duplicate: boolean}
 
   def new(subscription_topic,
             message,
@@ -27,8 +27,8 @@ defmodule Spotmq.Msg.PublishDelivery do
 
   end
 end
-defimpl Spotmq.Msg.Encode, for: Spotmq.Msg.PublishDelivery do
-  alias Spotmq.Msg.Encode.Utils
+defimpl Skiline.Msg.Encode, for: Skiline.Msg.PublishDelivery do
+  alias Skiline.Msg.Encode.Utils
 
   def encode(msg) do
     rest = Utils.utf8(msg.subscription_topic) <>

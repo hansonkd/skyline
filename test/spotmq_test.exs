@@ -1,6 +1,6 @@
-defmodule SpotmqTest do
+defmodule SkilineTest do
   use ExUnit.Case
-  doctest Spotmq
+  doctest Skiline
 
   test "the truth" do
     assert 1 + 1 == 2

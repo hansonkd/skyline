@@ -1,3 +1,3 @@
-defmodule Spotmq.Msg.Decode do
-  @callback decode_body(binary, Spotmq.Msg.FixedHeader.t) :: any
+defmodule Skiline.Msg.Decode do
+  @callback decode_body(binary, Skiline.Msg.FixedHeader.t) :: any
 end

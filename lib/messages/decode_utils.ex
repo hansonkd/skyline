@@ -1,9 +1,9 @@
-defmodule Spotmq.Msg.Decode.Utils do
+defmodule Skiline.Msg.Decode.Utils do
     use Bitwise
-    alias Spotmq.Msg.FixedHeader
-    alias Spotmq.Msg
+    alias Skiline.Msg.FixedHeader
+    alias Skiline.Msg
 
-    @spec decode(binary, SpotApp.socket) :: SpotApp.message_type
+    @spec decode(binary, Skiline.socket) :: Skiline.message_type
     def decode(msg = <<_m :: size(16)>>, socket) do
       header = decode_fixheader(msg, socket)
       var_m = read_bytes(socket, header.length)
@@ -63,7 +63,7 @@ defmodule Spotmq.Msg.Decode.Utils do
       {"", <<>>}
     end
 
-    @spec binary_to_length(binary, pos_integer, SpotApp.socket) :: pos_integer
+    @spec binary_to_length(binary, pos_integer, Skiline.socket) :: pos_integer
     defp binary_to_length(_bin, count = 0, _readByte) do
       raise "Invalid length"
     end
@@ -76,7 +76,7 @@ defmodule Spotmq.Msg.Decode.Utils do
       end
     end
 
-    @spec binary_to_qos(binary) :: SpotApp.qos_type
+    @spec binary_to_qos(binary) :: Skiline.qos_type
     def binary_to_qos(bin) do
       case bin do
         0 -> :fire_and_forget
@@ -86,7 +86,7 @@ defmodule Spotmq.Msg.Decode.Utils do
       end
     end
 
-    @spec binary_to_msg_type(binary) :: SpotApp.msg_type
+    @spec binary_to_msg_type(binary) :: Skiline.msg_type
     defp binary_to_msg_type(bin) do
       case bin do
         0 -> :reserved

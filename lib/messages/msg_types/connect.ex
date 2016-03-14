@@ -1,4 +1,4 @@
-defmodule Spotmq.Msg.Connect do
+defmodule Skiline.Msg.Connect do
   @moduledoc """
   Connect Message
 
@@ -18,23 +18,23 @@ defmodule Spotmq.Msg.Connect do
   @type t :: %__MODULE__{client_id: String.t,
                          user_name: String.t,
                          password: String.t,
-                         keep_alive_ms: SpotApp.keep_alive,
-                         keep_alive_server_ms: SpotApp.keep_alive,
+                         keep_alive_ms: Skiline.keep_alive,
+                         keep_alive_server_ms: Skiline.keep_alive,
                          last_will: boolean,
-                         will_qos: SpotApp.qos_type,
+                         will_qos: Skiline.qos_type,
                          will_retain: boolean,
                          will_topic: String.t,
                          will_message: String.t,
                          clean_session: boolean
                        }
-  @behaviour Spotmq.Msg.Decode
+  @behaviour Skiline.Msg.Decode
 
-  alias Spotmq.Msg.Decode.Utils
+  alias Skiline.Msg.Decode.Utils
 
   @doc """
 	Creates a new Connect.
 	"""
-  @spec new(binary, binary, binary, boolean, SpotApp.keep_alive, SpotApp.keep_alive, boolean, SpotApp.qos_type, boolean, binary, binary) :: __MODULE__.t
+  @spec new(binary, binary, binary, boolean, Skiline.keep_alive, Skiline.keep_alive, boolean, Skiline.qos_type, boolean, binary, binary) :: __MODULE__.t
   def new(client_id,
               user_name,
               password,
@@ -61,7 +61,7 @@ defmodule Spotmq.Msg.Connect do
               }
   end
 
-  @spec decode_body(binary, Spotmq.Msg.FixedHeader.t) :: __MODULE__.t
+  @spec decode_body(binary, Skiline.Msg.FixedHeader.t) :: __MODULE__.t
   def decode_body(<<0, 4, "MQTT",  4, flags :: size(8), keep_alive :: size(16), rest::binary>>, _hdr) do
     decode_common(flags, keep_alive, rest)
   end

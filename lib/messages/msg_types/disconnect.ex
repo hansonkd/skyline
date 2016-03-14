@@ -1,14 +1,14 @@
-defmodule Spotmq.Msg.Disconnect do
+defmodule Skiline.Msg.Disconnect do
   @moduledoc """
   Disconnect Message
 
   http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718090
   """
-  @behaviour Spotmq.Msg.Decode
   defstruct []
   @type t :: %__MODULE__{}
+  @behaviour Skiline.Msg.Decode
 
-  alias Spotmq.Msg.FixedHeader
+  alias Skiline.Msg.FixedHeader
 
   @doc """
   Creates a new Discnnect.
@@ -18,7 +18,7 @@ defmodule Spotmq.Msg.Disconnect do
     %__MODULE__{}
   end
 
-  @spec decode_body(binary, Spotmq.Msg.FixedHeader.t) :: __MODULE__.t
+  @spec decode_body(binary, Skiline.Msg.FixedHeader.t) :: __MODULE__.t
   def decode_body(<<>>, %FixedHeader{length: 0}) do
     new()
   end
@@ -26,8 +26,8 @@ defmodule Spotmq.Msg.Disconnect do
     # Raise an error about needing 0 length
   end
 end
-defimpl Spotmq.Msg.Encode, for: Spotmq.Msg.Disconnect do
-  alias Spotmq.Msg.Encode.Utils
+defimpl Skiline.Msg.Encode, for: Skiline.Msg.Disconnect do
+  alias Skiline.Msg.Encode.Utils
 
   def encode(_msg) do
     Utils.encode_basic(:disconnect)

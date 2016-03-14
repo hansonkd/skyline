@@ -1,4 +1,4 @@
-defmodule SpotApp.WorkerWorking do
+defmodule Skiline.WorkerWorking do
 
   def start_link(default) do
     pid = spawn_link(fn -> init(8000) end)

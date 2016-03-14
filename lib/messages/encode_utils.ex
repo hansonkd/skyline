@@ -1,17 +1,17 @@
-defmodule Spotmq.Msg.Encode.Utils do
+defmodule Skiline.Msg.Encode.Utils do
     use Bitwise
 
-    @spec encode_basic(SpotApp.empty_msg) :: binary
+    @spec encode_basic(Skiline.empty_msg) :: binary
     def encode_basic(msg_type) when msg_type in [:ping_req, :ping_resp, :disconnect] do
         <<msg_type_to_binary(msg_type) :: size(4), 0 :: size(4), 0x00>>
     end
 
-    @spec basic_with_msg_id(SpotApp.msg_with_id, pos_integer) :: binary
+    @spec basic_with_msg_id(Skiline.msg_with_id, pos_integer) :: binary
     def basic_with_msg_id(msg_type, msg_id) when msg_type in [:pub_ack, :pub_rec, :pub_comp, :unsub_ack] do
         <<msg_type_to_binary(msg_type) :: size(4), 0 :: size(4), 0x02, msg_id(msg_id) :: binary>>
     end
 
-    @spec encode_full_header(SpotApp.msg_type, boolean, SpotApp.qos_type, boolean, pos_integer) :: binary
+    @spec encode_full_header(Skiline.msg_type, boolean, Skiline.qos_type, boolean, pos_integer) :: binary
     def encode_full_header(message_type,
                            duplicate,
                            qos,
@@ -26,7 +26,7 @@ defmodule Spotmq.Msg.Encode.Utils do
     end
 
     @doc "Converts the atoms to binary message types"
-    @spec msg_type_to_binary(SpotApp.msg_type) :: pos_integer
+    @spec msg_type_to_binary(Skiline.msg_type) :: pos_integer
     def msg_type_to_binary(atom) do
       case atom do
         :reserved -> 0
@@ -57,7 +57,7 @@ defmodule Spotmq.Msg.Encode.Utils do
       <<id :: size(16)>>
     end
 
-    @spec keep_alive(SpotApp.keep_alive) :: binary
+    @spec keep_alive(Skiline.keep_alive) :: binary
   	def keep_alive(n) do
       case n do
         :infinity -> <<0 :: size(16)>>
@@ -97,7 +97,7 @@ defmodule Spotmq.Msg.Encode.Utils do
     end
 
     @doc "converts atoms the binary qos"
-    @spec qos_binary(SpotApp.qos_type) :: pos_integer
+    @spec qos_binary(Skiline.qos_type) :: pos_integer
     def qos_binary(atom) do
       case atom do
         :fire_and_forget -> 0
