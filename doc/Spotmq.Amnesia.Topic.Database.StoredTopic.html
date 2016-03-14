@@ -1,0 +1,2421 @@
+    <!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.11.4">
+    <title>Skiline.Amnesia.Topic.Database.StoredTopic – Skiline v0.0.1</title>
+    <link rel="stylesheet" href="dist/app-1e374caa3d.css" />
+    <script src="dist/sidebar_items.js"></script>
+  </head>
+  <body data-type="modules">
+
+    <div class="main">
+<button class="sidebar-toggle">
+  <i class="icon-menu"></i>
+</button>
+<section class="sidebar">
+  <button class="sidebar-toggle">
+    <i class="icon-menu"></i>
+  </button>
+
+  
+  <a href="api-reference.html" class="sidebar-projectLink">
+    <div class="sidebar-projectDetails">
+      <h1 class="sidebar-projectName">
+        Skiline
+      </h1>
+      <h2 class="sidebar-projectVersion">
+        v0.0.1
+      </h2>
+    </div>
+    
+  </a>
+
+  <div class="sidebar-search">
+    <i class="icon-search"></i>
+    <input type="text" class="sidebar-searchInput" placeholder="search" autocomplete="off" />
+  </div>
+
+  <ul class="sidebar-listNav">
+    <li><a id="extras-list" href="#full-list">Pages</a></li>
+
+    
+      <li><a id="modules-list" href="#full-list">Modules</a></li>
+    
+
+    
+
+    
+      <li><a id="protocols-list" href="#full-list">Protocols</a></li>
+    
+  </ul>
+
+  <ul id="full-list" class="sidebar-fullList"></ul>
+  <div class="sidebar-noResults"></div>
+</section>
+
+<section class="content">
+  <div id="content" class="content-inner">
+
+
+      <h1>
+        <small class="visible-xs">Skiline v0.0.1</small>
+        Skiline.Amnesia.Topic.Database.StoredTopic
+        
+        
+      </h1>
+
+      
+
+      
+        <section id="summary" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#summary">
+              <i class="icon-link"></i>
+            </a>
+            Summary
+          </h1>
+          
+  <div class="summary-types summary">
+    <h2>
+      <a href="#types">Types</a>
+    </h2>
+    <div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:autoincrement/0">autoincrement()</a>
+  </div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:t/0">t()</a>
+  </div>
+  
+</div>
+
+  </div>
+
+
+          
+  <div class="summary-functions summary">
+    <h2>
+      <a href="#functions">Functions</a>
+    </h2>
+    <div class="summary-row">
+  <div class="summary-signature">
+    <a href="#add_copy/2">add_copy(node, type \\ :disk)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Add a copy of the table on the given node with the given mode</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#add_index/1">add_index(attribute)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Add the index in the table for the given attribute</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#at!/1">at!(position)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Read a record based on a slot, see <code class="inline">mnesia:dirty_slot</code></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#attributes/0">attributes()</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>The in order keyword list of attributes passed when the table was defined</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#bag?/0">bag?()</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Check if the table is a bag</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#clear/0">clear()</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Clear the content of the table</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#copying/2">copying(node, to)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Change the copying mode of the table on the given node, see
+<code class="inline">mnesia:change_table_copy_type</code></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#count/0">count()</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Get the number of records in the table</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#create/1">create(copying \\ [])</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Create the table with the given copying mode and inherent definition</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#create!/1">create!(copying \\ [])</a>
+  </div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#database/0">database()</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Return the database the table belongs to</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#delete/1">delete(self)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Delete the record or the given key from the table, see <code class="inline">mnesia:delete</code>
+and <code class="inline">mnesia:delete_object</code></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#delete/2">delete(self, lock)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Delete the record or the given key from the table with the given lock,
+see <code class="inline">mnesia:delete</code> and <code class="inline">mnesia:delete_object</code></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#delete!/1">delete!(self)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Delete the record or the given key from the table, see
+<code class="inline">mnesia:dirty_delete</code> and <code class="inline">mnesia:dirty_delete_object</code></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#delete_copy/1">delete_copy(node)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Delete a copy of the table from the given node</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#delete_index/1">delete_index(attribute)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Delete the index in the table for the given attribute</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#destroy/0">destroy()</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Destroy the table</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#destroy!/0">destroy!()</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Destroy the table, raising if an error occurs</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#first/2">first(key \\ false, lock \\ :read)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Return the first key or record in the table, see <code class="inline">mnesia:first</code></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#first!/1">first!(key \\ false)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Return the first key or record in the table, see <code class="inline">mnesia:dirty_first</code></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#foldl/2">foldl(acc, fun)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Fold the whole table from the left, see <code class="inline">mnesia:foldl</code></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#foldr/2">foldr(acc, fun)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Fold the whole table from the right, see <code class="inline">mnesia:foldr</code></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#force/0">force()</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Force load the table</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#hook_read/2">hook_read(, )</a>
+  </div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#hook_read!/2">hook_read!(, )</a>
+  </div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#hook_write/1">hook_write()</a>
+  </div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#hook_write!/1">hook_write!()</a>
+  </div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#id/0">id()</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Get the name of the id key</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#info/1">info(key)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Get information about the table, see <code class="inline">mnesia:table_info</code></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#key/1">key(stored_topic)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Return the key of the record</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#keys/0">keys()</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Return all the keys in the table, see <code class="inline">mnesia:all_keys</code></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#keys!/0">keys!()</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Return all keys in the table, see <code class="inline">mnesia:dirty_all_keys</code></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#last/2">last(key \\ false, lock \\ :read)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Return the last key or record in the table, see <code class="inline">mnesia:last</code></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#last!/1">last!(key \\ false)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Return the last key or record in the table, see <code class="inline">mnesia:dirty_last</code></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#lock/1">lock(mode)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Lock the table with the given lock</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#majority/1">majority(value)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Change the table majority</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#master_nodes/1">master_nodes(nodes)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Set master nodes for the table, see <code class="inline">mnesia:set_master_nodes</code></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#match/2">match(lock \\ :read, pattern)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Select records in the table using simple don’t care values, see
+<code class="inline">mnesia:match_object</code></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#match!/1">match!(pattern)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Select records in the table using simple don’t care values, see
+<code class="inline">mnesia:dirty_match_object</code></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#member?/1">member?(key)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Check if the key is present in the table</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#mode/1">mode(value)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Change the access of the table, see <code class="inline">mnesia:change_table_access_mode</code></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#move_copy/2">move_copy(from, to)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Move a copy of the table from the given node to another given node</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#next/1">next(self)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Return the next key or record in the table, see <code class="inline">mnesia:next</code></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#next!/1">next!(self)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Return the next key or record in the table, see <code class="inline">mnesia:dirty_next</code></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#options/0">options()</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>The options passed when the table was defined</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#ordered_set?/0">ordered_set?()</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Check if the table is an ordered set</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#prev/1">prev(self)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Return the previous key or record in the table, see <code class="inline">mnesia:prev</code></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#prev!/1">prev!(self)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Return the previous key or record in the table, see <code class="inline">mnesia:dirty_prev</code></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#priority/1">priority(value)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Change the table loading priority</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#properties/0">properties()</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Return properties of the table</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#read/2">read(key, lock \\ :read)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Read a record from the table with the given lock, see <code class="inline">mnesia:read</code></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#read!/1">read!(key)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Read a record from the table, see <code class="inline">mnesia:dirty_read</code></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#read_at/2">read_at(key, position)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Read records from the table based on a secondary index given as position,
+see <code class="inline">mnesia:index_read</code></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#read_at!/2">read_at!(key, position)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Read records from the table based on a secondary index given as position,
+see <code class="inline">mnesia:dirty_index_read</code></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#select/1">select(spec)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Select records in the table using a match_spec, see <code class="inline">mnesia:select</code></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#select/2">select(lock_or_limit, spec)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Select records in the given table using a match_spec passing a limit or a
+lock kind, see <code class="inline">mnesia:select</code></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#select/3">select(lock_or_limit, limit_or_lock, spec)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Select records in the given table using a match_spec passing a limit and a
+lock kind, see <code class="inline">mnesia:select</code></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#select!/1">select!(spec)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Select records in the table using a match_spec, see
+<code class="inline">mnesia:dirty_select</code></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#set?/0">set?()</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Check if the table is a set</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#stream/1">stream(lock \\ :read)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Return an iterator to use with Enum functions</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#stream!/0">stream!()</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Return an iterator to use with the Enum functions using dirty
+operations to retrieve information</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#type/1">type(self)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Return the type of the table</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#wait/1">wait(timeout \\ :infinity)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Wait for the table optionally with a timeout</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#write/2">write(self, lock \\ :write)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Write the record to the table, see <code class="inline">mnesia:write</code></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#write!/1">write!(self)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Write the record to the table, see <code class="inline">mnesia:dirty_write</code></p>
+</div>
+  
+</div>
+
+  </div>
+
+
+          
+  <div class="summary-macros summary">
+    <h2>
+      <a href="#macros">Macros</a>
+    </h2>
+    <div class="summary-row">
+  <div class="summary-signature">
+    <a href="#__using__/1">__using__(opts)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Require the needed modules to use the table effectively</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#where/2">where(spec, options \\ [])</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Select records in the table using an Exquisite query, see
+<code class="inline">Exquisite.match/2</code> and <code class="inline">mnesia:select</code></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#where!/2">where!(spec, options \\ [])</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Select records in the table using an Exquisite query, see
+<code class="inline">Exquisite.match/2</code> and <code class="inline">mnesia:dirty_select</code></p>
+</div>
+  
+</div>
+
+  </div>
+
+
+          
+
+        </section>
+      
+
+      
+        <section id="types" class="types details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#types">
+              <i class="icon-link"></i>
+            </a>
+            Types
+          </h1>
+          <div class="types-list">
+            <div id="t:autoincrement/0" class="type-detail">
+  <pre><code class="elixir"><a href="#t:autoincrement/0">autoincrement</a> :: non_neg_integer</code></pre>
+  
+</div>
+<div id="t:t/0" class="type-detail">
+  <pre><code class="elixir"><a href="#t:t/0">t</a> :: %Skiline.Amnesia.Topic.Database.StoredTopic{message: <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>, topic_id: <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>}</code></pre>
+  
+</div>
+
+          </div>
+        </section>
+      
+
+      
+        <section id="functions" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#functions">
+              <i class="icon-link"></i>
+            </a>
+            Functions
+          </h1>
+          <div class="detail" id="add_copy/2">
+  <div class="detail-header">
+    <a href="#add_copy/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">add_copy(node, type \\ :disk)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">add_copy(node, Amnesia.Table.cv) :: Amnesia.Table.o</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Add a copy of the table on the given node with the given mode.</p>
+
+  </section>
+</div>
+<div class="detail" id="add_index/1">
+  <div class="detail-header">
+    <a href="#add_index/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">add_index(attribute)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">add_index(atom) :: Amnesia.Table.o</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Add the index in the table for the given attribute.</p>
+
+  </section>
+</div>
+<div class="detail" id="at!/1">
+  <div class="detail-header">
+    <a href="#at!/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">at!(position)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">at!(integer) :: <a href="#t:t/0">t</a> | nil | no_return</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Read a record based on a slot, see <code class="inline">mnesia:dirty_slot</code>.</p>
+
+  </section>
+</div>
+<div class="detail" id="attributes/0">
+  <div class="detail-header">
+    <a href="#attributes/0" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">attributes()</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">attributes :: <a href="http://elixir-lang.org/docs/stable/elixir/Keyword.html#t:t/0">Keyword.t</a></code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>The in order keyword list of attributes passed when the table was defined.</p>
+
+  </section>
+</div>
+<div class="detail" id="bag?/0">
+  <div class="detail-header">
+    <a href="#bag?/0" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">bag?()</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">bag? :: boolean</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Check if the table is a bag.</p>
+
+  </section>
+</div>
+<div class="detail" id="clear/0">
+  <div class="detail-header">
+    <a href="#clear/0" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">clear()</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">clear :: Amnesia.Table.o</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Clear the content of the table.</p>
+
+  </section>
+</div>
+<div class="detail" id="copying/2">
+  <div class="detail-header">
+    <a href="#copying/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">copying(node, to)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">copying(node, Amnesia.Table.cv) :: Amnesia.Table.o</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Change the copying mode of the table on the given node, see
+<code class="inline">mnesia:change_table_copy_type</code>.</p>
+<h2>Modes</h2>
+<ul>
+<li><code class="inline">:disk</code> sets <code class="inline">:disc_copies</code> mode
+</li>
+<li><code class="inline">:disk!</code> sets <code class="inline">:disc_only_copies</code> mode
+</li>
+<li><code class="inline">:memory</code> sets <code class="inline">:ram_copies</code> mode
+</li>
+</ul>
+
+  </section>
+</div>
+<div class="detail" id="count/0">
+  <div class="detail-header">
+    <a href="#count/0" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">count()</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">count :: non_neg_integer</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Get the number of records in the table.</p>
+
+  </section>
+</div>
+<div class="detail" id="create/1">
+  <div class="detail-header">
+    <a href="#create/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">create(copying \\ [])</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">create(Amnesia.Table.c) :: Amnesia.o</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Create the table with the given copying mode and inherent definition.</p>
+
+  </section>
+</div>
+<div class="detail" id="create!/1">
+  <div class="detail-header">
+    <a href="#create!/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">create!(copying \\ [])</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">create!(Amnesia.Table.c) :: :ok | no_return</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    
+  </section>
+</div>
+<div class="detail" id="database/0">
+  <div class="detail-header">
+    <a href="#database/0" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">database()</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">database :: module</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Return the database the table belongs to.</p>
+
+  </section>
+</div>
+<div class="detail" id="delete/1">
+  <div class="detail-header">
+    <a href="#delete/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">delete(self)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">delete(any | <a href="#t:t/0">t</a>) :: :ok | no_return</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Delete the record or the given key from the table, see <code class="inline">mnesia:delete</code>
+and <code class="inline">mnesia:delete_object</code>.</p>
+
+  </section>
+</div>
+<div class="detail" id="delete/2">
+  <div class="detail-header">
+    <a href="#delete/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">delete(self, lock)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">delete(atom | any, <a href="#t:t/0">t</a> | atom) :: :ok | no_return</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Delete the record or the given key from the table with the given lock,
+see <code class="inline">mnesia:delete</code> and <code class="inline">mnesia:delete_object</code>.</p>
+<h2>Locks</h2>
+<ul>
+<li><code class="inline">:write</code> sets a <code class="inline">:write</code> lock
+</li>
+<li><code class="inline">:write!</code> sets a <code class="inline">:sticky_write</code> lock
+</li>
+</ul>
+
+  </section>
+</div>
+<div class="detail" id="delete!/1">
+  <div class="detail-header">
+    <a href="#delete!/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">delete!(self)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">delete!(<a href="#t:t/0">t</a> | any) :: :ok | no_return</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Delete the record or the given key from the table, see
+<code class="inline">mnesia:dirty_delete</code> and <code class="inline">mnesia:dirty_delete_object</code>.</p>
+
+  </section>
+</div>
+<div class="detail" id="delete_copy/1">
+  <div class="detail-header">
+    <a href="#delete_copy/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">delete_copy(node)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">delete_copy(node) :: Amnesia.Table.o</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Delete a copy of the table from the given node.</p>
+
+  </section>
+</div>
+<div class="detail" id="delete_index/1">
+  <div class="detail-header">
+    <a href="#delete_index/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">delete_index(attribute)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">delete_index(atom) :: Amnesia.Table.o</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Delete the index in the table for the given attribute.</p>
+
+  </section>
+</div>
+<div class="detail" id="destroy/0">
+  <div class="detail-header">
+    <a href="#destroy/0" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">destroy()</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">destroy :: Amnesia.Table.o</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Destroy the table.</p>
+
+  </section>
+</div>
+<div class="detail" id="destroy!/0">
+  <div class="detail-header">
+    <a href="#destroy!/0" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">destroy!()</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">destroy! :: :ok | no_return</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Destroy the table, raising if an error occurs.</p>
+
+  </section>
+</div>
+<div class="detail" id="first/2">
+  <div class="detail-header">
+    <a href="#first/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">first(key \\ false, lock \\ :read)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">first(boolean, atom) :: any | <a href="#t:t/0">t</a> | nil | no_return</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Return the first key or record in the table, see <code class="inline">mnesia:first</code>.</p>
+<p>By default it returns the record, if you want only the key pass true as
+first parameter.</p>
+<p>If the table is a bag, it will return a list of records.</p>
+
+  </section>
+</div>
+<div class="detail" id="first!/1">
+  <div class="detail-header">
+    <a href="#first!/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">first!(key \\ false)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">first!(boolean) :: any | <a href="#t:t/0">t</a> | nil | no_return</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Return the first key or record in the table, see <code class="inline">mnesia:dirty_first</code>.</p>
+<p>By default it returns the record, if you want only the key pass true as
+first parameter.</p>
+<p>If the table is a bag, it will return a list of records.</p>
+
+  </section>
+</div>
+<div class="detail" id="foldl/2">
+  <div class="detail-header">
+    <a href="#foldl/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">foldl(acc, fun)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">foldl(any, (<a href="#t:t/0">t</a>, any -> any)) :: any | no_return</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Fold the whole table from the left, see <code class="inline">mnesia:foldl</code>.</p>
+
+  </section>
+</div>
+<div class="detail" id="foldr/2">
+  <div class="detail-header">
+    <a href="#foldr/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">foldr(acc, fun)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">foldr(any, (<a href="#t:t/0">t</a>, any -> any)) :: any | no_return</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Fold the whole table from the right, see <code class="inline">mnesia:foldr</code>.</p>
+
+  </section>
+</div>
+<div class="detail" id="force/0">
+  <div class="detail-header">
+    <a href="#force/0" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">force()</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">force :: :yes | {:error, any}</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Force load the table.</p>
+
+  </section>
+</div>
+<div class="detail" id="hook_read/2">
+  <div class="detail-header">
+    <a href="#hook_read/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">hook_read(, )</span>
+      
+  </div>
+  
+  <section class="docstring">
+    
+  </section>
+</div>
+<div class="detail" id="hook_read!/2">
+  <div class="detail-header">
+    <a href="#hook_read!/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">hook_read!(, )</span>
+      
+  </div>
+  
+  <section class="docstring">
+    
+  </section>
+</div>
+<div class="detail" id="hook_write/1">
+  <div class="detail-header">
+    <a href="#hook_write/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">hook_write()</span>
+      
+  </div>
+  
+  <section class="docstring">
+    
+  </section>
+</div>
+<div class="detail" id="hook_write!/1">
+  <div class="detail-header">
+    <a href="#hook_write!/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">hook_write!()</span>
+      
+  </div>
+  
+  <section class="docstring">
+    
+  </section>
+</div>
+<div class="detail" id="id/0">
+  <div class="detail-header">
+    <a href="#id/0" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">id()</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">id :: atom</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Get the name of the id key.</p>
+
+  </section>
+</div>
+<div class="detail" id="info/1">
+  <div class="detail-header">
+    <a href="#info/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">info(key)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">info(atom) :: any</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Get information about the table, see <code class="inline">mnesia:table_info</code>.</p>
+
+  </section>
+</div>
+<div class="detail" id="key/1">
+  <div class="detail-header">
+    <a href="#key/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">key(stored_topic)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">key(<a href="#t:t/0">t</a>) :: any</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Return the key of the record.</p>
+
+  </section>
+</div>
+<div class="detail" id="keys/0">
+  <div class="detail-header">
+    <a href="#keys/0" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">keys()</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">keys :: list | no_return</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Return all the keys in the table, see <code class="inline">mnesia:all_keys</code>.</p>
+
+  </section>
+</div>
+<div class="detail" id="keys!/0">
+  <div class="detail-header">
+    <a href="#keys!/0" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">keys!()</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">keys! :: list | no_return</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Return all keys in the table, see <code class="inline">mnesia:dirty_all_keys</code>.</p>
+
+  </section>
+</div>
+<div class="detail" id="last/2">
+  <div class="detail-header">
+    <a href="#last/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">last(key \\ false, lock \\ :read)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">last(boolean, atom) :: any | <a href="#t:t/0">t</a> | nil | no_return</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Return the last key or record in the table, see <code class="inline">mnesia:last</code>.</p>
+<p>By default it returns the record, if you want only the key pass true as
+first parameter.</p>
+<p>If the table is a bag, it will return a list of records.</p>
+
+  </section>
+</div>
+<div class="detail" id="last!/1">
+  <div class="detail-header">
+    <a href="#last!/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">last!(key \\ false)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">last!(boolean) :: any | <a href="#t:t/0">t</a> | nil | no_return</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Return the last key or record in the table, see <code class="inline">mnesia:dirty_last</code>.</p>
+<p>By default it returns the record, if you want only the key pass true as
+first parameter.</p>
+<p>If the table is a bag, it will return a list of records.</p>
+
+  </section>
+</div>
+<div class="detail" id="lock/1">
+  <div class="detail-header">
+    <a href="#lock/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">lock(mode)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">lock(:write | :write! | :read) ::
+  [node] |
+  :ok |
+  no_return</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Lock the table with the given lock.</p>
+<h2>Locks</h2>
+<ul>
+<li><code class="inline">:write</code> sets a <code class="inline">:write</code> lock
+</li>
+<li><code class="inline">:write!</code> sets a <code class="inline">:sticky_write</code> lock
+</li>
+<li><code class="inline">:read</code> sets a <code class="inline">:read</code> lock
+</li>
+</ul>
+
+  </section>
+</div>
+<div class="detail" id="majority/1">
+  <div class="detail-header">
+    <a href="#majority/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">majority(value)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">majority(boolean) :: Amnesia.Table.o</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Change the table majority.</p>
+
+  </section>
+</div>
+<div class="detail" id="master_nodes/1">
+  <div class="detail-header">
+    <a href="#master_nodes/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">master_nodes(nodes)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">master_nodes([node]) :: :ok | {:error, any}</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Set master nodes for the table, see <code class="inline">mnesia:set_master_nodes</code>.</p>
+
+  </section>
+</div>
+<div class="detail" id="match/2">
+  <div class="detail-header">
+    <a href="#match/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">match(lock \\ :read, pattern)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">match(:read | :write, any) :: [<a href="#t:t/0">t</a>] | nil | no_return</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Select records in the table using simple don’t care values, see
+<code class="inline">mnesia:match_object</code>.</p>
+
+  </section>
+</div>
+<div class="detail" id="match!/1">
+  <div class="detail-header">
+    <a href="#match!/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">match!(pattern)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">match!(any) :: [<a href="#t:t/0">t</a>] | nil | no_return</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Select records in the table using simple don’t care values, see
+<code class="inline">mnesia:dirty_match_object</code>.</p>
+
+  </section>
+</div>
+<div class="detail" id="member?/1">
+  <div class="detail-header">
+    <a href="#member?/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">member?(key)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">member?(any) :: boolean</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Check if the key is present in the table.</p>
+
+  </section>
+</div>
+<div class="detail" id="mode/1">
+  <div class="detail-header">
+    <a href="#mode/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">mode(value)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">mode(:both | :read!) :: Amnesia.Table.o</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Change the access of the table, see <code class="inline">mnesia:change_table_access_mode</code>.</p>
+<h2>Modes</h2>
+<ul>
+<li><code class="inline">:both</code> sets read and write mode, it’s the default.
+</li>
+<li><code class="inline">:read!</code> sets read-only mode.
+</li>
+</ul>
+
+  </section>
+</div>
+<div class="detail" id="move_copy/2">
+  <div class="detail-header">
+    <a href="#move_copy/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">move_copy(from, to)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">move_copy(node, node) :: Amnesia.Table.o</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Move a copy of the table from the given node to another given node.</p>
+
+  </section>
+</div>
+<div class="detail" id="next/1">
+  <div class="detail-header">
+    <a href="#next/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">next(self)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">next(any | <a href="#t:t/0">t</a>) :: any | <a href="#t:t/0">t</a> | nil | no_return</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Return the next key or record in the table, see <code class="inline">mnesia:next</code>.</p>
+<p>If you’re calling this function from an instance of the table (a record
+in it), it will get you the next record, if you’re calling it directly
+on the module it will treat the argument as key to start from and
+return you the next key.</p>
+
+  </section>
+</div>
+<div class="detail" id="next!/1">
+  <div class="detail-header">
+    <a href="#next!/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">next!(self)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">next!(any | <a href="#t:t/0">t</a>) :: any | <a href="#t:t/0">t</a> | nil | no_return</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Return the next key or record in the table, see <code class="inline">mnesia:dirty_next</code>.</p>
+<p>If you’re calling this function from an instance of the table (a record
+in it), it will get you the next record, if you’re calling it directly
+on the module it will treat the argument as key to start from and
+return you the next key.</p>
+
+  </section>
+</div>
+<div class="detail" id="options/0">
+  <div class="detail-header">
+    <a href="#options/0" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">options()</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">options :: <a href="http://elixir-lang.org/docs/stable/elixir/Keyword.html#t:t/0">Keyword.t</a></code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>The options passed when the table was defined.</p>
+
+  </section>
+</div>
+<div class="detail" id="ordered_set?/0">
+  <div class="detail-header">
+    <a href="#ordered_set?/0" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">ordered_set?()</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">ordered_set? :: boolean</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Check if the table is an ordered set.</p>
+
+  </section>
+</div>
+<div class="detail" id="prev/1">
+  <div class="detail-header">
+    <a href="#prev/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">prev(self)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">prev(any | <a href="#t:t/0">t</a>) :: any | <a href="#t:t/0">t</a> | nil | no_return</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Return the previous key or record in the table, see <code class="inline">mnesia:prev</code>.</p>
+<p>If you’re calling this function from an instance of the table (a record
+in it), it will get you the previous record, if you’re calling it
+directly on the module it will treat the argument as key to start from
+and return you the previous key.</p>
+
+  </section>
+</div>
+<div class="detail" id="prev!/1">
+  <div class="detail-header">
+    <a href="#prev!/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">prev!(self)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">prev!(any | <a href="#t:t/0">t</a>) :: any | <a href="#t:t/0">t</a> | nil | no_return</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Return the previous key or record in the table, see <code class="inline">mnesia:dirty_prev</code>.</p>
+<p>If you’re calling this function from an instance of the table (a record
+in it), it will get you the previous record, if you’re calling it
+directly on the module it will treat the argument as key to start from
+and return you the previous key.</p>
+
+  </section>
+</div>
+<div class="detail" id="priority/1">
+  <div class="detail-header">
+    <a href="#priority/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">priority(value)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">priority(integer) :: Amnesia.Table.o</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Change the table loading priority.</p>
+
+  </section>
+</div>
+<div class="detail" id="properties/0">
+  <div class="detail-header">
+    <a href="#properties/0" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">properties()</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">properties :: <a href="http://elixir-lang.org/docs/stable/elixir/Keyword.html#t:t/0">Keyword.t</a></code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Return properties of the table.</p>
+
+  </section>
+</div>
+<div class="detail" id="read/2">
+  <div class="detail-header">
+    <a href="#read/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">read(key, lock \\ :read)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">read(any, :read | :write | :write!) ::
+  <a href="#t:t/0">t</a> |
+  nil |
+  no_return</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Read a record from the table with the given lock, see <code class="inline">mnesia:read</code>.</p>
+<p>Unlike <code class="inline">mnesia:read</code> this returns either the record or nil.</p>
+<h2>Locks</h2>
+<ul>
+<li><code class="inline">:write</code> sets a <code class="inline">:write</code> lock
+</li>
+<li><code class="inline">:write!</code> sets a <code class="inline">:sticky_write</code> lock
+</li>
+<li><code class="inline">:read</code> sets a <code class="inline">:read</code> lock
+</li>
+</ul>
+
+  </section>
+</div>
+<div class="detail" id="read!/1">
+  <div class="detail-header">
+    <a href="#read!/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">read!(key)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">read!(any) :: <a href="#t:t/0">t</a> | nil | no_return</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Read a record from the table, see <code class="inline">mnesia:dirty_read</code>.</p>
+<p>Unlike <code class="inline">mnesia:dirty_read</code> this returns either the record or nil.</p>
+
+  </section>
+</div>
+<div class="detail" id="read_at/2">
+  <div class="detail-header">
+    <a href="#read_at/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">read_at(key, position)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">read_at(any, integer | atom) ::
+  [<a href="#t:t/0">t</a>] |
+  nil |
+  no_return</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Read records from the table based on a secondary index given as position,
+see <code class="inline">mnesia:index_read</code>.</p>
+
+  </section>
+</div>
+<div class="detail" id="read_at!/2">
+  <div class="detail-header">
+    <a href="#read_at!/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">read_at!(key, position)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">read_at!(any, integer | atom) ::
+  [<a href="#t:t/0">t</a>] |
+  nil |
+  no_return</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Read records from the table based on a secondary index given as position,
+see <code class="inline">mnesia:dirty_index_read</code>.</p>
+
+  </section>
+</div>
+<div class="detail" id="select/1">
+  <div class="detail-header">
+    <a href="#select/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">select(spec)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">select(any) ::
+  Amnesia.Table.Selection.t |
+  nil |
+  no_return</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Select records in the table using a match_spec, see <code class="inline">mnesia:select</code>.</p>
+
+  </section>
+</div>
+<div class="detail" id="select/2">
+  <div class="detail-header">
+    <a href="#select/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">select(lock_or_limit, spec)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">select(integer | :read | :write, any) ::
+  Amnesia.Table.Selection.t |
+  nil |
+  no_return</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Select records in the given table using a match_spec passing a limit or a
+lock kind, see <code class="inline">mnesia:select</code>.</p>
+
+  </section>
+</div>
+<div class="detail" id="select/3">
+  <div class="detail-header">
+    <a href="#select/3" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">select(lock_or_limit, limit_or_lock, spec)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">select(integer | :read | :write, integer | :read | :write, integer) ::
+  Amnesia.Table.Selection.t |
+  nil |
+  no_return</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Select records in the given table using a match_spec passing a limit and a
+lock kind, see <code class="inline">mnesia:select</code>.</p>
+
+  </section>
+</div>
+<div class="detail" id="select!/1">
+  <div class="detail-header">
+    <a href="#select!/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">select!(spec)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">select!(any) :: Selection.t | nil | no_return</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Select records in the table using a match_spec, see
+<code class="inline">mnesia:dirty_select</code>.</p>
+
+  </section>
+</div>
+<div class="detail" id="set?/0">
+  <div class="detail-header">
+    <a href="#set?/0" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">set?()</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">set? :: boolean</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Check if the table is a set.</p>
+
+  </section>
+</div>
+<div class="detail" id="stream/1">
+  <div class="detail-header">
+    <a href="#stream/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">stream(lock \\ :read)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">stream(:read | :write | :write!) :: Amnesia.Table.Stream.t</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Return an iterator to use with Enum functions.</p>
+
+  </section>
+</div>
+<div class="detail" id="stream!/0">
+  <div class="detail-header">
+    <a href="#stream!/0" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">stream!()</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">stream! :: Amnesia.Table.Stream.t</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Return an iterator to use with the Enum functions using dirty
+operations to retrieve information.</p>
+
+  </section>
+</div>
+<div class="detail" id="type/1">
+  <div class="detail-header">
+    <a href="#type/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">type(self)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">type(<a href="#t:t/0">t</a>) :: :set | :ordered_set | :bag</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Return the type of the table.</p>
+
+  </section>
+</div>
+<div class="detail" id="wait/1">
+  <div class="detail-header">
+    <a href="#wait/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">wait(timeout \\ :infinity)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">wait(integer | :infinity) ::
+  :ok |
+  {:timeout, [atom]} |
+  {:error, atom}</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Wait for the table optionally with a timeout.</p>
+
+  </section>
+</div>
+<div class="detail" id="write/2">
+  <div class="detail-header">
+    <a href="#write/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">write(self, lock \\ :write)</span>
+      
+  </div>
+  
+  <section class="docstring">
+    <p>Write the record to the table, see <code class="inline">mnesia:write</code>.</p>
+<p>Missing fields tagged as autoincrement will be incremented with the
+counter if <code class="inline">nil</code>.</p>
+
+  </section>
+</div>
+<div class="detail" id="write!/1">
+  <div class="detail-header">
+    <a href="#write!/1" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">write!(self)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">write!(<a href="#t:t/0">t</a>) :: <a href="#t:t/0">t</a> | no_return</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Write the record to the table, see <code class="inline">mnesia:dirty_write</code>.</p>
+<p>Missing fields tagged as autoincrement will be incremented with the
+counter if <code class="inline">nil</code>.</p>
+
+  </section>
+</div>
+
+        </section>
+      
+
+      
+        <section id="macros" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#macros">
+              <i class="icon-link"></i>
+            </a>
+            Macros
+          </h1>
+          <div class="detail" id="__using__/1">
+  <div class="detail-header">
+    <a href="#__using__/1" class="detail-link" title="Link to this macro">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">__using__(opts)</span>
+      
+  </div>
+  
+  <section class="docstring">
+    <p>Require the needed modules to use the table effectively.</p>
+
+  </section>
+</div>
+<div class="detail" id="where/2">
+  <div class="detail-header">
+    <a href="#where/2" class="detail-link" title="Link to this macro">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">where(spec, options \\ [])</span>
+      
+  </div>
+  
+  <section class="docstring">
+    <p>Select records in the table using an Exquisite query, see
+<code class="inline">Exquisite.match/2</code> and <code class="inline">mnesia:select</code>.</p>
+<h2>Options</h2>
+<ul>
+<li><code class="inline">limit</code> - sets the count of elements to select in every continuation
+</li>
+<li><code class="inline">lock</code> - sets the kind of lock to use
+</li>
+<li><code class="inline">select</code> - Exquisite selector spec
+</li>
+<li>`qualified’ - whether to set a name for the record or not
+
+</li>
+</ul>
+
+  </section>
+</div>
+<div class="detail" id="where!/2">
+  <div class="detail-header">
+    <a href="#where!/2" class="detail-link" title="Link to this macro">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">where!(spec, options \\ [])</span>
+      
+  </div>
+  
+  <section class="docstring">
+    <p>Select records in the table using an Exquisite query, see
+<code class="inline">Exquisite.match/2</code> and <code class="inline">mnesia:dirty_select</code>.</p>
+<h2>Options</h2>
+<ul>
+<li><code class="inline">select</code> - Exquisite selector spec
+</li>
+<li>`qualified’ - whether to set a name for the record or not
+
+</li>
+</ul>
+
+  </section>
+</div>
+
+        </section>
+      
+
+      
+        <footer class="footer">
+      <p>
+        <span class="line">
+          Built using
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" rel="help" target="_blank">ExDoc</a> (v0.11.4),
+        </span>
+        <span class="line">
+          designed by
+          <a href="https://twitter.com/dignifiedquire" target="_blank" title="@dignifiedquire">Friedel Ziegelmayer</a>.
+          </span>
+      </p>
+      <button class="night-mode-toggle" />
+    </footer>
+  </div>
+</section>
+</div>
+  <script src="dist/app-6d2e071366.js"></script>
+  </body>
+</html>
+
