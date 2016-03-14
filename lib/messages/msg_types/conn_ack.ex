@@ -1,23 +1,23 @@
-defmodule Skiline.Msg.ConnAck do
+defmodule Skyline.Msg.ConnAck do
   @moduledoc """
-  ConnAck Message
+  ConnAck MQTT Message
 
   http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718033
   """
-  @behaviour Skiline.Msg.Decode
+  @behaviour Skyline.Msg.Decode
 
   defstruct status: :ok
-  @type t :: %__MODULE__{status: Skiline.conn_ack_type}
+  @type t :: %__MODULE__{status: Skyline.conn_ack_type}
 
   @doc """
   Construct a new ConnAck.
   """
-  @spec new(Skiline.conn_ack_type) :: __MODULE__.t
+  @spec new(Skyline.conn_ack_type) :: __MODULE__.t
   def new(status) do
     %__MODULE__{status: status}
   end
 
-  @spec decode_body(binary, Skiline.Msg.FixedHeader.t) :: __MODULE__.t
+  @spec decode_body(binary, Skyline.Msg.FixedHeader.t) :: __MODULE__.t
   def decode_body(<<_reserved :: bytes-size(1), status :: integer-size(8)>>, h) do
     new(decode_status(status))
   end
@@ -25,7 +25,7 @@ defmodule Skiline.Msg.ConnAck do
   @doc """
   Decode binary into conn_ack_type.
   """
-  @spec decode_status(binary) :: Skiline.conn_ack_type
+  @spec decode_status(binary) :: Skyline.conn_ack_type
   def decode_status(bin) do
     case bin do
       0 -> :ok
@@ -38,8 +38,8 @@ defmodule Skiline.Msg.ConnAck do
   end
 end
 
-defimpl Skiline.Msg.Encode, for: Skiline.Msg.ConnAck do
-  alias Skiline.Msg.Encode.Utils
+defimpl Skyline.Msg.Encode, for: Skyline.Msg.ConnAck do
+  alias Skyline.Msg.Encode.Utils
 
   def encode(msg) do
     <<Utils.msg_type_to_binary(:conn_ack) :: size(4),

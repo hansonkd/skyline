@@ -1,17 +1,23 @@
-defmodule Skiline.Msg.Encode.Utils do
+defmodule Skyline.Msg.Encode.Utils do
+    @moduledoc """
+    Common methods for encoding
+    """
     use Bitwise
 
-    @spec encode_basic(Skiline.empty_msg) :: binary
+    @doc "Encode messages that don't have attributes"
+    @spec encode_basic(Skyline.empty_msg) :: binary
     def encode_basic(msg_type) when msg_type in [:ping_req, :ping_resp, :disconnect] do
         <<msg_type_to_binary(msg_type) :: size(4), 0 :: size(4), 0x00>>
     end
 
-    @spec basic_with_msg_id(Skiline.msg_with_id, pos_integer) :: binary
+    @doc "Encode messages that have a message_id"
+    @spec basic_with_msg_id(Skyline.msg_with_id, pos_integer) :: binary
     def basic_with_msg_id(msg_type, msg_id) when msg_type in [:pub_ack, :pub_rec, :pub_comp, :unsub_ack] do
         <<msg_type_to_binary(msg_type) :: size(4), 0 :: size(4), 0x02, msg_id(msg_id) :: binary>>
     end
 
-    @spec encode_full_header(Skiline.msg_type, boolean, Skiline.qos_type, boolean, pos_integer) :: binary
+    @doc "Encode all parts of the header"
+    @spec encode_full_header(Skyline.msg_type, boolean, Skyline.qos_type, boolean, pos_integer) :: binary
     def encode_full_header(message_type,
                            duplicate,
                            qos,
@@ -26,7 +32,7 @@ defmodule Skiline.Msg.Encode.Utils do
     end
 
     @doc "Converts the atoms to binary message types"
-    @spec msg_type_to_binary(Skiline.msg_type) :: pos_integer
+    @spec msg_type_to_binary(Skyline.msg_type) :: pos_integer
     def msg_type_to_binary(atom) do
       case atom do
         :reserved -> 0
@@ -57,7 +63,7 @@ defmodule Skiline.Msg.Encode.Utils do
       <<id :: size(16)>>
     end
 
-    @spec keep_alive(Skiline.keep_alive) :: binary
+    @spec keep_alive(Skyline.keep_alive) :: binary
   	def keep_alive(n) do
       case n do
         :infinity -> <<0 :: size(16)>>
@@ -65,6 +71,10 @@ defmodule Skiline.Msg.Encode.Utils do
       end
     end
 
+    @doc """
+    Encode length as defined in
+    http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718023
+    """
     @spec encode_length(pos_integer) :: binary
   	def encode_length(0) do
       <<0, 0>>
@@ -86,8 +96,7 @@ defmodule Skiline.Msg.Encode.Utils do
   		end
   	end
 
-
-  	@doc "converts boolean to bits"
+  	@doc "Converts boolean to bit"
     @spec boolean_to_binary(boolean) :: binary
   	def boolean_to_binary(bool) do
       case bool do
@@ -96,8 +105,8 @@ defmodule Skiline.Msg.Encode.Utils do
       end
     end
 
-    @doc "converts atoms the binary qos"
-    @spec qos_binary(Skiline.qos_type) :: pos_integer
+    @doc "Converts atoms the binary qos"
+    @spec qos_binary(Skyline.qos_type) :: pos_integer
     def qos_binary(atom) do
       case atom do
         :fire_and_forget -> 0

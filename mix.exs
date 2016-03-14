@@ -1,8 +1,8 @@
-defmodule Skiline.Mixfile do
+defmodule Skyline.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :Skiline,
+    [app: :Skyline,
      version: "0.0.1",
      elixir: "~> 1.2",
      build_embedded: Mix.env == :prod,
@@ -15,7 +15,7 @@ defmodule Skiline.Mixfile do
   # Type "mix help compile.app" for more information
   def application do
     [applications: [:logger, :connection, :gproc, :socket, :amnesia, :ranch],
-     mod: {Skiline, []}]
+     mod: {Skyline, []}]
   end
 
   # Dependencies can be Hex packages:

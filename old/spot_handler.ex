@@ -1,4 +1,4 @@
-defmodule Skiline.Handler do
+defmodule Skyline.Handler do
   use GenServer
 
   def start_link(ref, socket, transport, opts) do
@@ -15,7 +15,7 @@ defmodule Skiline.Handler do
   def handle_info(:timeout, {state, ref, socket, transport}) do
     #IO.inspect "State #{inspect state}"
     :ok = :ranch.accept_ack(ref)
-    :gproc.reg({:p, :l, :Skiline})
+    :gproc.reg({:p, :l, :Skyline})
     {:noreply, state}
   end
 
@@ -46,7 +46,7 @@ defmodule Skiline.Handler do
       {:ok, data} ->
         case cleaned = String.strip(data) do
           "subscribe" -> :gproc.reg({:p, :l, :wut})
-          _ -> GenServer.cast({:via, :gproc, {:p, :l, :Skiline}}, :hello_world_cast) # :gproc.bcast({:p, :l, :wut}, :hello_world_cast)
+          _ -> GenServer.cast({:via, :gproc, {:p, :l, :Skyline}}, :hello_world_cast) # :gproc.bcast({:p, :l, :wut}, :hello_world_cast)
         end
         transport.send(socket, data)
         loop(socket, transport)

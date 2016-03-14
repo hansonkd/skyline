@@ -1,4 +1,4 @@
-defmodule Skiline.Router do
+defmodule Skyline.Router do
     @moduledoc """
     Router
 
@@ -14,7 +14,7 @@ defmodule Skiline.Router do
 
     No benchmarks have been done to see if one is more efficient then the other.
     """
-    use Skiline.Amnesia.Router.TreeDatabase
+    use Skyline.Amnesia.Router.TreeDatabase
     require Exquisite
     require Amnesia
 

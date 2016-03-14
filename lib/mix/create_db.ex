@@ -1,7 +1,7 @@
 defmodule Mix.Tasks.CreateDb do
   use Mix.Task
-  use Skiline.Amnesia.Topic.Database
-  use Skiline.Amnesia.Router.TreeDatabase
+  use Skyline.Amnesia.Topic.Database
+  use Skyline.Amnesia.Router.TreeDatabase
 
   def run(_) do
     # This creates the mnesia schema, this has to be done on every node before

@@ -1,6 +1,6 @@
-defmodule Skiline.Auth do
-    alias Skiline.Msg.{Connect, ConnAck}
-    alias Skiline.Session
+defmodule Skyline.Auth do
+    alias Skyline.Msg.{Connect, ConnAck}
+    alias Skyline.Session
 
     # Reconnects an existing server with a new connection
     defp reconnect(server, connection, client_proc) do
@@ -8,7 +8,7 @@ defmodule Skiline.Auth do
     end
 
     def connect(client, %Connect{} = con) do
-      value = case Session.start_link({client, con}) do
+      value = case Session.start_link(client, con) do
          {:error, {:already_started, pid}} ->
             {:ok, pid}
          any -> any

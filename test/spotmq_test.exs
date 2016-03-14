@@ -1,6 +1,6 @@
-defmodule SkilineTest do
+defmodule SkylineTest do
   use ExUnit.Case
-  doctest Skiline
+  doctest Skyline
 
   test "the truth" do
     assert 1 + 1 == 2

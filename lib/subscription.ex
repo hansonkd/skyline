@@ -1,4 +1,4 @@
-defmodule Skiline.Subscription do
+defmodule Skyline.Subscription do
   @moduledoc """
 
   Manages QoS and queueing the messages for a certain subscribe Topic.
@@ -16,11 +16,11 @@ defmodule Skiline.Subscription do
 
   import Amnesia
   use GenServer
-  use Skiline.Amnesia.Topic.Database
-  import Skiline.Router
-  alias Skiline.Amnesia.Topic.Database.{StoredTopic}
-  alias Skiline.Msg.{PublishReq}
-  alias Skiline.Qos.Outgoing.{Qos0, Qos1}
+  use Skyline.Amnesia.Topic.Database
+  import Skyline.Router
+  alias Skyline.Amnesia.Topic.Database.{StoredTopic}
+  alias Skyline.Msg.{PublishReq}
+  alias Skyline.Qos.Outgoing.{Qos0, Qos1}
 
   def start_link({client_id, sess_pid, topic, qos}, _opts \\ []) do
     name = {client_id, topic}
@@ -29,7 +29,7 @@ defmodule Skiline.Subscription do
   end
 
   def init(%State{topic: topic} = state) do
-    Skiline.Router.add_topic_subscription(topic, self)
+    Skyline.Router.add_topic_subscription(topic, self)
     GenServer.cast(self, :check_for_stored_message)
     {:ok, state}
   end

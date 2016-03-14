@@ -1,12 +1,12 @@
-defmodule Skiline.Handler do
+defmodule Skyline.Handler do
   @moduledoc """
   Functions to help dispatch messages.
   """
-  alias Skiline.Msg.{PublishReq, SubAck, PubAck, PingResp, Subscribe, PingReq, Unsubscribe, UnsubAck}
-  alias Skiline.Subscription
+  alias Skyline.Msg.{PublishReq, SubAck, PubAck, PingResp, Subscribe, PingReq, Unsubscribe, UnsubAck}
+  alias Skyline.Subscription
 
-  use Skiline.Amnesia.Topic.Database
-  alias Skiline.Amnesia.Topic.Database.{StoredTopic}
+  use Skyline.Amnesia.Topic.Database
+  alias Skyline.Amnesia.Topic.Database.{StoredTopic}
 
   def handle_msg(%Subscribe{msg_id: msg_id, topics: topics} = msg, sess_pid, conn_msg) do
     client_id = conn_msg.client_id
@@ -65,7 +65,7 @@ defmodule Skiline.Handler do
     GenServer.cast(sess_pid, {:msg, outgoing})
   end
   defp qos_to_qos_mod(qos) do
-    alias Skiline.Qos.Incoming.{Qos0, Qos1}
+    alias Skyline.Qos.Incoming.{Qos0, Qos1}
     case qos do
       :fire_and_forget -> Qos0
       :at_least_once -> Qos1

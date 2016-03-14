@@ -1,15 +1,15 @@
-defmodule Skiline.Listener do
+defmodule Skyline.Listener do
     @moduledoc """
-    Listener
+    Listens for new message on socket.
 
     Is repsonsible for listening for new TCP messages, and handling their dispatch
     """
     use GenServer
 
     import Socket
-    alias Skiline.Session
-    alias Skiline.Msg.Decode.Utils, as: Decoder
-    alias Skiline.Handler
+    alias Skyline.Session
+    alias Skyline.Msg.Decode.Utils, as: Decoder
+    alias Skyline.Handler
 
 
     defmodule State do
@@ -33,7 +33,7 @@ defmodule Skiline.Listener do
         { :ok, data = <<_m :: size(16)>> } ->
             msg = Decoder.decode(data, socket)
             case msg do
-              %Skiline.Msg.Connect{} ->
+              %Skyline.Msg.Connect{} ->
                 GenServer.cast(self, {:authenticate, msg})
                 {:noreply, st}
               _other -> #IO.inspect("Have not recieved auth")
@@ -52,14 +52,14 @@ defmodule Skiline.Listener do
         { :ok, data = <<_m :: size(16)>> } ->
             msg = Decoder.decode(data, socket)
             case msg do
-              %Skiline.Msg.Connect{} ->
+              %Skyline.Msg.Connect{} ->
                   #IO.puts("Only one connect message per connection...")
                   {:stop, :normal, state}
-              %Skiline.Msg.Disconnect{} ->
+              %Skyline.Msg.Disconnect{} ->
                   #IO.puts("Disconnecting on request of client")
                   {:stop, :normal, state}
               _other ->
-                  Skiline.Handler.handle_msg(msg, sess_pid, conn_msg)
+                  Skyline.Handler.handle_msg(msg, sess_pid, conn_msg)
                   GenServer.cast(self, :verified_loop)
                   {:noreply, state}
             end
@@ -78,7 +78,7 @@ defmodule Skiline.Listener do
       :ok
     end
     def handle_cast({:authenticate, msg}, %State{socket: socket} = state) do
-        case Skiline.Auth.connect(socket, msg) do
+        case Skyline.Auth.connect(socket, msg) do
           {:ok, smsg, sess_pid} ->
               Session.send_to_socket(socket, smsg)
               new_state = %{state | conn_msg: msg, sess_pid: sess_pid}

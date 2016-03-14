@@ -1,6 +1,6 @@
-defmodule Skiline.Msg.Connect do
+defmodule Skyline.Msg.Connect do
   @moduledoc """
-  Connect Message
+  Connect MQTT Message
 
   http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718028
   """
@@ -18,23 +18,23 @@ defmodule Skiline.Msg.Connect do
   @type t :: %__MODULE__{client_id: String.t,
                          user_name: String.t,
                          password: String.t,
-                         keep_alive_ms: Skiline.keep_alive,
-                         keep_alive_server_ms: Skiline.keep_alive,
+                         keep_alive_ms: Skyline.keep_alive,
+                         keep_alive_server_ms: Skyline.keep_alive,
                          last_will: boolean,
-                         will_qos: Skiline.qos_type,
+                         will_qos: Skyline.qos_type,
                          will_retain: boolean,
                          will_topic: String.t,
                          will_message: String.t,
                          clean_session: boolean
                        }
-  @behaviour Skiline.Msg.Decode
+  @behaviour Skyline.Msg.Decode
 
-  alias Skiline.Msg.Decode.Utils
+  alias Skyline.Msg.Decode.Utils
 
   @doc """
 	Creates a new Connect.
 	"""
-  @spec new(binary, binary, binary, boolean, Skiline.keep_alive, Skiline.keep_alive, boolean, Skiline.qos_type, boolean, binary, binary) :: __MODULE__.t
+  @spec new(binary, binary, binary, boolean, Skyline.keep_alive, Skyline.keep_alive, boolean, Skyline.qos_type, boolean, binary, binary) :: __MODULE__.t
   def new(client_id,
               user_name,
               password,
@@ -61,7 +61,7 @@ defmodule Skiline.Msg.Connect do
               }
   end
 
-  @spec decode_body(binary, Skiline.Msg.FixedHeader.t) :: __MODULE__.t
+  @spec decode_body(binary, Skyline.Msg.FixedHeader.t) :: __MODULE__.t
   def decode_body(<<0, 4, "MQTT",  4, flags :: size(8), keep_alive :: size(16), rest::binary>>, _hdr) do
     decode_common(flags, keep_alive, rest)
   end

@@ -1,4 +1,4 @@
-defmodule Skiline.Amnesia.Router do
+defmodule Skyline.Amnesia.Router do
   use Amnesia
 
   # defines a database called Database, it's basically a defmodule with

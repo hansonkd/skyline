@@ -1,15 +1,19 @@
-defmodule Skiline.Msg.Decode.Utils do
+defmodule Skyline.Msg.Decode.Utils do
+    @moduledoc """
+    Common methods for decoding
+    """
     use Bitwise
-    alias Skiline.Msg.FixedHeader
-    alias Skiline.Msg
+    alias Skyline.Msg.FixedHeader
+    alias Skyline.Msg
 
-    @spec decode(binary, Skiline.socket) :: Skiline.message_type
+    @spec decode(binary, Skyline.socket) :: Skyline.skyline_msg
     def decode(msg = <<_m :: size(16)>>, socket) do
       header = decode_fixheader(msg, socket)
       var_m = read_bytes(socket, header.length)
       decode_message(var_m, header)
     end
 
+    @spec decode_fixheader(binary, Skyline.socket) :: FixedHeader.t
     defp decode_fixheader(<<type :: size(4), dup :: size(1), qos :: size(2),
                  retain :: size(1), len :: size(8)>>, socket) do
       FixedHeader.new(
@@ -21,6 +25,7 @@ defmodule Skiline.Msg.Decode.Utils do
       )
     end
 
+    @spec decode_message(binary, FixedHeader) :: Skyline.skyline_msg
     def decode_message(msg, h = %FixedHeader{message_type: msg_type}) do
       mod = case msg_type do
         :publish -> Msg.PublishReq
@@ -63,7 +68,7 @@ defmodule Skiline.Msg.Decode.Utils do
       {"", <<>>}
     end
 
-    @spec binary_to_length(binary, pos_integer, Skiline.socket) :: pos_integer
+    @spec binary_to_length(binary, pos_integer, Skyline.socket) :: pos_integer
     defp binary_to_length(_bin, count = 0, _readByte) do
       raise "Invalid length"
     end
@@ -76,7 +81,7 @@ defmodule Skiline.Msg.Decode.Utils do
       end
     end
 
-    @spec binary_to_qos(binary) :: Skiline.qos_type
+    @spec binary_to_qos(binary) :: Skyline.qos_type
     def binary_to_qos(bin) do
       case bin do
         0 -> :fire_and_forget
@@ -86,7 +91,7 @@ defmodule Skiline.Msg.Decode.Utils do
       end
     end
 
-    @spec binary_to_msg_type(binary) :: Skiline.msg_type
+    @spec binary_to_msg_type(binary) :: Skyline.msg_type
     defp binary_to_msg_type(bin) do
       case bin do
         0 -> :reserved

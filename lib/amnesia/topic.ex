@@ -1,4 +1,4 @@
-defmodule Skiline.Amnesia.Topic do
+defmodule Skyline.Amnesia.Topic do
   use Amnesia
 
   # defines a database called Database, it's basically a defmodule with

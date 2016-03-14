@@ -1,9 +1,15 @@
-defmodule Skiline.Session do
+defmodule Skyline.Session do
+  @moduledoc """
+
+  Responsible for writing messages to a socket, starting up new subcriptions,
+  and managing the session.
+
+  """
   use GenServer
 
   import Socket
-  alias Skiline.Msg.{Connect, Subscribe, Encode, PublishDelivery}
-  alias Skiline.Subscription
+  alias Skyline.Msg.{Connect, Subscribe, Encode, PublishDelivery}
+  alias Skyline.Subscription
 
   defmodule State do
     defstruct socket: nil,
@@ -15,9 +21,16 @@ defmodule Skiline.Session do
 
   end
 
-  def start_link({socket, %Connect{client_id: client_id} = con}, _opts \\ []) do
+  @spec start_link(Skyline.socket, Skyline.Msg.Connect.t, [key: any]) :: GenServer.on_start
+  def start_link(socket, %Connect{client_id: client_id} = con, _opts \\ []) do
     new_state =  %State{socket: socket, client_id: client_id, con_msg: con}
     GenServer.start_link(__MODULE__, new_state, name: {:global, {__MODULE__, client_id}})
+  end
+
+  @doc "An exposed helper method for sending a message to a socket"
+  @spec send_to_socket(Skyline.socket, Skyline.skyline_msg) :: :ok
+  def send_to_socket(socket, msg) do
+    send_binary_to_socket(socket, Encode.encode(msg))
   end
 
   def init(%State{client_id: client_id} = state) do
@@ -36,9 +49,6 @@ defmodule Skiline.Session do
   def handle_cast({:binary_msg, msg}, %State{socket: socket} = state) do
     send_binary_to_socket(socket, msg)
     {:noreply, state}
-  end
-  def send_to_socket(socket, msg) do
-    send_binary_to_socket(socket, Encode.encode(msg))
   end
   defp send_binary_to_socket(socket, raw_msg) do
     ##IO.inspect({"raw", raw_msg, socket})

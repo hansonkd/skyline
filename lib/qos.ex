@@ -1,4 +1,4 @@
-defmodule Skiline.Qos.Outgoing.Qos0 do
+defmodule Skyline.Qos.Outgoing.Qos0 do
   @moduledoc """
   Outgoing QoS0.
 
@@ -14,7 +14,7 @@ defmodule Skiline.Qos.Outgoing.Qos0 do
 
 end
 
-defmodule Skiline.Qos.Outgoing.Qos1 do
+defmodule Skyline.Qos.Outgoing.Qos1 do
   @moduledoc """
   Outgoing QoS1.
 
@@ -28,8 +28,8 @@ defmodule Skiline.Qos.Outgoing.Qos1 do
   end
 
   use GenServer
-  alias Skiline.Msg.PubAck
-  import Skiline.Router
+  alias Skyline.Msg.PubAck
+  import Skyline.Router
 
   def start(sess_pid, sub_id, client_id, msg) do
     state = %Qos1State{sess_pid: sess_pid, sub_id: sub_id, msg: msg}
@@ -57,13 +57,13 @@ defmodule Incoming do
     quote do
       def bcast_msg(msg) do
         #GenServer.cast({:via, :gproc, {:p, :l, {:topic, }}}, )
-        Skiline.Router.broadcast_msg(msg.topic, {:publish, msg})
+        Skyline.Router.broadcast_msg(msg.topic, {:publish, msg})
       end
     end
   end
 end
 
-defmodule Skiline.Qos.Incoming.Qos0 do
+defmodule Skyline.Qos.Incoming.Qos0 do
   @moduledoc """
   Incoming QoS0.
 
@@ -79,7 +79,7 @@ defmodule Skiline.Qos.Incoming.Qos0 do
   end
 
 end
-defmodule Skiline.Qos.Incoming.Qos1 do
+defmodule Skyline.Qos.Incoming.Qos1 do
   @moduledoc """
   Incoming QoS1.
 
@@ -87,7 +87,7 @@ defmodule Skiline.Qos.Incoming.Qos1 do
   """
 
   use Incoming
-  alias Skiline.Msg.PubAck
+  alias Skyline.Msg.PubAck
 
   def start(sess_pid, cliend_id, msg) do
     bcast_msg(msg)

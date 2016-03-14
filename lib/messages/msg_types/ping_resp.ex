@@ -1,14 +1,14 @@
-defmodule Skiline.Msg.PingResp do
+defmodule Skyline.Msg.PingResp do
   @moduledoc """
-  PingResp
+  PingResp MQTT Message
 
   http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718086
   """
   defstruct []
   @type t :: %__MODULE__{}
-  @behaviour Skiline.Msg.Decode
-  
-  alias Skiline.Msg.FixedHeader
+  @behaviour Skyline.Msg.Decode
+
+  alias Skyline.Msg.FixedHeader
 
   @doc """
   Creates a new PingResp.
@@ -18,7 +18,7 @@ defmodule Skiline.Msg.PingResp do
     %__MODULE__{}
   end
 
-  @spec decode_body(binary, Skiline.Msg.FixedHeader.t) :: __MODULE__.t
+  @spec decode_body(binary, Skyline.Msg.FixedHeader.t) :: __MODULE__.t
   def decode_body(<<>>, %FixedHeader{length: 0}) do
     new()
   end
@@ -26,8 +26,8 @@ defmodule Skiline.Msg.PingResp do
     # Raise an error about needing 0 length
   end
 end
-defimpl Skiline.Msg.Encode, for: Skiline.Msg.PingResp do
-  alias Skiline.Msg.Encode.Utils
+defimpl Skyline.Msg.Encode, for: Skyline.Msg.PingResp do
+  alias Skyline.Msg.Encode.Utils
 
   def encode(_msg) do
     Utils.encode_basic(:ping_resp)

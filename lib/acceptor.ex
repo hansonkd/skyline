@@ -1,11 +1,11 @@
-defmodule Skiline.Acceptor do
+defmodule Skyline.Acceptor do
   @moduledoc """
   A worker process which accepts new connections and starts the listeners
   """
   import Socket
-  alias Skiline.Session
-  alias Skiline.Msg.Decode.Utils, as: Decoder
-  alias Skiline.Handler
+  alias Skyline.Session
+  alias Skyline.Msg.Decode.Utils, as: Decoder
+  alias Skyline.Handler
 
   import Supervisor.Spec
 
@@ -29,7 +29,7 @@ defmodule Skiline.Acceptor do
     client = server |> Socket.TCP.accept!
 
 
-    {:ok, _pid} = Skiline.Listener.start_link(client)
+    {:ok, _pid} = Skyline.Listener.start_link(client)
 
     do_listen(server)
 

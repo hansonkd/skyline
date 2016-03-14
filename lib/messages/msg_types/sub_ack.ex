@@ -1,27 +1,27 @@
-defmodule Skiline.Msg.SubAck do
+defmodule Skyline.Msg.SubAck do
   @moduledoc """
-  SubAck
+  SubAck MQTT Message
 
   http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718068
   """
   defstruct msg_id: nil,
             granted_qos: []
-  @type t :: %__MODULE__{msg_id: pos_integer, granted_qos: [Skiline.qos_type]}
-  @behaviour Skiline.Msg.Decode
-  
+  @type t :: %__MODULE__{msg_id: pos_integer, granted_qos: [Skyline.qos_type]}
+  @behaviour Skyline.Msg.Decode
+
   @spec new([Mqttex.qos_type], pos_integer) :: SubAck.t
   def new(granted_qos, msg_id) do
     %__MODULE__{msg_id: msg_id,
                 granted_qos: granted_qos}
   end
 
-  @spec decode_body(binary, Skiline.Msg.FixedHeader.t) :: __MODULE__.t
+  @spec decode_body(binary, Skyline.Msg.FixedHeader.t) :: __MODULE__.t
   def decode_body(<<msg_id :: unsigned-integer-size(16), content :: binary>>, _hdr) do
     granted_qos = qos_list(content, [])
     new(granted_qos, msg_id)
   end
 
-  @spec qos_list(binary, [Skiline.qos_type]):: [Skiline.qos_type]
+  @spec qos_list(binary, [Skyline.qos_type]):: [Skyline.qos_type]
   defp qos_list(<<>>, acc) do
     Enum.reverse acc
   end
@@ -30,8 +30,8 @@ defmodule Skiline.Msg.SubAck do
   end
 
 end
-defimpl Skiline.Msg.Encode, for: Skiline.Msg.SubAck do
-  alias Skiline.Msg.Encode.Utils
+defimpl Skyline.Msg.Encode, for: Skyline.Msg.SubAck do
+  alias Skyline.Msg.Encode.Utils
 
   def encode(msg) do
 

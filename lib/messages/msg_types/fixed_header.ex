@@ -1,9 +1,15 @@
-defmodule Skiline.Msg.FixedHeader do
+defmodule Skyline.Msg.FixedHeader do
+  @moduledoc """
+  MQTT Fixed header
+
+  http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718020
+  """
   defstruct message_type: :reserved,
             duplicate: false,
             qos: :fire_and_forget,
             retain: false,
             length: 0
+  @type t :: %__MODULE__{message_type: Skyline.msg_type, duplicate: boolean, retain: boolean, length: pos_integer}
 
   def new(msg_type,
              dup,
