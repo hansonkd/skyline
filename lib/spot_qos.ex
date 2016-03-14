@@ -1,4 +1,9 @@
 defmodule Spotmq.Qos.Outgoing.Qos0 do
+  @moduledoc """
+  Outgoing QoS0.
+
+  QoS0 is fire and forget so no observer process is needed.
+  """
   defstruct msg_queue: :queue.new
 
   def start(sess_pid, sub_id, cliend_id, msg) do
@@ -10,6 +15,12 @@ defmodule Spotmq.Qos.Outgoing.Qos0 do
 end
 
 defmodule Spotmq.Qos.Outgoing.Qos1 do
+  @moduledoc """
+  Outgoing QoS1.
+
+  QoS1 requires an acknowledgement, so we much have a process to wait for the client's
+  acknowledgement or resend.
+  """
   defmodule Qos1State do
     defstruct msg: nil,
               sess_pid: nil,
@@ -53,6 +64,12 @@ defmodule Incoming do
 end
 
 defmodule Spotmq.Qos.Incoming.Qos0 do
+  @moduledoc """
+  Incoming QoS0.
+
+  QoS0 is fire and forget so no observer process is needed.
+  """
+
   use Incoming
 
   def start(sess_pid, cliend_id, msg) do
@@ -63,18 +80,19 @@ defmodule Spotmq.Qos.Incoming.Qos0 do
 
 end
 defmodule Spotmq.Qos.Incoming.Qos1 do
+  @moduledoc """
+  Incoming QoS1.
+
+  QoS1 only requires an acknowledgement be sent, so no observer is needed.
+  """
+
   use Incoming
   alias Spotmq.Msg.PubAck
 
   def start(sess_pid, cliend_id, msg) do
-    pid = spawn_link(
-      fn() ->
-        bcast_msg(msg)
-        GenServer.cast(sess_pid, {:msg, PubAck.create(msg.msg_id)})
-      end
-    )
-    #bcast_msg(msg)
-    {:ok, pid}
+    bcast_msg(msg)
+    GenServer.cast(sess_pid, {:msg, PubAck.new(msg.msg_id)})
+    {:ok, nil}
   end
 
 end

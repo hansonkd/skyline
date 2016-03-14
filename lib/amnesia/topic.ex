@@ -1,4 +1,4 @@
-defmodule Spotmq.Persist.Topic do
+defmodule Spotmq.Amnesia.Topic do
   use Amnesia
 
   # defines a database called Database, it's basically a defmodule with

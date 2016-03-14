@@ -1,12 +1,17 @@
 defmodule Spotmq.Msg.PublishDelivery do
+  @moduledoc """
+  PublishDelivery - Broker -> Client Publish
+
+  http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718037
+  """
   defstruct subscription_topic: "", # We have to send back the subscription pattern that picked it up.
             msg_id: nil,
             message: "",
             duplicate: false,
             qos: :fire_and_forget
+  @type t :: %__MODULE__{subscription_topic: String.t, msg_id: pos_integer, message: String.t, qos: SpotApp.qos_type, duplicate: boolean}
 
-
-  def create(subscription_topic,
+  def new(subscription_topic,
             message,
             qos,
             msg_id,

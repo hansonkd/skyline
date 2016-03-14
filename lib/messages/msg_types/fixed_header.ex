@@ -5,7 +5,7 @@ defmodule Spotmq.Msg.FixedHeader do
             retain: false,
             length: 0
 
-  def create(msg_type,
+  def new(msg_type,
              dup,
              qos,
              retain,

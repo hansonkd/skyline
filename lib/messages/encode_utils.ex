@@ -1,57 +1,63 @@
 defmodule Spotmq.Msg.Encode.Utils do
-  use Bitwise
+    use Bitwise
 
-  def encode_basic(msg_type) do # when msg_type in [:ping_req, :ping_resp, :disconnect] do
-      <<msg_type_to_binary(msg_type) :: size(4), 0 :: size(4), 0x00>>
-  end
-
-  def basic_with_msg_id(msg_type, msg_id) do #when msg_type in [:pub_ack, :pub_rec, :pub_comp, :unsub_ack] do
-      <<msg_type_to_binary(msg_type) :: size(4), 0 :: size(4), 0x02, msg_id(msg_id) :: binary>>
-  end
-
-  def encode_full_header(message_type,
-                         duplicate,
-                         qos,
-                         retain,
-                         length) do
-    <<msg_type_to_binary(message_type) :: size(4),
-      boolean_to_binary(duplicate) :: bits,
-      qos_binary(qos) :: size(2),
-      boolean_to_binary(retain) :: bits >>
-      # Second Byte
-      <> encode_length(length)
-  end
-
-  @doc "Converts the atoms to binary message types"
-  def msg_type_to_binary(atom) do
-    case atom do
-      :reserved -> 0
-      :connect -> 1
-      :conn_ack -> 2
-      :publish -> 3
-      :pub_ack -> 4
-      :pub_rec -> 5
-      :pub_rel -> 6
-      :pub_comp -> 7
-      :subscribe -> 8
-      :sub_ack -> 9
-      :unsubscribe -> 10
-      :unsub_ack -> 11
-      :ping_req -> 12
-      :ping_resp -> 13
-      :disconnect -> 14
+    @spec encode_basic(SpotApp.empty_msg) :: binary
+    def encode_basic(msg_type) when msg_type in [:ping_req, :ping_resp, :disconnect] do
+        <<msg_type_to_binary(msg_type) :: size(4), 0 :: size(4), 0x00>>
     end
-  end
 
+    @spec basic_with_msg_id(SpotApp.msg_with_id, pos_integer) :: binary
+    def basic_with_msg_id(msg_type, msg_id) when msg_type in [:pub_ack, :pub_rec, :pub_comp, :unsub_ack] do
+        <<msg_type_to_binary(msg_type) :: size(4), 0 :: size(4), 0x02, msg_id(msg_id) :: binary>>
+    end
 
+    @spec encode_full_header(SpotApp.msg_type, boolean, SpotApp.qos_type, boolean, pos_integer) :: binary
+    def encode_full_header(message_type,
+                           duplicate,
+                           qos,
+                           retain,
+                           length) do
+      <<msg_type_to_binary(message_type) :: size(4),
+        boolean_to_binary(duplicate) :: bits,
+        qos_binary(qos) :: size(2),
+        boolean_to_binary(retain) :: bits >>
+        # Second Byte
+        <> encode_length(length)
+    end
+
+    @doc "Converts the atoms to binary message types"
+    @spec msg_type_to_binary(SpotApp.msg_type) :: pos_integer
+    def msg_type_to_binary(atom) do
+      case atom do
+        :reserved -> 0
+        :connect -> 1
+        :conn_ack -> 2
+        :publish -> 3
+        :pub_ack -> 4
+        :pub_rec -> 5
+        :pub_rel -> 6
+        :pub_comp -> 7
+        :subscribe -> 8
+        :sub_ack -> 9
+        :unsubscribe -> 10
+        :unsub_ack -> 11
+        :ping_req -> 12
+        :ping_resp -> 13
+        :disconnect -> 14
+      end
+    end
+
+    @spec utf8(String.t) :: binary
   	def utf8(str) do
       <<byte_size(str) :: size(16) >> <> str
     end
 
+    @spec msg_id(pos_integer) :: binary
   	def msg_id(id) when is_integer(id) do
       <<id :: size(16)>>
     end
 
+    @spec keep_alive(SpotApp.keep_alive) :: binary
   	def keep_alive(n) do
       case n do
         :infinity -> <<0 :: size(16)>>
@@ -59,6 +65,7 @@ defmodule Spotmq.Msg.Encode.Utils do
       end
     end
 
+    @spec encode_length(pos_integer) :: binary
   	def encode_length(0) do
       <<0, 0>>
     end
@@ -81,6 +88,7 @@ defmodule Spotmq.Msg.Encode.Utils do
 
 
   	@doc "converts boolean to bits"
+    @spec boolean_to_binary(boolean) :: binary
   	def boolean_to_binary(bool) do
       case bool do
         true -> <<1 :: size(1)>>
@@ -89,6 +97,7 @@ defmodule Spotmq.Msg.Encode.Utils do
     end
 
     @doc "converts atoms the binary qos"
+    @spec qos_binary(SpotApp.qos_type) :: pos_integer
     def qos_binary(atom) do
       case atom do
         :fire_and_forget -> 0

@@ -1,5 +1,9 @@
 defmodule Spotmq.Subscription do
+  @moduledoc """
 
+  Manages QoS and queueing the messages for a certain subscribe Topic.
+
+  """
   defmodule State do
     defstruct client_id: nil,
               sess_pid: nil,
@@ -12,23 +16,19 @@ defmodule Spotmq.Subscription do
 
   import Amnesia
   use GenServer
-  use Spotmq.Persist.Topic.Database
+  use Spotmq.Amnesia.Topic.Database
   import Spotmq.Router
-  alias Spotmq.Persist.Topic.Database.{StoredTopic}
+  alias Spotmq.Amnesia.Topic.Database.{StoredTopic}
   alias Spotmq.Msg.{PublishReq}
   alias Spotmq.Qos.Outgoing.{Qos0, Qos1}
 
   def start_link({client_id, sess_pid, topic, qos}, _opts \\ []) do
     name = {client_id, topic}
     state = %State{client_id: client_id, sess_pid: sess_pid, topic: topic, qos: qos}
-    ret = GenServer.start_link(__MODULE__, state, name: {:global, name})
-    #IO.puts("Registered #{topic}")
-    ret
+    GenServer.start_link(__MODULE__, state, name: {:global, name})
   end
 
   def init(%State{topic: topic} = state) do
-    #IO.puts("Registering #{topic}")
-    #:gproc.reg({:p, :l, {:topic, topic}})
     Spotmq.Router.add_topic_subscription(topic, self)
     GenServer.cast(self, :check_for_stored_message)
     {:ok, state}
@@ -46,7 +46,6 @@ defmodule Spotmq.Subscription do
     {:noreply, state}
   end
   def handle_cast({:publish, %PublishReq{} = msg}, %State{client_id: client_id} = state) do
-    #IO.inspect({"Cast publish", msg})
     msg_id = :ets.update_counter(:session_msg_ids, client_id, 1)
     new_msg = PublishReq.convert_to_delivery(state.topic, state.qos, msg_id, false, msg)
     new_queue = :queue.in(new_msg, state.msg_queue)

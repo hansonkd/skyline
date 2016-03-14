@@ -1,22 +1,31 @@
 defmodule Spotmq.Msg.SubAck do
-  defstruct msg_id: nil,
-            granted_qos: [] # :: [pos_integer],
+  @moduledoc """
+  SubAck
 
-  @spec create([Mqttex.qos_type], pos_integer) :: SubAck.t
-  def create(granted_qos, msg_id) do
+  http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718068
+  """
+  defstruct msg_id: nil,
+            granted_qos: []
+  @type t :: %__MODULE__{msg_id: pos_integer, granted_qos: [SpotApp.qos_type]}
+  @behaviour Spotmq.Msg.Decode
+  
+  @spec new([Mqttex.qos_type], pos_integer) :: SubAck.t
+  def new(granted_qos, msg_id) do
     %__MODULE__{msg_id: msg_id,
                 granted_qos: granted_qos}
   end
 
+  @spec decode_body(binary, Spotmq.Msg.FixedHeader.t) :: __MODULE__.t
   def decode_body(<<msg_id :: unsigned-integer-size(16), content :: binary>>, _hdr) do
     granted_qos = qos_list(content, [])
-    create(granted_qos, msg_id)
+    new(granted_qos, msg_id)
   end
 
-  def qos_list(<<>>, acc) do
+  @spec qos_list(binary, [SpotApp.qos_type]):: [SpotApp.qos_type]
+  defp qos_list(<<>>, acc) do
     Enum.reverse acc
   end
-  def qos_list(<<q :: size(8), rest :: binary>>, acc) do
+  defp qos_list(<<q :: size(8), rest :: binary>>, acc) do
     qos_list(rest, [Utils.binary_to_qos(q) | acc])
   end
 

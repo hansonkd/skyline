@@ -31,8 +31,10 @@ defmodule Spotmq.Mixfile do
     [{:connection, "1.0.2" },
      {:gproc, "~> 0.5"},
      {:socket, "~> 0.3"},
-     {:dialyxir, "~> 0.3", only: [:dev]},
      {:amnesia, github: "meh/amnesia", tag: :master},
-     {:ranch, "~> 1.1"}]
+     {:ranch, "~> 1.1"},
+     {:dialyxir, "~> 0.3", only: [:dev]},
+     {:ex_doc, "~> 0.11", only: :dev},
+     {:earmark, ">= 0.0.0", only: :dev}]
   end
 end

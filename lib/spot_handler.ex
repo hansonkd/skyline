@@ -1,9 +1,12 @@
 defmodule Spotmq.Handler do
+  @moduledoc """
+  Functions to help dispatch messages.
+  """
   alias Spotmq.Msg.{PublishReq, SubAck, PubAck, PingResp, Subscribe, PingReq, Unsubscribe, UnsubAck}
   alias Spotmq.Subscription
 
-  use Spotmq.Persist.Topic.Database
-  alias Spotmq.Persist.Topic.Database.{StoredTopic}
+  use Spotmq.Amnesia.Topic.Database
+  alias Spotmq.Amnesia.Topic.Database.{StoredTopic}
 
   def handle_msg(%Subscribe{msg_id: msg_id, topics: topics} = msg, sess_pid, conn_msg) do
     client_id = conn_msg.client_id
@@ -16,7 +19,7 @@ defmodule Spotmq.Handler do
            top_qos
       end
     end
-    cast_msg(sess_pid, SubAck.create(qos_list, msg_id), false)
+    cast_msg(sess_pid, SubAck.new(qos_list, msg_id), false)
   end
   def handle_msg(%Unsubscribe{topics: topics, msg_id: msg_id} = msg, sess_pid, conn_msg) do
     :ok = GenServer.call(sess_pid, {:unsubscribe, topics})
@@ -28,7 +31,7 @@ defmodule Spotmq.Handler do
         :ok = GenServer.stop({client_id, topic})
       end
     end
-    cast_msg(sess_pid, UnsubAck.create(msg_id), false)
+    cast_msg(sess_pid, UnsubAck.new(msg_id), false)
   end
 
   def handle_msg(%PublishReq{} = msg, sess_pid, conn_msg) do
@@ -47,7 +50,7 @@ defmodule Spotmq.Handler do
     {:ok, _pid} = mod.start(sess_pid, conn_msg.client_id, msg)
   end
   def handle_msg(%PingReq{}, sess_pid, _conn_msg) do
-    cast_msg(sess_pid,  PingResp.create(), false)
+    cast_msg(sess_pid,  PingResp.new(), false)
   end
   def handle_msg(%PubAck{msg_id: msg_id} = msg, sess_pid, conn_msg) do
     GenServer.cast({:global, {:qos_send, conn_msg.client_id, msg_id}}, {:next, msg})
@@ -61,7 +64,7 @@ defmodule Spotmq.Handler do
     end
     GenServer.cast(sess_pid, {:msg, outgoing})
   end
-  def qos_to_qos_mod(qos) do
+  defp qos_to_qos_mod(qos) do
     alias Spotmq.Qos.Incoming.{Qos0, Qos1}
     case qos do
       :fire_and_forget -> Qos0

@@ -1,6 +1,6 @@
 defmodule Mix.Tasks.DestroyDb do
   use Mix.Task
-  use Spotmq.Persist.Topic.Database
+  use Spotmq.Amnesia.Topic.Database
 
   def run(_) do
     # Start mnesia, or we can't do much.

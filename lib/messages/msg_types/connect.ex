@@ -1,22 +1,41 @@
 defmodule Spotmq.Msg.Connect do
+  @moduledoc """
+  Connect Message
+
+  http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718028
+  """
+  defstruct client_id: "",
+            user_name: "",
+            password: "",
+            keep_alive_ms:  :infinity,
+            keep_alive_server_ms: :infinity,
+            last_will: false,
+            will_qos: :fire_and_forget,
+            will_retain: false,
+            will_topic: "",
+            will_message: "",
+            clean_session: true
+  @type t :: %__MODULE__{client_id: String.t,
+                         user_name: String.t,
+                         password: String.t,
+                         keep_alive_ms: SpotApp.keep_alive,
+                         keep_alive_server_ms: SpotApp.keep_alive,
+                         last_will: boolean,
+                         will_qos: SpotApp.qos_type,
+                         will_retain: boolean,
+                         will_topic: String.t,
+                         will_message: String.t,
+                         clean_session: boolean
+                       }
+  @behaviour Spotmq.Msg.Decode
+
   alias Spotmq.Msg.Decode.Utils
 
-  defstruct client_id: "", # :: binary,
-            user_name: "", # :: binary,
-            password: "", # :: binary,
-            keep_alive_ms:  :infinity, # or the keep-alive in milliseconds (=1000*mqtt-keep-alive)
-            keep_alive_server_ms: :infinity, # or 1.5 * keep-alive in milliseconds (=1500*mqtt-keep-alive)
-            last_will: false, # :: boolean,
-            will_qos: :fire_and_forget, # :: Mqttex.qos_type,
-            will_retain: false, # :: boolean,
-            will_topic: "", # :: binary,
-            will_message: "", # :: binary,
-            clean_session: true # :: boolean,
-
   @doc """
-	Creates a new connect message.
+	Creates a new Connect.
 	"""
-  def create(client_id,
+  @spec new(binary, binary, binary, boolean, SpotApp.keep_alive, SpotApp.keep_alive, boolean, SpotApp.qos_type, boolean, binary, binary) :: __MODULE__.t
+  def new(client_id,
               user_name,
               password,
               clean_session,
@@ -41,13 +60,15 @@ defmodule Spotmq.Msg.Connect do
                 clean_session: clean_session
               }
   end
+
+  @spec decode_body(binary, Spotmq.Msg.FixedHeader.t) :: __MODULE__.t
   def decode_body(<<0, 4, "MQTT",  4, flags :: size(8), keep_alive :: size(16), rest::binary>>, _hdr) do
     decode_common(flags, keep_alive, rest)
   end
   def decode_body(<<0x00, 0x06, "MQIsdp", 0x03, flags :: size(8), keep_alive :: size(16), rest::binary>>, _hdr) do
     decode_common(flags, keep_alive, rest)
   end
-  def decode_common(flags, keep_alive, rest) do
+  defp decode_common(flags, keep_alive, rest) do
     <<user_flag :: size(1),
       pass_flag :: size(1),
       w_retain :: size(1),
@@ -67,7 +88,7 @@ defmodule Spotmq.Msg.Connect do
       {keep_alive * 1000, (keep_alive + 10) * 1000}
     end
 
-    create(client_id,
+    new(client_id,
         user_name,
         password,
         clean == 1,

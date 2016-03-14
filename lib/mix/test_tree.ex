@@ -17,7 +17,7 @@ defmodule Mix.Tasks.TestTree do
     # each one of them with the passed copying behaviour
     #
     # In this case it will keep a ram and disk copy on the current node.
-    Database.create()
+    Database.new()
 
     # This waits for the database to be fully created.
     Database.wait

@@ -1,9 +1,15 @@
 defmodule SpotApp.Worker do
+  @moduledoc """
+  Worker
 
+  A worker process which accepts new connections and starts the listeners
+  """
   import Socket
   alias Spotmq.Session
   alias Spotmq.Msg.Decode.Utils, as: Decoder
   alias Spotmq.Handler
+
+  import Supervisor.Spec
 
   def start_link(default) do
     pid = spawn_link(fn -> init(8000) end)
@@ -23,6 +29,7 @@ defmodule SpotApp.Worker do
 
   defp do_listen(server) do
     client = server |> Socket.TCP.accept!
+
 
     {:ok, _pid} = Spotmq.Listener.start_link(client)
 

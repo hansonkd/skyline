@@ -1,4 +1,9 @@
 defmodule Spotmq.Listener do
+    @moduledoc """
+    Listener
+
+    Is repsonsible for listening for new TCP messages, and handling their dispatch
+    """
     use GenServer
 
     import Socket

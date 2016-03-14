@@ -1,13 +1,24 @@
 defmodule Spotmq.Msg.PubComp do
-  defstruct msg_id: nil
-  alias Spotmq.Msg.Decode.Utils
+  @moduledoc """
+  PubComp
 
-  def create(msg_id) do
+  http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718058
+  """
+  defstruct msg_id: nil
+  @type t :: %__MODULE__{msg_id: pos_integer}
+
+  alias Spotmq.Msg.Decode.Utils
+  @behaviour Spotmq.Msg.Decode
+
+  @doc "New PubComp Message"
+  @spec new(pos_integer) :: __MODULE__.t
+  def new(msg_id) do
     %__MODULE__{msg_id: msg_id}
   end
 
+  @spec decode_body(binary, Spotmq.Msg.FixedHeader.t) :: __MODULE__.t
   def decode_body(msg, _hdr) do
-    create(Utils.get_msgid(msg))
+    new(Utils.get_msgid(msg))
   end
 end
 

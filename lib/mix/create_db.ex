@@ -1,6 +1,6 @@
 defmodule Mix.Tasks.CreateDb do
   use Mix.Task
-  use Spotmq.Persist.Topic.Database
+  use Spotmq.Amnesia.Topic.Database
   use Spotmq.Amnesia.Router.TreeDatabase
 
   def run(_) do
@@ -17,8 +17,8 @@ defmodule Mix.Tasks.CreateDb do
     # each one of them with the passed copying behaviour
     #
     # In this case it will keep a ram and disk copy on the current node.
-    Database.create(disk: [node])
-    TreeDatabase.create()
+    Database.new(disk: [node])
+    TreeDatabase.new()
 
     # This waits for the database to be fully created.
     Database.wait

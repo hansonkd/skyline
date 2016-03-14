@@ -1,5 +1,3 @@
-defprotocol Spotmq.Msg.Decode do
-  # Make this a behaviour
-  alias Spotmq.Msg.FixedHeader
-  @callback decode_body(binary, FixedHeader.t) :: any
+defmodule Spotmq.Msg.Decode do
+  @callback decode_body(binary, Spotmq.Msg.FixedHeader.t) :: any
 end

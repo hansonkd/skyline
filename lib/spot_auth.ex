@@ -17,8 +17,8 @@ defmodule Spotmq.Auth do
          any -> any
        end
       case value do
-        {:ok, pid}       -> {:ok, ConnAck.create(:ok), pid}
-        {:error, reason} -> {:error, ConnAck.create(reason)}
+        {:ok, pid}       -> {:ok, ConnAck.new(:ok), pid}
+        {:error, reason} -> {:error, ConnAck.new(reason)}
       end
     end
 end
