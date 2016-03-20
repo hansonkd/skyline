@@ -1,4 +1,5 @@
 defmodule Skyline do
+
   use Application
   import Supervisor.Spec, warn: false
 
@@ -31,7 +32,7 @@ defmodule Skyline do
     :ets.new(:session_msg_ids, [:set, :named_table, :public])
 
     children = [
-      worker(Skyline.Acceptor, [8000])
+      worker(Skyline.Acceptor, [Skyline.AppConfig.default(), 8000])
     ]
 
     opts = [strategy: :one_for_one, name: Skyline.Supervisor]

@@ -5,7 +5,7 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.11.4">
-    <title>Skyline.Qos.Incoming.Qos1 – Skyline v0.0.1</title>
+    <title>Skyline.Socket – Skyline v0.0.1</title>
     <link rel="stylesheet" href="dist/app-1e374caa3d.css" />
     <script src="dist/sidebar_items.js"></script>
   </head>
@@ -62,15 +62,14 @@
 
       <h1>
         <small class="visible-xs">Skyline v0.0.1</small>
-        Skyline.Qos.Incoming.Qos1
+        Skyline.Socket
         
         
       </h1>
 
       
         <section id="moduledoc" class="docstring">
-          <p>Incoming QoS1.</p>
-<p>QoS1 only requires an acknowledgement be sent, so no observer is needed.</p>
+          <p>Socket aliases.</p>
 
         </section>
       
@@ -92,14 +91,23 @@
     </h2>
     <div class="summary-row">
   <div class="summary-signature">
-    <a href="#bcast_msg/1">bcast_msg(msg)</a>
+    <a href="#listen/1">listen(port)</a>
   </div>
   
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#start/3">start(sess_pid, client_id, msg)</a>
+    <a href="#read_bytes/2">read_bytes(socket, nr)</a>
   </div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#send/2">send(socket, msg)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>An exposed helper method for sending a message to a socket</p>
+</div>
   
 </div>
 
@@ -123,12 +131,12 @@
             </a>
             Functions
           </h1>
-          <div class="detail" id="bcast_msg/1">
+          <div class="detail" id="listen/1">
   <div class="detail-header">
-    <a href="#bcast_msg/1" class="detail-link" title="Link to this function">
+    <a href="#listen/1" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">bcast_msg(msg)</span>
+    <span class="signature">listen(port)</span>
       
   </div>
   
@@ -136,17 +144,40 @@
     
   </section>
 </div>
-<div class="detail" id="start/3">
+<div class="detail" id="read_bytes/2">
   <div class="detail-header">
-    <a href="#start/3" class="detail-link" title="Link to this function">
+    <a href="#read_bytes/2" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">start(sess_pid, client_id, msg)</span>
+    <span class="signature">read_bytes(socket, nr)</span>
       
   </div>
   
   <section class="docstring">
     
+  </section>
+</div>
+<div class="detail" id="send/2">
+  <div class="detail-header">
+    <a href="#send/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">send(socket, msg)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">send(<a href="Skyline.html#t:socket/0">Skyline.socket</a>, <a href="Skyline.html#t:skyline_msg/0">Skyline.skyline_msg</a>) :: :ok</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>An exposed helper method for sending a message to a socket</p>
+
   </section>
 </div>
 

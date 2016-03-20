@@ -1,8 +1,8 @@
-defmodule Skyline.Router do
+defmodule Skyline.Topic.Dispatcher do
     @moduledoc """
     Router
 
-    A routing scheme inspired by emqttd.
+    A message dispatch scheme inspired by emqttd.
 
     This tree differs from emqttd by acting as a registry for the pids themselves
     instead of acting as a registry for active topics, which are then dispatched seperately.
@@ -10,7 +10,7 @@ defmodule Skyline.Router do
     It also differs by each key being immutable and tagged by pid of the subscriber process.
     This makes write locks unecassary and lets you remove subscriptions and prune leaves without
     walking the tree.
-    In emqttd trees, the nodes count the leaves by the value on the edge which gets updated.
+    In emqttd trees, the nodes count the leaves by the value on the edge which gets mutated.
 
     No benchmarks have been done to see if one is more efficient then the other.
     """

@@ -9,7 +9,7 @@ defmodule Skyline.Msg.Decode.Utils do
     @spec decode(binary, Skyline.socket) :: Skyline.skyline_msg
     def decode(msg = <<_m :: size(16)>>, socket) do
       header = decode_fixheader(msg, socket)
-      var_m = read_bytes(socket, header.length)
+      var_m = Skyline.Socket.read_bytes(socket, header.length)
       decode_message(var_m, header)
     end
 
@@ -75,7 +75,7 @@ defmodule Skyline.Msg.Decode.Utils do
     defp binary_to_length(<<overflow :: size(1), len :: size(7)>>, count \\ 4, socket) do
       case overflow do
         1 ->
-          byte = read_bytes(socket, 1)
+          byte = Skyline.Socket.read_bytes(socket, 1)
           len + (binary_to_length(byte, count - 1, socket) <<< 7)
         0 -> len
       end
@@ -113,15 +113,4 @@ defmodule Skyline.Msg.Decode.Utils do
       end
     end
 
-    defp read_bytes(socket, 0), do: ""
-    defp read_bytes(socket, nr) do
-        result = case Socket.Stream.recv(socket, nr) do
-          {:ok, bytes} -> bytes
-          # {:error, reason} -> Lager.error("read_bytes: receiving #{nr} bytes failed with #{inspect reason}")
-          any ->
-            #IO.inspect("Received a strange message: #{inspect any}")
-            any
-        end
-        result
-      end
 end

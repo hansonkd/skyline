@@ -5,11 +5,11 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.11.4">
-    <title>Skyline.Listener – Skyline v0.0.1</title>
+    <title>Skyline.Auth.Protocol – Skyline v0.0.1</title>
     <link rel="stylesheet" href="dist/app-1e374caa3d.css" />
     <script src="dist/sidebar_items.js"></script>
   </head>
-  <body data-type="modules">
+  <body data-type="protocols">
 
     <div class="main">
 <button class="sidebar-toggle">
@@ -62,17 +62,13 @@
 
       <h1>
         <small class="visible-xs">Skyline v0.0.1</small>
-        Skyline.Listener
+        Skyline.Auth.Protocol
+        
+          <small>protocol</small>
         
         
       </h1>
 
-      
-        <section id="moduledoc" class="docstring">
-          <p>Listens for new message on socket.</p>
-<p>Is repsonsible for listening for new TCP messages, and handling their dispatch</p>
-
-        </section>
       
 
       
@@ -84,6 +80,25 @@
             Summary
           </h1>
           
+  <div class="summary-types summary">
+    <h2>
+      <a href="#types">Types</a>
+    </h2>
+    <div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:connection_response/0">connection_response()</a>
+  </div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:t/0">t()</a>
+  </div>
+  
+</div>
+
+  </div>
+
 
           
   <div class="summary-functions summary">
@@ -92,7 +107,7 @@
     </h2>
     <div class="summary-row">
   <div class="summary-signature">
-    <a href="#start_link/2">start_link(client, opts \\ [])</a>
+    <a href="#new_connection/1">new_connection(con_msg)</a>
   </div>
   
 </div>
@@ -108,6 +123,28 @@
       
 
       
+        <section id="types" class="types details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#types">
+              <i class="icon-link"></i>
+            </a>
+            Types
+          </h1>
+          <div class="types-list">
+            <div id="t:connection_response/0" class="type-detail">
+  <pre><code class="elixir"><a href="#t:connection_response/0">connection_response</a> ::
+  {:ok, any} |
+  {:error, <a href="Skyline.html#t:conn_ack_type/0">Skyline.conn_ack_type</a>}</code></pre>
+  
+</div>
+<div id="t:t/0" class="type-detail">
+  <pre><code class="elixir"><a href="#t:t/0">t</a> :: term</code></pre>
+  
+</div>
+
+          </div>
+        </section>
+      
 
       
         <section id="functions" class="details-list">
@@ -117,14 +154,23 @@
             </a>
             Functions
           </h1>
-          <div class="detail" id="start_link/2">
+          <div class="detail" id="new_connection/1">
   <div class="detail-header">
-    <a href="#start_link/2" class="detail-link" title="Link to this function">
+    <a href="#new_connection/1" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">start_link(client, opts \\ [])</span>
+    <span class="signature">new_connection(con_msg)</span>
       
   </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">new_connection(<a href="Skyline.Msg.Connect.html#t:t/0">Skyline.Msg.Connect.t</a>) :: <a href="#t:connection_response/0">connection_response</a></code></pre>
+        
+      </div>
+    </div>
   
   <section class="docstring">
     

@@ -17,8 +17,8 @@ defmodule Mix.Tasks.CreateDb do
     # each one of them with the passed copying behaviour
     #
     # In this case it will keep a ram and disk copy on the current node.
-    Database.new(disk: [node])
-    TreeDatabase.new()
+    Database.create(disk: [node])
+    TreeDatabase.create()
 
     # This waits for the database to be fully created.
     Database.wait

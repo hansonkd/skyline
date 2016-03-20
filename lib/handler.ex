@@ -2,14 +2,12 @@ defmodule Skyline.Handler do
   @moduledoc """
   Functions to help dispatch messages.
   """
+  alias Skyline.Client
   alias Skyline.Msg.{PublishReq, SubAck, PubAck, PingResp, Subscribe, PingReq, Unsubscribe, UnsubAck}
   alias Skyline.Subscription
 
-  use Skyline.Amnesia.Topic.Database
-  alias Skyline.Amnesia.Topic.Database.{StoredTopic}
 
-  def handle_msg(%Subscribe{msg_id: msg_id, topics: topics} = msg, sess_pid, conn_msg) do
-    client_id = conn_msg.client_id
+  def handle_msg(%Subscribe{msg_id: msg_id, topics: topics} = msg, %Client{sess_pid: sess_pid, client_id: client_id} = state) do
 
     qos_list = for {topic, qos} <- topics do
       case Subscription.start_link({client_id, sess_pid, topic, qos}) do
@@ -19,11 +17,11 @@ defmodule Skyline.Handler do
            top_qos
       end
     end
-    cast_msg(sess_pid, SubAck.new(qos_list, msg_id), false)
+    cast_msg(sess_pid, SubAck.new(qos_list, msg_id))
+    state
   end
-  def handle_msg(%Unsubscribe{topics: topics, msg_id: msg_id} = msg, sess_pid, conn_msg) do
+  def handle_msg(%Unsubscribe{topics: topics, msg_id: msg_id} = msg, %Client{sess_pid: sess_pid, client_id: client_id} = state) do
     :ok = GenServer.call(sess_pid, {:unsubscribe, topics})
-    client_id = conn_msg.client_id
 
     for topic <- topics do
       pid = GenServer.whereis({:global, {client_id, topic}})
@@ -31,44 +29,24 @@ defmodule Skyline.Handler do
         :ok = GenServer.stop({client_id, topic})
       end
     end
-    cast_msg(sess_pid, UnsubAck.new(msg_id), false)
+    cast_msg(sess_pid, UnsubAck.new(msg_id))
+    state
   end
 
-  def handle_msg(%PublishReq{} = msg, sess_pid, conn_msg) do
+  def handle_msg(%PublishReq{} = msg, state) do
     ##IO.inspect("Sending Publish #{msg.topic}")
-    if msg.retain do
-      Amnesia.transaction do
-        ##IO.inspect({"pub_req topic", StoredTopic.read(msg.topic)})
-        st = case StoredTopic.read(msg.topic) do
-          %StoredTopic{} = cst -> %{cst | message: msg.message}
-          _ -> %StoredTopic{topic_id: msg.topic, message: msg.message}
-        end
-        st |> StoredTopic.write
-      end
-    end
-    mod = qos_to_qos_mod(msg.qos)
-    {:ok, _pid} = mod.start(sess_pid, conn_msg.client_id, msg)
+    {:ok, new_state} = Skyline.Topic.PublishDispatcher.publish(msg, state)
+    new_state
   end
-  def handle_msg(%PingReq{}, sess_pid, _conn_msg) do
-    cast_msg(sess_pid,  PingResp.new(), false)
+
+  def handle_msg(%PingReq{}, sess_pid, _state) do
+    cast_msg(sess_pid,  PingResp.new())
   end
-  def handle_msg(%PubAck{msg_id: msg_id} = msg, sess_pid, conn_msg) do
-    GenServer.cast({:global, {:qos_send, conn_msg.client_id, msg_id}}, {:next, msg})
+  def handle_msg(%PubAck{msg_id: msg_id} = msg, %Client{client_id: client_id} = state) do
+    GenServer.cast({:global, {:qos_send, client_id, msg_id}}, {:next, msg})
   end
-  defp cast_msg(sess_pid, msg, incr) do
-    outgoing = if incr do
-      {:ok, msg_id} = GenServer.call(sess_pid, :msg_id)
-      %{msg | msg_id: msg_id}
-    else
-      msg
-    end
-    GenServer.cast(sess_pid, {:msg, outgoing})
+  defp cast_msg(sess_pid, msg) do
+    GenServer.cast(sess_pid, {:msg, msg})
   end
-  defp qos_to_qos_mod(qos) do
-    alias Skyline.Qos.Incoming.{Qos0, Qos1}
-    case qos do
-      :fire_and_forget -> Qos0
-      :at_least_once -> Qos1
-    end
-  end
+
 end

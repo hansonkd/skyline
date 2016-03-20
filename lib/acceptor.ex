@@ -9,29 +9,22 @@ defmodule Skyline.Acceptor do
 
   import Supervisor.Spec
 
-  def start_link(default) do
-    pid = spawn_link(fn -> init(8000) end)
+  def start_link(app, port) do
+    pid = spawn_link(fn -> init(port, app) end)
     {:ok, pid}
   end
 
-  def init(port) do
-    server = Socket.TCP.listen!(port, [packet: 0,
-											                 reuseaddr: true,
-                                       binary: true,
-                                       nodelay: true,
-                                       active: true,
-                                       backlog: 30,
-											                 mode: :active])
-    do_listen(server)
+  def init(port, app) do
+    server = Skyline.Socket.listen(port)
+    do_listen(server, app)
   end
 
-  defp do_listen(server) do
+  defp do_listen(server, app) do
     client = server |> Socket.TCP.accept!
 
+    {:ok, _pid} = Skyline.Client.start_link(client, app)
 
-    {:ok, _pid} = Skyline.Listener.start_link(client)
-
-    do_listen(server)
+    do_listen(server, app)
 
   end
 

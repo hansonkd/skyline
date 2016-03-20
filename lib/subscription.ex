@@ -17,10 +17,9 @@ defmodule Skyline.Subscription do
   import Amnesia
   use GenServer
   use Skyline.Amnesia.Topic.Database
-  import Skyline.Router
+  import Skyline.Topic.Dispatcher
   alias Skyline.Amnesia.Topic.Database.{StoredTopic}
   alias Skyline.Msg.{PublishReq}
-  alias Skyline.Qos.Outgoing.{Qos0, Qos1}
 
   def start_link({client_id, sess_pid, topic, qos}, _opts \\ []) do
     name = {client_id, topic}
@@ -29,7 +28,7 @@ defmodule Skyline.Subscription do
   end
 
   def init(%State{topic: topic} = state) do
-    Skyline.Router.add_topic_subscription(topic, self)
+    Skyline.Topic.Dispatcher.add_topic_subscription(topic, self)
     GenServer.cast(self, :check_for_stored_message)
     {:ok, state}
   end
@@ -108,8 +107,8 @@ defmodule Skyline.Subscription do
 
   def qos_to_qos_mod(qos) do
     case qos do
-      :fire_and_forget -> Qos0
-      :at_least_once -> Qos1
+      :fire_and_forget -> Skyline.Qos.Outgoing.Qos0
+      :at_least_once -> Skyline.Qos.Outgoing.Qos1
     end
   end
 end
