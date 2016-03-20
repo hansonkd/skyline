@@ -29,11 +29,20 @@ defmodule Skyline do
 
   def start(_type, _args) do
 
-    :ets.new(:session_msg_ids, [:set, :named_table, :public])
+    :ets.new(:session_msg_ids, [:named_table, :public])
+
+    port = Application.fetch_env!(:skyline, :port)
+    app = Application.fetch_env!(:skyline, :app)
 
     children = [
-      worker(Skyline.Acceptor, [Skyline.AppConfig.default(), 8000])
+      worker(Skyline.Acceptor, [app, port])
     ]
+
+    alias Skyline.Amnesia.Topic.TopicDatabase
+    alias Skyline.Amnesia.Router.TreeDatabase
+
+    meta = TopicDatabase.metadata()
+    IO.puts("Meta: #{inspect meta}")
 
     opts = [strategy: :one_for_one, name: Skyline.Supervisor]
     Supervisor.start_link(children, opts)

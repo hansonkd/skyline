@@ -6,8 +6,8 @@ defmodule Skyline.Topic.Controller.Default.Subscribe do
     opts
   end
 
-  def subscribe(%Conn{message: msg, client: client}, _opts) do
-    Skyline.Topic.Utils.subscribe(msg, client)
+  def subscribe(%Conn{topic: topic, qos: qos, message: msg, client: client}, _opts) do
+    Skyline.Topic.Utils.subscribe(topic, qos, msg, client)
     :ok
   end
 

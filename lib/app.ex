@@ -1,8 +1,6 @@
 defmodule Skyline.AppConfig do
-  defstruct auth: %Skyline.Auth.NoAuth{},
-            topic_handlers: [],
-            fall_back_topic_handler: nil #%Skyline.Topic.PrePublishHook.Default{}
-
+  defstruct auth: nil,
+            router: nil
 
   def default() do
     %__MODULE__{}
@@ -12,4 +10,5 @@ defmodule Skyline.AppConfig do
   def add_topic_handler(self, h) do
 
   end
+
 end

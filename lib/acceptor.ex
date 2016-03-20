@@ -1,7 +1,8 @@
 defmodule Skyline.Acceptor do
-  @moduledoc """
-  A worker process which accepts new connections and starts the listeners
-  """
+  # A worker process which accepts new connections and starts the listeners
+
+  @moduledoc false
+
   import Socket
   alias Skyline.Session
   alias Skyline.Msg.Decode.Utils, as: Decoder
@@ -10,11 +11,11 @@ defmodule Skyline.Acceptor do
   import Supervisor.Spec
 
   def start_link(app, port) do
-    pid = spawn_link(fn -> init(port, app) end)
+    pid = spawn_link(fn -> init(app, port) end)
     {:ok, pid}
   end
 
-  def init(port, app) do
+  def init(app, port) do
     server = Skyline.Socket.listen(port)
     do_listen(server, app)
   end

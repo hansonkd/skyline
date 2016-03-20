@@ -40,7 +40,10 @@ defmodule Skyline.Msg.Decode.Utils do
         :connect -> Msg.Connect
         :conn_ack -> Msg.ConnAck
       end
-      mod.decode_body(msg, h)
+
+      ret = mod.decode_body(msg, h)
+      IO.puts("Ret Decode: #{inspect ret}")
+      ret
     end
 
     @spec get_msgid(binary) :: pos_integer

@@ -9,17 +9,16 @@ defmodule Skyline.Auth do
   end
 
   @spec connect(Skyline.socket, Skyline.Msg.Connect.t, Skyline.Client.t) :: connect_response
-  def connect(client, %Connect{} = con_msg, %Skyline.Client{app: app}) do
-    case Skyline.Auth.Protocol.new_connection(app.auth, con_msg) do
-      {:ok, auth_state} ->
-          case Session.start_link(client, con_msg, auth_state) do
+  def connect(client, %Connect{client_id: client_id} = con_msg, %Skyline.Client{app_config: config}) do
+    case Skyline.Auth.Protocol.new_connection(config.auth, con_msg) do
+      {:ok, auth_info} ->
+          case Session.start_link(client, client_id, auth_info) do
              {:error, {:already_started, pid}} ->
-                {:ok, ConnAck.new(:ok), pid, auth_state}
+                {:ok, ConnAck.new(:ok), pid, auth_info}
              {:ok, pid} ->
-                {:ok, ConnAck.new(:ok), pid, auth_state}
+                {:ok, ConnAck.new(:ok), pid, auth_info}
            end
       {:error, reason} -> {:error, ConnAck.new(reason)}
     end
   end
-
 end

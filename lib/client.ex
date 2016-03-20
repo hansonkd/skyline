@@ -8,8 +8,8 @@ defmodule Skyline.Client do
               client_id: nil,
               keep_alive_server_ms: nil,
               sess_pid: nil,
-              auth_state: nil,
-              app: nil
+              auth_info: nil,
+              app_config: nil
 
     use GenServer
 
@@ -20,11 +20,12 @@ defmodule Skyline.Client do
     alias Skyline.Handler
 
     def start_link(client, app, _opts \\ []) do
-      state = %Client{socket: client, app: app}
+      state = %Client{socket: client, app_config: app.init}
       GenServer.start_link(__MODULE__, state)
     end
 
-    def init(client) do
+    def init(%Client{client_id: client_id} = client) do
+
       GenServer.cast(self, :listen)
       {:ok, client}
     end
@@ -70,9 +71,11 @@ defmodule Skyline.Client do
             {:stop, :normal, state}
         _other ->
             IO.puts("Message #{inspect msg}")
-            new_state = Skyline.Handler.handle_msg(msg, state)
+
+            Skyline.Handler.handle_msg(msg, state)
+
             GenServer.cast(self, :verified_loop)
-            {:noreply, new_state}
+            {:noreply, state}
       end
     end
 
@@ -84,14 +87,14 @@ defmodule Skyline.Client do
     #end
 
     def handle_cast({:authenticate, msg}, %Client{socket: socket} = state) do
-        case Skyline.Auth.Dispatcher.connect(socket, msg, state) do
-          {:ok, smsg, sess_pid, auth_state} ->
+        case Skyline.Auth.connect(socket, msg, state) do
+          {:ok, smsg, sess_pid, auth_info} ->
               Skyline.Socket.send(socket, smsg)
               new_state = %{
                 state | client_id: msg.client_id,
                         keep_alive_server_ms: msg.keep_alive_server_ms,
                         sess_pid: sess_pid,
-                        auth_state: auth_state}
+                        auth_info: auth_info}
               GenServer.cast(self, :verified_loop)
               {:noreply, new_state}
           {:error, emsg} ->

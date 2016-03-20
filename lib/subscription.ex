@@ -16,9 +16,11 @@ defmodule Skyline.Subscription do
 
   import Amnesia
   use GenServer
-  use Skyline.Amnesia.Topic.Database
+
+  use Skyline.Amnesia.Topic.TopicDatabase
+  alias Skyline.Amnesia.Topic.TopicDatabase.StoredTopic
+
   import Skyline.Topic.Dispatcher
-  alias Skyline.Amnesia.Topic.Database.{StoredTopic}
   alias Skyline.Msg.{PublishReq}
 
   def start_link({client_id, sess_pid, topic, qos}, _opts \\ []) do
@@ -32,7 +34,6 @@ defmodule Skyline.Subscription do
     GenServer.cast(self, :check_for_stored_message)
     {:ok, state}
   end
-
   def handle_call({:reset, new_qos}, _from, state) do
     new_state = %{state | qos: new_qos, msg_queue: :queue.new}
     {:reply, {:ok, new_qos}, new_state}
@@ -45,6 +46,8 @@ defmodule Skyline.Subscription do
     {:noreply, state}
   end
   def handle_cast({:publish, %PublishReq{} = msg}, %State{client_id: client_id} = state) do
+    IO.puts("UPDATE: #{inspect client_id}")
+    :ets.update_counter(:session_msg_ids, client_id, 1)
     msg_id = :ets.update_counter(:session_msg_ids, client_id, 1)
     new_msg = PublishReq.convert_to_delivery(state.topic, state.qos, msg_id, false, msg)
     new_queue = :queue.in(new_msg, state.msg_queue)

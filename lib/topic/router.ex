@@ -59,6 +59,11 @@ defmodule Skyline.Topic.Router do
        """
        def call(conn, opts), do: do_call(conn, opts)
 
+       def to_function(opts \\ nil) do
+         nopts = init(opts)
+         fn(conn) -> call(conn, nopts) end
+       end
+
        defp match_route(conn, []) do
          match_route(conn, conn.method, Enum.map(conn.path_info, &URI.decode/1))
        end

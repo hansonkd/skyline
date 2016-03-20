@@ -5,23 +5,23 @@ defmodule Skyline.Topic.Utils do
   alias Skyline.Msg.{PublishReq, SubAck, Subscribe, Unsubscribe, UnsubAck}
   alias Skyline.Subscription
 
-  use Skyline.Amnesia.Topic.Database
-  alias Skyline.Amnesia.Topic.Database.StoredTopic
+  use Skyline.Amnesia.Topic.TopicDatabase
+  alias Skyline.Amnesia.Topic.TopicDatabase.StoredTopic
 
   @doc """
   Deliver the message to all subscribers, retain if necassary.
   """
-  @spec publish(PublishReq.t, Client.t) :: Client.t
-  def publish(%PublishReq{topic: topic} = msg, %Client{sess_pid: sess_pid, client_id: client_id, app: app} = state) do
-    if msg.retain do
+  @spec publish(String.t, Skyline.qos_type, PublishReq.t, Client.t) :: Client.t
+  def publish(topic, qos, %PublishReq{message: body, retain: retain} = msg, %Client{sess_pid: sess_pid, client_id: client_id} = state) do
+    if retain do
       Amnesia.transaction do
-        case StoredTopic.read(msg.topic) do
-          %StoredTopic{} = cst -> %{cst | message: msg.message}
-          _ -> %StoredTopic{topic_id: msg.topic, message: msg.message}
+        case StoredTopic.read(topic) do
+          %StoredTopic{} = cst -> %{cst | message: body}
+          _ -> %StoredTopic{topic_id: msg.topic, message: body}
         end |> StoredTopic.write
       end
     end
-    mod = qos_to_qos_mod(msg.qos)
+    mod = qos_to_qos_mod(qos)
     {:ok, _pid} = mod.start(sess_pid, client_id, msg)
     :ok
   end
@@ -29,19 +29,14 @@ defmodule Skyline.Topic.Utils do
   @doc """
   Sets up a subsription to the topic and register with tree dispatcher.
   """
-  @spec subscribe(Subscribe.t, Client.t) :: Client.t
-  def subscribe(%Subscribe{msg_id: msg_id, topics: topics} = msg, %Client{sess_pid: sess_pid, client_id: client_id} = state) do
-
-    qos_list = for {topic, qos} <- topics do
+  @spec subscribe(String.t, Skyline.qos_type, Subscribe.t, Client.t) :: Client.t
+  def subscribe(topic, qos, %Subscribe{msg_id: msg_id} = msg, %Client{sess_pid: sess_pid, client_id: client_id} = state) do
       case Subscription.start_link({client_id, sess_pid, topic, qos}) do
         {:ok, pid} -> qos
         {:error, {:already_started, pid}} ->
            {:ok, top_qos} = GenServer.call(pid, {:reset, qos})
            top_qos
       end
-    end
-    cast_msg(sess_pid, SubAck.new(qos_list, msg_id))
-    state
   end
 
   defp cast_msg(sess_pid, msg) do

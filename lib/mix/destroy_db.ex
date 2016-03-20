@@ -1,13 +1,13 @@
 defmodule Mix.Tasks.DestroyDb do
   use Mix.Task
-  use Skyline.Amnesia.Topic.Database
+  use Skyline.Amnesia.Topic.TopicDatabase
 
   def run(_) do
     # Start mnesia, or we can't do much.
     Amnesia.start
 
     # Destroy the database.
-    Database.destroy
+    TopicDatabase.destroy
 
     # Stop mnesia, so it flushes everything.
     Amnesia.stop

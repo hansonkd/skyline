@@ -1,6 +1,6 @@
 defmodule Mix.Tasks.CreateDb do
   use Mix.Task
-  use Skyline.Amnesia.Topic.Database
+  use Skyline.Amnesia.Topic.TopicDatabase
   use Skyline.Amnesia.Router.TreeDatabase
 
   def run(_) do
@@ -17,11 +17,12 @@ defmodule Mix.Tasks.CreateDb do
     # each one of them with the passed copying behaviour
     #
     # In this case it will keep a ram and disk copy on the current node.
-    Database.create(disk: [node])
+    TopicDatabase.create(disk: [node])
     TreeDatabase.create()
 
     # This waits for the database to be fully created.
-    Database.wait
+    TopicDatabase.wait
+    TreeDatabase.wait
 
     Amnesia.transaction do
       # ... initial data creation

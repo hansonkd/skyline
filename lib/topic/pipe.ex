@@ -40,11 +40,12 @@ defmodule Skyline.Topic.Pipe do
 
    quote do
      case unquote(compile_guards(call, guards)) do
-       {:halt, %Skyline.Msg.PublishReq{} = msg} = conn ->
+       {:halt, %Skyline.Topic.Conn{} = msg} = conn ->
          unquote(log_halt(pipe_type, pipe, env, builder_opts))
-         conn
+         :halt
        %Skyline.Topic.Conn{} = conn ->
          unquote(acc)
+       :ok -> :ok
        a ->
          IO.inspect({:error, a})
          raise unquote(error_message)
