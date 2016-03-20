@@ -5,7 +5,7 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.11.4">
-    <title>Skyline.Auth.Protocol – Skyline v0.0.1</title>
+    <title>Skyline.Auth.Protocol – skyline v0.0.1</title>
     <link rel="stylesheet" href="dist/app-1e374caa3d.css" />
     <script src="dist/sidebar_items.js"></script>
   </head>
@@ -24,7 +24,7 @@
   <a href="api-reference.html" class="sidebar-projectLink">
     <div class="sidebar-projectDetails">
       <h1 class="sidebar-projectName">
-        Skyline
+        skyline
       </h1>
       <h2 class="sidebar-projectVersion">
         v0.0.1
@@ -46,6 +46,8 @@
     
 
     
+      <li><a id="exceptions-list" href="#full-list">Exceptions</a></li>
+    
 
     
       <li><a id="protocols-list" href="#full-list">Protocols</a></li>
@@ -61,7 +63,7 @@
 
 
       <h1>
-        <small class="visible-xs">Skyline v0.0.1</small>
+        <small class="visible-xs">skyline v0.0.1</small>
         Skyline.Auth.Protocol
         
           <small>protocol</small>
@@ -107,7 +109,7 @@
     </h2>
     <div class="summary-row">
   <div class="summary-signature">
-    <a href="#new_connection/1">new_connection(con_msg)</a>
+    <a href="#new_connection/2">new_connection(mod, con_msg)</a>
   </div>
   
 </div>
@@ -154,12 +156,12 @@
             </a>
             Functions
           </h1>
-          <div class="detail" id="new_connection/1">
+          <div class="detail" id="new_connection/2">
   <div class="detail-header">
-    <a href="#new_connection/1" class="detail-link" title="Link to this function">
+    <a href="#new_connection/2" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">new_connection(con_msg)</span>
+    <span class="signature">new_connection(mod, con_msg)</span>
       
   </div>
   
@@ -167,7 +169,7 @@
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">new_connection(<a href="Skyline.Msg.Connect.html#t:t/0">Skyline.Msg.Connect.t</a>) :: <a href="#t:connection_response/0">connection_response</a></code></pre>
+          <pre><code class="elixir">new_connection(Skyline.Auth.Protocol, Skyline.Msg.Connect.t) :: <a href="#t:connection_response/0">connection_response</a></code></pre>
         
       </div>
     </div>

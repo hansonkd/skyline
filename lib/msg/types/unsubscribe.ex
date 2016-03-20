@@ -1,9 +1,10 @@
 defmodule Skyline.Msg.Unsubscribe do
-  @moduledoc """
-  Unsubscribe MQTT Message
+  @moduledoc false
 
-  http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718072
-  """
+  # Unsubscribe MQTT Message
+  #
+  # http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718072
+
   defstruct topics: [],
             msg_id: nil
   @type t :: %__MODULE__{msg_id: pos_integer, topics: [String.t]}

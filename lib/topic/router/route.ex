@@ -5,7 +5,6 @@ defmodule Skyline.Topic.Router.Route do
   @moduledoc false
 
   alias Skyline.Topic.Router.Route
-  import Skyline.Topic.Conn
 
   @doc """
   The `Skyline.Topic.Router.Route` struct. It stores:
@@ -54,7 +53,7 @@ defmodule Skyline.Topic.Router.Route do
   defp verb_match(:*), do: Macro.var(:_verb, nil)
   defp verb_match(verb), do: verb
 
-  defp build_path_and_binding(%Route{path: path} = route) do
+  defp build_path_and_binding(%Route{path: path}) do
     {params, segments} = Skyline.Topic.Pipe.Utils.build_path_match(path)
 
     binding = for var <- params do
@@ -92,7 +91,6 @@ defmodule Skyline.Topic.Router.Route do
   end
 
   defp build_pipes(route) do
-    IO.inspect({:route, route})
     quote do
       var!(conn)
       |> Skyline.Topic.Conn.put_private(:phoenix_pipelines, unquote(route.pipe_through))

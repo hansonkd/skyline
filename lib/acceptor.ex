@@ -1,7 +1,9 @@
 defmodule Skyline.Acceptor do
+  @moduledoc false
+
   # A worker process which accepts new connections and starts the listeners
 
-  @moduledoc false
+
 
   import Socket
   alias Skyline.Session

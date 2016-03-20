@@ -1,9 +1,10 @@
 defmodule Skyline.Msg.PubRec do
-  @moduledoc """
-  PingRec MQTT Message
+  @moduledoc false
+  
+  # PingRec MQTT Message
+  #
+  # http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718048
 
-  http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718048
-  """
   defstruct msg_id: nil
   @type t :: %__MODULE__{msg_id: pos_integer}
   @behaviour Skyline.Msg.Decode

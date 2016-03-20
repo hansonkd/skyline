@@ -1,4 +1,4 @@
-defmodule Skyline.Topic.Controller.Default.Subscribe do
+defmodule Skyline.Topic.Controller.Default.SubscribeController do
   use Skyline.Topic.Controller
   alias Skyline.Topic.Conn
 
@@ -7,8 +7,8 @@ defmodule Skyline.Topic.Controller.Default.Subscribe do
   end
 
   def subscribe(%Conn{topic: topic, qos: qos, message: msg, client: client}, _opts) do
-    Skyline.Topic.Utils.subscribe(topic, qos, msg, client)
-    :ok
+    ret_qos = Skyline.Topic.Utils.subscribe(topic, qos, msg, client)
+    {:ok, ret_qos}
   end
 
 end

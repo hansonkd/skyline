@@ -1,35 +1,35 @@
 defmodule Skyline.Subscription do
-  @moduledoc """
+  @moduledoc false
 
-  Manages QoS and queueing the messages for a certain subscribe Topic.
+  # Manages QoS and queueing the messages for a certain subscribe Topic.
 
-  """
-  defmodule State do
-    defstruct client_id: nil,
-              sess_pid: nil,
-              topic: "",
-              qos: nil,
-              current_msg: nil,
-              msg_queue: :queue.new,
-              qos_pid: nil
-  end
 
-  import Amnesia
+  defstruct client_id: nil,
+            sess_pid: nil,
+            topic: "",
+            qos: nil,
+            current_msg: nil,
+            msg_queue: :queue.new,
+            qos_pid: nil
+
+
+
   use GenServer
+
+  alias Skyline.Subscription
+  alias Skyline.Msg.PublishReq
 
   use Skyline.Amnesia.Topic.TopicDatabase
   alias Skyline.Amnesia.Topic.TopicDatabase.StoredTopic
 
-  import Skyline.Topic.Dispatcher
-  alias Skyline.Msg.{PublishReq}
 
   def start_link({client_id, sess_pid, topic, qos}, _opts \\ []) do
     name = {client_id, topic}
-    state = %State{client_id: client_id, sess_pid: sess_pid, topic: topic, qos: qos}
+    state = %Subscription{client_id: client_id, sess_pid: sess_pid, topic: topic, qos: qos}
     GenServer.start_link(__MODULE__, state, name: {:global, name})
   end
 
-  def init(%State{topic: topic} = state) do
+  def init(%Subscription{topic: topic} = state) do
     Skyline.Topic.Dispatcher.add_topic_subscription(topic, self)
     GenServer.cast(self, :check_for_stored_message)
     {:ok, state}
@@ -38,15 +38,14 @@ defmodule Skyline.Subscription do
     new_state = %{state | qos: new_qos, msg_queue: :queue.new}
     {:reply, {:ok, new_qos}, new_state}
   end
-  def handle_call(:get_qos, _from, %State{qos: qos} = state) do
+  def handle_call(:get_qos, _from, %Subscription{qos: qos} = state) do
     {:reply, {:ok, qos}, state}
   end
   def handle_cast(:check_for_stored_message, state) do
     check_for_stored_message(state)
     {:noreply, state}
   end
-  def handle_cast({:publish, %PublishReq{} = msg}, %State{client_id: client_id} = state) do
-    IO.puts("UPDATE: #{inspect client_id}")
+  def handle_cast({:publish, %PublishReq{} = msg}, %Subscription{client_id: client_id} = state) do
     :ets.update_counter(:session_msg_ids, client_id, 1)
     msg_id = :ets.update_counter(:session_msg_ids, client_id, 1)
     new_msg = PublishReq.convert_to_delivery(state.topic, state.qos, msg_id, false, msg)
@@ -54,7 +53,7 @@ defmodule Skyline.Subscription do
     GenServer.cast(self, :process_queue)
     {:noreply, %{state | msg_queue: new_queue}}
   end
-  def handle_cast(:process_queue, %State{msg_queue: msg_queue, qos_pid: qos_pid} = state) do
+  def handle_cast(:process_queue, %Subscription{msg_queue: msg_queue, qos_pid: qos_pid} = state) do
 
     new_qos_pid = if not is_pid(qos_pid) || not Process.alive?(qos_pid) do
       case :queue.out(msg_queue) do
@@ -70,7 +69,7 @@ defmodule Skyline.Subscription do
 
     {:noreply, %{state | qos_pid: new_qos_pid}}
   end
-  def handle_cast({:finish_msg, msg_id}, %State{msg_queue: msg_queue} = state) do
+  def handle_cast({:finish_msg, msg_id}, %Subscription{msg_queue: msg_queue} = state) do
      new_queue = case :queue.out(msg_queue) do
         {{:value, msg}, new_queue} ->
           if msg.msg_id == msg_id do
@@ -85,16 +84,6 @@ defmodule Skyline.Subscription do
         GenServer.cast(self, :process_queue)
       end
       {:noreply, %{state | msg_queue: new_queue}}
-  end
-
-  def handle_cast(other, state) do
-    IO.puts("not matched")
-    IO.inspect({other, state})
-    {:noreply, state}
-  end
-
-  defp send_message(msg, %State{sess_pid: sess_pid}) do
-    GenServer.cast(sess_pid, {:msg, msg})
   end
 
   defp check_for_stored_message(state) do

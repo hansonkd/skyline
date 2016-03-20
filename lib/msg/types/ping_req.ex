@@ -1,9 +1,10 @@
 defmodule Skyline.Msg.PingReq do
-  @moduledoc """
-  PingReq MQTT Message
+  @moduledoc false
 
-  http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718081
-  """
+  # PingReq MQTT Message
+  #
+  # http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718081
+
   defstruct []
   @type t :: %__MODULE__{}
   @behaviour Skyline.Msg.Decode

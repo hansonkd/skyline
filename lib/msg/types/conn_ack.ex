@@ -1,9 +1,9 @@
 defmodule Skyline.Msg.ConnAck do
-  @moduledoc """
-  ConnAck MQTT Message
+  @moduledoc false
+  #ConnAck MQTT Message
+  #
+  #http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718033
 
-  http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718033
-  """
   @behaviour Skyline.Msg.Decode
 
   defstruct status: :ok
@@ -18,7 +18,7 @@ defmodule Skyline.Msg.ConnAck do
   end
 
   @spec decode_body(binary, Skyline.Msg.FixedHeader.t) :: __MODULE__.t
-  def decode_body(<<_reserved :: bytes-size(1), status :: integer-size(8)>>, h) do
+  def decode_body(<<_reserved :: bytes-size(1), status :: integer-size(8)>>, _h) do
     new(decode_status(status))
   end
 

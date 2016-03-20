@@ -1,19 +1,20 @@
 defmodule Skyline.Topic.Dispatcher do
-    @moduledoc """
-    Router
+    @moduledoc false
 
-    A message dispatch scheme inspired by emqttd.
+    # Router
+    #
+    # A message dispatch scheme inspired by emqttd.
+    #
+    # This tree differs from emqttd by acting as a registry for the pids themselves
+    # instead of acting as a registry for active topics, which are then dispatched seperately.
+    #
+    # It also differs by each key being immutable and tagged by pid of the subscriber process.
+    # This makes write locks unecassary and lets you remove subscriptions and prune leaves without
+    # walking the tree.
+    # In emqttd trees, the nodes count the leaves by the value on the edge which gets mutated.
+    # 
+    # No benchmarks have been done to see if one is more efficient then the other.
 
-    This tree differs from emqttd by acting as a registry for the pids themselves
-    instead of acting as a registry for active topics, which are then dispatched seperately.
-
-    It also differs by each key being immutable and tagged by pid of the subscriber process.
-    This makes write locks unecassary and lets you remove subscriptions and prune leaves without
-    walking the tree.
-    In emqttd trees, the nodes count the leaves by the value on the edge which gets mutated.
-
-    No benchmarks have been done to see if one is more efficient then the other.
-    """
     use Skyline.Amnesia.Router.TreeDatabase
     require Exquisite
     require Amnesia

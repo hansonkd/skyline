@@ -1,9 +1,10 @@
 defmodule Skyline.Msg.PubAck do
-  @moduledoc """
-  PubAck MQTT Message
+  @moduledoc false
 
-  http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718043
-  """
+  # PubAck MQTT Message
+  # 
+  # http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718043
+
   defstruct msg_id: nil
   @type t :: %__MODULE__{msg_id: pos_integer}
   @behaviour Skyline.Msg.Decode

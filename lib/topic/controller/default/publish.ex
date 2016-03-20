@@ -1,4 +1,4 @@
-defmodule Skyline.Topic.Controller.Default.Publish do
+defmodule Skyline.Topic.Controller.Default.PublishController do
   use Skyline.Topic.Controller
   alias Skyline.Topic.Conn
 

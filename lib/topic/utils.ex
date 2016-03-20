@@ -1,8 +1,10 @@
 defmodule Skyline.Topic.Utils do
+  @moduledoc """
+  Utility functions for building Publish and Subscribe Controllers.
+  """
 
   alias Skyline.Client
-  alias Skyline.Topic.PublishHandler
-  alias Skyline.Msg.{PublishReq, SubAck, Subscribe, Unsubscribe, UnsubAck}
+  alias Skyline.Msg.{PublishReq, Subscribe}
   alias Skyline.Subscription
 
   use Skyline.Amnesia.Topic.TopicDatabase
@@ -12,7 +14,7 @@ defmodule Skyline.Topic.Utils do
   Deliver the message to all subscribers, retain if necassary.
   """
   @spec publish(String.t, Skyline.qos_type, PublishReq.t, Client.t) :: Client.t
-  def publish(topic, qos, %PublishReq{message: body, retain: retain} = msg, %Client{sess_pid: sess_pid, client_id: client_id} = state) do
+  def publish(topic, qos, %PublishReq{message: body, retain: retain} = msg, %Client{sess_pid: sess_pid, client_id: client_id}) do
     if retain do
       Amnesia.transaction do
         case StoredTopic.read(topic) do
@@ -30,17 +32,13 @@ defmodule Skyline.Topic.Utils do
   Sets up a subsription to the topic and register with tree dispatcher.
   """
   @spec subscribe(String.t, Skyline.qos_type, Subscribe.t, Client.t) :: Client.t
-  def subscribe(topic, qos, %Subscribe{msg_id: msg_id} = msg, %Client{sess_pid: sess_pid, client_id: client_id} = state) do
+  def subscribe(topic, qos, %Subscribe{}, %Client{sess_pid: sess_pid, client_id: client_id}) do
       case Subscription.start_link({client_id, sess_pid, topic, qos}) do
-        {:ok, pid} -> qos
+        {:ok, _pid} -> qos
         {:error, {:already_started, pid}} ->
            {:ok, top_qos} = GenServer.call(pid, {:reset, qos})
            top_qos
       end
-  end
-
-  defp cast_msg(sess_pid, msg) do
-    GenServer.cast(sess_pid, {:msg, msg})
   end
 
   defp qos_to_qos_mod(qos) do

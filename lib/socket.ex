@@ -1,7 +1,5 @@
 defmodule Skyline.Socket do
-    @moduledoc """
-    Socket aliases.
-    """
+    @moduledoc false
 
     alias Skyline.Msg.Encode
 
@@ -25,12 +23,17 @@ defmodule Skyline.Socket do
       Socket.Stream.send(socket, raw_msg)
     end
 
-    def read_bytes(socket, nr) do
-        result = case Socket.Stream.recv(socket, nr) do
+    def close(socket) do
+      Socket.close(socket)
+    end
+
+    def recv(socket, nr, timeout \\ :infinity) do
+      Socket.Stream.recv(socket, nr, timeout: timeout)
+    end
+    def read_bytes(socket, nr, timeout \\ :infinity) do
+        result = case recv(socket, nr, timeout) do
           {:ok, bytes} -> bytes
-          # {:error, reason} -> Lager.error("read_bytes: receiving #{nr} bytes failed with #{inspect reason}")
           any ->
-            #IO.inspect("Received a strange message: #{inspect any}")
             any
         end
         result

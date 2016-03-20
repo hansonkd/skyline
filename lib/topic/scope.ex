@@ -19,7 +19,6 @@ defmodule Skyline.Topic.Scope do
   Builds a route based on the top of the stack.
   """
   def route(module, verb, path, pipe, pipe_opts, opts) do
-    IO.inspect({"Pipe", pipe})
     private = Keyword.get(opts, :private, %{})
     assigns = Keyword.get(opts, :assigns, %{})
 
@@ -101,13 +100,6 @@ defmodule Skyline.Topic.Scope do
     [alias|extract(stack, :alias)]
     |> Enum.reverse()
     |> Module.concat()
-  end
-
-  defp join_as(_stack, nil), do: nil
-  defp join_as(stack, as) when is_atom(as) or is_binary(as) do
-    [as|extract(stack, :as)]
-    |> Enum.reverse()
-    |> Enum.join("_")
   end
 
   defp join_private(stack, private) do

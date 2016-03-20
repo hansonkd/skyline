@@ -12,7 +12,6 @@ defmodule Skyline.Msg.PublishReq do
   @type t :: %__MODULE__{topic: String.t, msg_id: pos_integer, message: String.t, qos: Skyline.qos_type, retain: boolean}
   @behaviour Skyline.Msg.Decode
 
-  alias Skyline.Msg.FixedHeader
   alias Skyline.Msg.Decode.Utils
 
 

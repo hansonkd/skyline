@@ -1,9 +1,10 @@
 defmodule Skyline.Msg.SubAck do
-  @moduledoc """
-  SubAck MQTT Message
+  @moduledoc false
 
-  http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718068
-  """
+  # SubAck MQTT Message
+  #
+  # http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718068
+  
   defstruct msg_id: nil,
             granted_qos: []
   @type t :: %__MODULE__{msg_id: pos_integer, granted_qos: [Skyline.qos_type]}

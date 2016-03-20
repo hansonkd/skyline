@@ -1,9 +1,10 @@
 defmodule Skyline.Msg.FixedHeader do
-  @moduledoc """
-  MQTT Fixed header
+  @moduledoc false
 
-  http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718020
-  """
+  #MQTT Fixed header
+  #
+  #http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718020
+  
   defstruct message_type: :reserved,
             duplicate: false,
             qos: :fire_and_forget,

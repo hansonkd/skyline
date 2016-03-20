@@ -1,9 +1,10 @@
 defmodule Skyline.Msg.PublishDelivery do
-  @moduledoc """
-  Publish MQTT Message | Broker -> Client Publish
+  @moduledoc false
 
-  http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718037
-  """
+  # Publish MQTT Message | Broker -> Client Publish
+  #
+  # http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718037
+  
   defstruct subscription_topic: "", # We have to send back the subscription pattern that picked it up.
             msg_id: nil,
             message: "",

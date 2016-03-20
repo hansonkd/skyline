@@ -5,7 +5,7 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.11.4">
-    <title>API Reference – Skyline v0.0.1</title>
+    <title>API Reference – skyline v0.0.1</title>
     <link rel="stylesheet" href="dist/app-1e374caa3d.css" />
     <script src="dist/sidebar_items.js"></script>
   </head>
@@ -24,7 +24,7 @@
   <a href="api-reference.html" class="sidebar-projectLink">
     <div class="sidebar-projectDetails">
       <h1 class="sidebar-projectName">
-        Skyline
+        skyline
       </h1>
       <h2 class="sidebar-projectVersion">
         v0.0.1
@@ -46,6 +46,8 @@
     
 
     
+      <li><a id="exceptions-list" href="#full-list">Exceptions</a></li>
+    
 
     
       <li><a id="protocols-list" href="#full-list">Protocols</a></li>
@@ -60,7 +62,7 @@
   <div id="content" class="content-inner">
 
   <h1>
-    <small class="visible-xs">Skyline v0.0.1</small>
+    <small class="visible-xs">skyline v0.0.1</small>
     API Reference
   </h1>
 
@@ -68,6 +70,8 @@
     
       <li><a href="#modules">Modules</a></li>
     
+    
+      <li><a href="#exceptions">Exceptions</a></li>
     
     
       <li><a href="#protocols">Protocols</a></li>
@@ -79,7 +83,7 @@
       <h1 class="section-heading">Modules</h1>
       <div class="summary">
         <div class="summary-row">
-  <div class="summary-signature"><a href="Incoming.html">Incoming</a></div>
+  <div class="summary-signature"><a href="Inline.html">Inline</a></div>
   
 </div>
 <div class="summary-row">
@@ -91,7 +95,15 @@
   
 </div>
 <div class="summary-row">
+  <div class="summary-signature"><a href="Mix.Tasks.TestRouter.html">Mix.Tasks.TestRouter</a></div>
+  
+</div>
+<div class="summary-row">
   <div class="summary-signature"><a href="Mix.Tasks.TestTree.html">Mix.Tasks.TestTree</a></div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="MyPlug.html">MyPlug</a></div>
   
 </div>
 <div class="summary-row">
@@ -99,42 +111,10 @@
   
 </div>
 <div class="summary-row">
-  <div class="summary-signature"><a href="Skyline.Acceptor.html">Skyline.Acceptor</a></div>
-  
-    <div class="summary-synopsis"><p>A worker process which accepts new connections and starts the listeners</p>
-</div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature"><a href="Skyline.Amnesia.Router.html">Skyline.Amnesia.Router</a></div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature"><a href="Skyline.Amnesia.Router.TreeDatabase.html">Skyline.Amnesia.Router.TreeDatabase</a></div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature"><a href="Skyline.Amnesia.Router.TreeDatabase.TreeEdge.html">Skyline.Amnesia.Router.TreeDatabase.TreeEdge</a></div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature"><a href="Skyline.Amnesia.Topic.html">Skyline.Amnesia.Topic</a></div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature"><a href="Skyline.Amnesia.Topic.Database.html">Skyline.Amnesia.Topic.Database</a></div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature"><a href="Skyline.Amnesia.Topic.Database.StoredTopic.html">Skyline.Amnesia.Topic.Database.StoredTopic</a></div>
-  
-</div>
-<div class="summary-row">
   <div class="summary-signature"><a href="Skyline.AppConfig.html">Skyline.AppConfig</a></div>
   
+    <div class="summary-synopsis"><p>Config that is used to authorize and handle messages</p>
 </div>
-<div class="summary-row">
-  <div class="summary-signature"><a href="Skyline.Auth.Dispatcher.html">Skyline.Auth.Dispatcher</a></div>
   
 </div>
 <div class="summary-row">
@@ -142,118 +122,9 @@
   
 </div>
 <div class="summary-row">
-  <div class="summary-signature"><a href="Skyline.Client.html">Skyline.Client</a></div>
-  
-    <div class="summary-synopsis"><p>Listens for new message on socket</p>
-</div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature"><a href="Skyline.Handler.html">Skyline.Handler</a></div>
-  
-    <div class="summary-synopsis"><p>Functions to help dispatch messages</p>
-</div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature"><a href="Skyline.Msg.ConnAck.html">Skyline.Msg.ConnAck</a></div>
-  
-    <div class="summary-synopsis"><p>ConnAck MQTT Message</p>
-</div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature"><a href="Skyline.Msg.Connect.html">Skyline.Msg.Connect</a></div>
-  
-    <div class="summary-synopsis"><p>Connect MQTT Message</p>
-</div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature"><a href="Skyline.Msg.Decode.html">Skyline.Msg.Decode</a></div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature"><a href="Skyline.Msg.Decode.Utils.html">Skyline.Msg.Decode.Utils</a></div>
-  
-    <div class="summary-synopsis"><p>Common methods for decoding</p>
-</div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature"><a href="Skyline.Msg.Disconnect.html">Skyline.Msg.Disconnect</a></div>
-  
-    <div class="summary-synopsis"><p>Disconnect MQTT Message</p>
-</div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature"><a href="Skyline.Msg.Encode.Utils.html">Skyline.Msg.Encode.Utils</a></div>
-  
-    <div class="summary-synopsis"><p>Common methods for encoding</p>
-</div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature"><a href="Skyline.Msg.FixedHeader.html">Skyline.Msg.FixedHeader</a></div>
-  
-    <div class="summary-synopsis"><p>MQTT Fixed header</p>
-</div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature"><a href="Skyline.Msg.PingReq.html">Skyline.Msg.PingReq</a></div>
-  
-    <div class="summary-synopsis"><p>PingReq MQTT Message</p>
-</div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature"><a href="Skyline.Msg.PingResp.html">Skyline.Msg.PingResp</a></div>
-  
-    <div class="summary-synopsis"><p>PingResp MQTT Message</p>
-</div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature"><a href="Skyline.Msg.PubAck.html">Skyline.Msg.PubAck</a></div>
-  
-    <div class="summary-synopsis"><p>PubAck MQTT Message</p>
-</div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature"><a href="Skyline.Msg.PubComp.html">Skyline.Msg.PubComp</a></div>
-  
-    <div class="summary-synopsis"><p>PubComp MQTT Message</p>
-</div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature"><a href="Skyline.Msg.PubRec.html">Skyline.Msg.PubRec</a></div>
-  
-    <div class="summary-synopsis"><p>PingRec MQTT Message</p>
-</div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature"><a href="Skyline.Msg.PublishDelivery.html">Skyline.Msg.PublishDelivery</a></div>
-  
-    <div class="summary-synopsis"><p>Publish MQTT Message | Broker -&gt; Client</p>
-</div>
-  
-</div>
-<div class="summary-row">
   <div class="summary-signature"><a href="Skyline.Msg.PublishReq.html">Skyline.Msg.PublishReq</a></div>
   
     <div class="summary-synopsis"><p>Publish MQTT Message | Client -&gt; Broker</p>
-</div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature"><a href="Skyline.Msg.SubAck.html">Skyline.Msg.SubAck</a></div>
-  
-    <div class="summary-synopsis"><p>SubAck MQTT Message</p>
 </div>
   
 </div>
@@ -265,86 +136,95 @@
   
 </div>
 <div class="summary-row">
-  <div class="summary-signature"><a href="Skyline.Msg.UnsubAck.html">Skyline.Msg.UnsubAck</a></div>
+  <div class="summary-signature"><a href="Skyline.Topic.Conn.html">Skyline.Topic.Conn</a></div>
   
-    <div class="summary-synopsis"><p>UnsubAck MQTT Message</p>
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Skyline.Topic.Controller.html">Skyline.Topic.Controller</a></div>
+  
+    <div class="summary-synopsis"><p>This module implements the controller pipeline responsible for handling requests.</p>
+<h2>The pipeline</h2>
+<p>The goal of a controller is to receive a request and invoke the desired
+action. The whole flow of the controller is managed by a single pipeline:</p>
+<pre><code class="elixir">defmodule UserController do
+  use Skyline.Topic.Controller
+  require Logger
+  pipe :log_message, &quot;before action&quot;
+  def show(conn, _params) do
+    Logger.debug &quot;show/2&quot;
+    send_resp(conn, 200, &quot;OK&quot;)
+  end
+  defp log_message(conn, msg) do
+    Logger.debug msg
+    conn
+  end
+end</code></pre>
+<p>When invoked, this pipeline will print:</p>
+<pre><code class="elixir">before action
+show/2</code></pre>
+<p>As any other pipeline, we can halt at any step by calling
+<code class="inline">Skyline.Topic.Conn.halt/1</code> (which is by default imported into controllers).
+If we change <code class="inline">log_message/2</code> to:</p>
+<pre><code class="elixir">def log_message(conn, msg) do
+  Logger.debug msg
+  halt(conn)
+end</code></pre>
+<p>it will print only:</p>
+<pre><code class="elixir">before action</code></pre>
+<p>As the rest of the pipeline (the action and the after action pipe)
+will never be invoked.</p>
+<h2>Guards</h2>
+<p><a href="#pipe/2"><code class="inline">pipe/2</code></a> supports guards, allowing a developer to configure a pipe to only
+run in some particular action:</p>
+<pre><code class="elixir">pipe :log_message, &quot;before show and edit&quot; when action in [:show, :edit]
+pipe :log_message, &quot;before all but index&quot; when not action in [:index]</code></pre>
+<p>The first pipe will run only when action is show or edit.
+The second pipe will always run, except for the index action.
+Those guards work like regular Elixir guards and the only variables accessible
+in the guard are <code class="inline">conn</code>, the <code class="inline">action</code> as an atom and the <code class="inline">controller</code> as an
+alias.</p>
+<h2>Controllers are pipes</h2>
+<p>Like routers, controllers are pipes, but they are wired to dispatch
+to a particular function which is called an action.
+For example, the route:</p>
+<pre><code class="elixir">get &quot;/users/:id&quot;, UserController, :show</code></pre>
+<p>will invoke <code class="inline">UserController</code> as a pipe:</p>
+<pre><code class="elixir">UserController.call(conn, :show)</code></pre>
+<p>which will trigger the pipe pipeline and which will eventually
+invoke the inner action pipe that dispatches to the <code class="inline">show/2</code>
+function in the <code class="inline">UserController</code>.
+As controllers are pipes, they implement both <code class="inline">init/1</code> and
+<code class="inline">call/2</code>, and it also provides a function named <code class="inline">action/2</code>
+which is responsible for dispatching the appropriate action
+after the pipe stack (and is also overridable)</p>
 </div>
   
 </div>
 <div class="summary-row">
-  <div class="summary-signature"><a href="Skyline.Msg.Unsubscribe.html">Skyline.Msg.Unsubscribe</a></div>
-  
-    <div class="summary-synopsis"><p>Unsubscribe MQTT Message</p>
-</div>
+  <div class="summary-signature"><a href="Skyline.Topic.Controller.Default.PublishController.html">Skyline.Topic.Controller.Default.PublishController</a></div>
   
 </div>
 <div class="summary-row">
-  <div class="summary-signature"><a href="Skyline.Qos.Incoming.Qos0.html">Skyline.Qos.Incoming.Qos0</a></div>
-  
-    <div class="summary-synopsis"><p>Incoming QoS0</p>
-</div>
+  <div class="summary-signature"><a href="Skyline.Topic.Controller.Default.SubscribeController.html">Skyline.Topic.Controller.Default.SubscribeController</a></div>
   
 </div>
 <div class="summary-row">
-  <div class="summary-signature"><a href="Skyline.Qos.Incoming.Qos1.html">Skyline.Qos.Incoming.Qos1</a></div>
-  
-    <div class="summary-synopsis"><p>Incoming QoS1</p>
-</div>
+  <div class="summary-signature"><a href="Skyline.Topic.Controller.Publish.html">Skyline.Topic.Controller.Publish</a></div>
   
 </div>
 <div class="summary-row">
-  <div class="summary-signature"><a href="Skyline.Qos.Outgoing.Qos0.html">Skyline.Qos.Outgoing.Qos0</a></div>
-  
-    <div class="summary-synopsis"><p>Outgoing QoS0</p>
-</div>
+  <div class="summary-signature"><a href="Skyline.Topic.Controller.Subscribe.html">Skyline.Topic.Controller.Subscribe</a></div>
   
 </div>
 <div class="summary-row">
-  <div class="summary-signature"><a href="Skyline.Qos.Outgoing.Qos1.html">Skyline.Qos.Outgoing.Qos1</a></div>
-  
-    <div class="summary-synopsis"><p>Outgoing QoS1</p>
-</div>
+  <div class="summary-signature"><a href="Skyline.Topic.Router.html">Skyline.Topic.Router</a></div>
   
 </div>
 <div class="summary-row">
-  <div class="summary-signature"><a href="Skyline.Topic.Dispatcher.html">Skyline.Topic.Dispatcher</a></div>
+  <div class="summary-signature"><a href="Skyline.Topic.Utils.html">Skyline.Topic.Utils</a></div>
   
-    <div class="summary-synopsis"><p>Router</p>
+    <div class="summary-synopsis"><p>Utility functions for building Publish and Subscribe Controllers</p>
 </div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature"><a href="Skyline.Session.html">Skyline.Session</a></div>
-  
-    <div class="summary-synopsis"><p>Responsible for writing messages to a socket, starting up new subcriptions,
-and managing the session</p>
-</div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature"><a href="Skyline.Socket.html">Skyline.Socket</a></div>
-  
-    <div class="summary-synopsis"><p>Socket aliases</p>
-</div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature"><a href="Skyline.Subscription.html">Skyline.Subscription</a></div>
-  
-    <div class="summary-synopsis"><p>Manages QoS and queueing the messages for a certain subscribe Topic</p>
-</div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature"><a href="Skyline.Subscription.State.html">Skyline.Subscription.State</a></div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature"><a href="Skyline.Topic.PublishDispatcher.html">Skyline.Topic.PublishDispatcher</a></div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature"><a href="Skyline.Topic.PublishHandler.Default.html">Skyline.Topic.PublishHandler.Default</a></div>
   
 </div>
 
@@ -352,6 +232,33 @@ and managing the session</p>
     </section>
   
 
+  
+    <section id="exceptions" class="details-list">
+      <h1 class="section-heading">Exceptions</h1>
+      <div class="summary">
+        <div class="summary-row">
+  <div class="summary-signature"><a href="Skyline.Topic.Pipe.InvalidSpecError.html">Skyline.Topic.Pipe.InvalidSpecError</a></div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Skyline.Topic.Router.NoRouteError.html">Skyline.Topic.Router.NoRouteError</a></div>
+  
+    <div class="summary-synopsis"><p>Exception raised when no route is found</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Skyline.WrapperError.html">Skyline.WrapperError</a></div>
+  
+    <div class="summary-synopsis"><p>Wraps the connection in an error which is meant
+to be handled upper in the stack.
+Used by both <code class="inline">Pipe.Debugger</code> and <code class="inline">Pipe.ErrorHandler</code></p>
+</div>
+  
+</div>
+
+      </div>
+    </section>
   
 
   
@@ -367,10 +274,6 @@ and managing the session</p>
   
     <div class="summary-synopsis"><p>Protocol for converting messages into binary</p>
 </div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature"><a href="Skyline.Topic.PublishHandler.html">Skyline.Topic.PublishHandler</a></div>
   
 </div>
 

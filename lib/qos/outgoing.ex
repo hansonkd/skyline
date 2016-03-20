@@ -1,12 +1,13 @@
 defmodule Skyline.Qos.Outgoing.Qos0 do
-  @moduledoc """
-  Outgoing QoS0.
+  @moduledoc false
 
-  QoS0 is fire and forget so no observer process is needed.
-  """
+  # Outgoing QoS0.
+  #
+  # QoS0 is fire and forget so no observer process is needed.
+
   defstruct msg_queue: :queue.new
 
-  def start(sess_pid, sub_id, client_id, msg) do
+  def start(sess_pid, sub_id, _client_id, msg) do
     GenServer.cast(sess_pid, {:msg, msg})
     GenServer.cast(sub_id, {:finish_msg, msg.msg_id})
     {:ok, nil}
@@ -15,18 +16,18 @@ defmodule Skyline.Qos.Outgoing.Qos0 do
 end
 
 defmodule Skyline.Qos.Outgoing.Qos1 do
-  @moduledoc """
-  Outgoing QoS1.
+  @moduledoc false
 
-  QoS1 requires an acknowledgement, so we much have a process to wait for the client's
-  acknowledgement or resend.
-  """
+  # Outgoing QoS1.
+  #
+  # QoS1 requires an acknowledgement, so we much have a process to wait for the client's
+  # acknowledgement or resend.
+
   defstruct msg: nil,
             sess_pid: nil,
             sub_id: nil
 
   use GenServer
-  import Skyline.Topic.Dispatcher
   alias Skyline.Qos.Outgoing.Qos1
   alias Skyline.Msg.PubAck
 

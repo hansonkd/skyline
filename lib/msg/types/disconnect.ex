@@ -1,9 +1,10 @@
 defmodule Skyline.Msg.Disconnect do
-  @moduledoc """
-  Disconnect MQTT Message
+  @moduledoc false
 
-  http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718090
-  """
+  # Disconnect MQTT Message
+  #
+  # http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718090
+  
   defstruct []
   @type t :: %__MODULE__{}
   @behaviour Skyline.Msg.Decode

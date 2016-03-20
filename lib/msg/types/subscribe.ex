@@ -17,7 +17,7 @@ defmodule Skyline.Msg.Subscribe do
 
   @spec decode_body(binary, Skyline.Msg.FixedHeader.t) :: __MODULE__.t
   def decode_body(<<msg_id :: unsigned-integer-size(16), payload :: binary>>, _hdr) do
-    topics = topics(payload)
+    topics = topics(payload, [])
     new(topics, msg_id)
   end
 
@@ -25,7 +25,7 @@ defmodule Skyline.Msg.Subscribe do
   defp topics(<<>>, acc) do
     Enum.reverse acc
   end
-  defp topics(payload, acc \\ []) do
+  defp topics(payload, acc) do
     {topic, rest} = Utils.utf8(payload)
     <<qos :: size(8), r :: binary>> = rest
     topics(r, [{topic, Utils.binary_to_qos(qos)} | acc])

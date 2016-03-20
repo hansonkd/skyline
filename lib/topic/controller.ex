@@ -63,7 +63,7 @@ defmodule Skyline.Topic.Controller do
   @doc false
   defmacro __using__(_) do
     quote do
-      @behaviour Pipe
+      #@behaviour Pipe
 
       import Skyline.Topic.Controller
       import Skyline.Topic.Pipe

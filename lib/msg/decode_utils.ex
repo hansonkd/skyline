@@ -1,7 +1,8 @@
 defmodule Skyline.Msg.Decode.Utils do
-    @moduledoc """
-    Common methods for decoding
-    """
+    @moduledoc false
+
+    # Common methods for decoding
+
     use Bitwise
     alias Skyline.Msg.FixedHeader
     alias Skyline.Msg
@@ -21,7 +22,7 @@ defmodule Skyline.Msg.Decode.Utils do
         (dup == 1),
         binary_to_qos(qos),
         (retain == 1),
-        binary_to_length(<<len>>, socket)
+        binary_to_length(<<len>>, 4, socket)
       )
     end
 
@@ -41,15 +42,10 @@ defmodule Skyline.Msg.Decode.Utils do
         :conn_ack -> Msg.ConnAck
       end
 
-      ret = mod.decode_body(msg, h)
-      IO.puts("Ret Decode: #{inspect ret}")
-      ret
+      mod.decode_body(msg, h)
     end
 
     @spec get_msgid(binary) :: pos_integer
-    def get_msgid(<<id :: unsigned-integer-size(16)>>) do
-      id
-    end
     def get_msgid(<<id :: unsigned-integer-size(16)>>) do
       id
     end
@@ -75,7 +71,7 @@ defmodule Skyline.Msg.Decode.Utils do
     defp binary_to_length(_bin, count = 0, _readByte) do
       raise "Invalid length"
     end
-    defp binary_to_length(<<overflow :: size(1), len :: size(7)>>, count \\ 4, socket) do
+    defp binary_to_length(<<overflow :: size(1), len :: size(7)>>, count, socket) do
       case overflow do
         1 ->
           byte = Skyline.Socket.read_bytes(socket, 1)

@@ -1,25 +1,30 @@
 defmodule Skyline.Handler do
-  @moduledoc """
-  Functions to help dispatch messages.
-  """
+  # Functions to help dispatch messages.
+  @moduledoc false
+
   alias Skyline.Client
   alias Skyline.Msg.{PublishReq, SubAck, PubAck, PingResp, Subscribe, PingReq, Unsubscribe, UnsubAck}
-  alias Skyline.Subscription
 
-
-  def handle_msg(%Subscribe{msg_id: msg_id, topics: topics} = msg, %Client{sess_pid: sess_pid, app_config: config} = state) do
-    IO.puts("Subscribe 1: #{inspect msg}")
-    qos_list = for {topic, qos} <- topics do
-      IO.puts("Topic : #{inspect topic}")
-      ret = config.router.call(Skyline.Topic.Conn.conn(topic, qos, msg, state, :subscribe), nil)
-      IO.puts("Handle Sub Ret: #{inspect ret}")
-      qos
-    end
-    IO.puts("Subscribe 2: #{inspect msg}")
-    cast_msg(sess_pid, SubAck.new(qos_list, msg_id))
-    state
+  def handle_msg(%PingReq{}, sess_pid, _state) do
+    cast_msg(sess_pid,  PingResp.new())
+    :ok
   end
-  def handle_msg(%Unsubscribe{topics: topics, msg_id: msg_id} = msg, %Client{sess_pid: sess_pid, client_id: client_id} = state) do
+
+  def handle_msg(%PubAck{msg_id: msg_id} = msg, %Client{client_id: client_id} ) do
+    GenServer.cast({:global, {:qos_send, client_id, msg_id}}, {:next, msg})
+    :ok
+  end
+
+  def handle_msg(%PublishReq{topic: topic, qos: qos} = msg, %Client{app_config: config} = state) do
+    config.router.call(Skyline.Topic.Conn.conn(topic, qos, msg, state, :publish), nil)
+    :ok
+  end
+
+  def handle_msg(%Subscribe{topics: topics} = msg, %Client{} = state) do
+    handle_subscribe(topics, msg, [], state)
+  end
+
+  def handle_msg(%Unsubscribe{topics: topics, msg_id: msg_id}, %Client{sess_pid: sess_pid, client_id: client_id}) do
     :ok = GenServer.call(sess_pid, {:unsubscribe, topics})
 
     for topic <- topics do
@@ -29,23 +34,24 @@ defmodule Skyline.Handler do
       end
     end
     cast_msg(sess_pid, UnsubAck.new(msg_id))
-    state
+    :ok
   end
 
-  def handle_msg(%PublishReq{topic: topic, qos: qos} = msg, %Client{app_config: config} = state) do
-    ##IO.inspect("Sending Publish #{msg.topic}")
-    config.router.call(Skyline.Topic.Conn.conn(topic, qos, msg, state, :publish), nil)
-    state
+  defp handle_subscribe([], %Subscribe{msg_id: msg_id}, qos_list, %Client{sess_pid: sess_pid}) do
+    cast_msg(sess_pid, SubAck.new(Enum.reverse(qos_list), msg_id))
+    :ok
+  end
+  defp handle_subscribe([{topic, qos}|topics], msg, qos_list, %Client{app_config: config} = state) do
+    conn = Skyline.Topic.Conn.conn(topic, qos, msg, state, :subscribe)
+    case config.router.call(conn, nil) do
+      {:ok, qos} ->
+          handle_subscribe(topics, msg, [qos | qos_list], state)
+      {:close_connection, _reason} = n ->
+          n
+    end
   end
 
-  def handle_msg(%PingReq{}, sess_pid, _state) do
-    cast_msg(sess_pid,  PingResp.new())
-  end
-  def handle_msg(%PubAck{msg_id: msg_id} = msg, %Client{client_id: client_id} = state) do
-    GenServer.cast({:global, {:qos_send, client_id, msg_id}}, {:next, msg})
-  end
   defp cast_msg(sess_pid, msg) do
-    IO.puts("cast msg: #{inspect msg}")
     GenServer.cast(sess_pid, {:msg, msg})
   end
 

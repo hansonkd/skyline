@@ -85,7 +85,6 @@ defmodule Skyline.Topic.Router do
       block =
         quote do
           pipe = unquote(pipe)
-          IO.inspect pipe
           @phoenix_pipeline []
           unquote(block)
         end
@@ -93,7 +92,6 @@ defmodule Skyline.Topic.Router do
       compiler =
         quote unquote: false do
           Skyline.Topic.Scope.pipeline(__MODULE__, pipe)
-          IO.inspect  @phoenix_pipeline
           {conn, body} = Skyline.Topic.Pipe.compile(__ENV__, @phoenix_pipeline, [])
           def unquote(pipe)(unquote(conn), _) do
             try do
@@ -136,7 +134,7 @@ defmodule Skyline.Topic.Router do
         end
 
       # line: -1 is used here to avoid warnings if forwarding to root path
-      match_404 =
+      no_match =
         quote line: -1 do
           defp match_route(conn, _method, _path_info) do
             raise NoRouteError, conn: conn, router: __MODULE__
@@ -148,28 +146,16 @@ defmodule Skyline.Topic.Router do
           unquote(call)
         end
 
-        @doc false
-        def __routes__,  do: unquote(Macro.escape(routes))
-
-        @doc false
-        def __helpers__, do: __MODULE__.Helpers
-
         unquote(matches)
-        unquote(match_404)
+        unquote(no_match)
       end
     end
 
-    defp build_match({route, exprs}) do
-      IO.inspect(exprs.path)
-      IO.inspect(exprs.verb_match)
+    defp build_match({_route, exprs}) do
       quote do
-
         defp match_route(var!(conn), unquote(exprs.verb_match),
                         unquote(exprs.path)) do
-
           unquote(exprs.dispatch)
-
-
         end
       end
     end
@@ -256,7 +242,6 @@ defmodule Skyline.Topic.Router do
         end
       end
     end
-
 
     defmacro pipe(pipe, opts \\ []) do
       quote do

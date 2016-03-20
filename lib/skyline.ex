@@ -38,12 +38,6 @@ defmodule Skyline do
       worker(Skyline.Acceptor, [app, port])
     ]
 
-    alias Skyline.Amnesia.Topic.TopicDatabase
-    alias Skyline.Amnesia.Router.TreeDatabase
-
-    meta = TopicDatabase.metadata()
-    IO.puts("Meta: #{inspect meta}")
-
     opts = [strategy: :one_for_one, name: Skyline.Supervisor]
     Supervisor.start_link(children, opts)
 

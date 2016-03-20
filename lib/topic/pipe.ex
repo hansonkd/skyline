@@ -1,5 +1,7 @@
 defmodule Skyline.Topic.Pipe do
-  #@spec compile(Macro.Env.t, [{pipe, Pipe.opts, Macro.t}], Keyword.t) :: {Macro.t, Macro.t}
+  @moduledoc false
+
+  #@spec compile(Macro.Env.t, [{pipe, Skyline.Topic.Pipe.opts, Macro.t}], Keyword.t) :: {Macro.t, Macro.t}
   def compile(env, pipeline, builder_opts) do
    conn = quote do: conn
    {conn, Enum.reduce(pipeline, conn, &quote_pipe(init_pipe(&1), &2, env, builder_opts))}
@@ -40,14 +42,14 @@ defmodule Skyline.Topic.Pipe do
 
    quote do
      case unquote(compile_guards(call, guards)) do
-       {:halt, %Skyline.Topic.Conn{} = msg} = conn ->
+       {:close_connection, _reason} = ret ->
          unquote(log_halt(pipe_type, pipe, env, builder_opts))
-         :halt
+         ret
        %Skyline.Topic.Conn{} = conn ->
          unquote(acc)
+       {:ok, qos} = n -> n
        :ok -> :ok
        a ->
-         IO.inspect({:error, a})
          raise unquote(error_message)
      end
    end

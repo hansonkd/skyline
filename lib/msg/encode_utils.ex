@@ -1,7 +1,9 @@
 defmodule Skyline.Msg.Encode.Utils do
-    @moduledoc """
-    Common methods for encoding
-    """
+    @moduledoc false
+
+    # Common methods for encoding
+
+    
     use Bitwise
 
     @doc "Encode messages that don't have attributes"
