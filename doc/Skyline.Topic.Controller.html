@@ -1,0 +1,272 @@
+    <!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.11.4">
+    <title>Skyline.Topic.Controller – skyline v0.0.1</title>
+    <link rel="stylesheet" href="dist/app-1e374caa3d.css" />
+    <script src="dist/sidebar_items.js"></script>
+  </head>
+  <body data-type="modules">
+
+    <div class="main">
+<button class="sidebar-toggle">
+  <i class="icon-menu"></i>
+</button>
+<section class="sidebar">
+  <button class="sidebar-toggle">
+    <i class="icon-menu"></i>
+  </button>
+
+  
+  <a href="api-reference.html" class="sidebar-projectLink">
+    <div class="sidebar-projectDetails">
+      <h1 class="sidebar-projectName">
+        skyline
+      </h1>
+      <h2 class="sidebar-projectVersion">
+        v0.0.1
+      </h2>
+    </div>
+    
+  </a>
+
+  <div class="sidebar-search">
+    <i class="icon-search"></i>
+    <input type="text" class="sidebar-searchInput" placeholder="search" autocomplete="off" />
+  </div>
+
+  <ul class="sidebar-listNav">
+    <li><a id="extras-list" href="#full-list">Pages</a></li>
+
+    
+      <li><a id="modules-list" href="#full-list">Modules</a></li>
+    
+
+    
+      <li><a id="exceptions-list" href="#full-list">Exceptions</a></li>
+    
+
+    
+      <li><a id="protocols-list" href="#full-list">Protocols</a></li>
+    
+  </ul>
+
+  <ul id="full-list" class="sidebar-fullList"></ul>
+  <div class="sidebar-noResults"></div>
+</section>
+
+<section class="content">
+  <div id="content" class="content-inner">
+
+
+      <h1>
+        <small class="visible-xs">skyline v0.0.1</small>
+        Skyline.Topic.Controller
+        
+        
+      </h1>
+
+      
+        <section id="moduledoc" class="docstring">
+          <p>This module implements the controller pipeline responsible for handling requests.</p>
+<h2>The pipeline</h2>
+<p>The goal of a controller is to receive a request and invoke the desired
+action. The whole flow of the controller is managed by a single pipeline:</p>
+<pre><code class="elixir">defmodule UserController do
+  use Skyline.Topic.Controller
+  require Logger
+  pipe :log_message, &quot;before action&quot;
+  def show(conn, _params) do
+    Logger.debug &quot;show/2&quot;
+    send_resp(conn, 200, &quot;OK&quot;)
+  end
+  defp log_message(conn, msg) do
+    Logger.debug msg
+    conn
+  end
+end</code></pre>
+<p>When invoked, this pipeline will print:</p>
+<pre><code class="elixir">before action
+show/2</code></pre>
+<p>As any other pipeline, we can halt at any step by calling
+<code class="inline">Skyline.Topic.Conn.halt/1</code> (which is by default imported into controllers).
+If we change <code class="inline">log_message/2</code> to:</p>
+<pre><code class="elixir">def log_message(conn, msg) do
+  Logger.debug msg
+  halt(conn)
+end</code></pre>
+<p>it will print only:</p>
+<pre><code class="elixir">before action</code></pre>
+<p>As the rest of the pipeline (the action and the after action pipe)
+will never be invoked.</p>
+<h2>Guards</h2>
+<p><a href="#pipe/2"><code class="inline">pipe/2</code></a> supports guards, allowing a developer to configure a pipe to only
+run in some particular action:</p>
+<pre><code class="elixir">pipe :log_message, &quot;before show and edit&quot; when action in [:show, :edit]
+pipe :log_message, &quot;before all but index&quot; when not action in [:index]</code></pre>
+<p>The first pipe will run only when action is show or edit.
+The second pipe will always run, except for the index action.
+Those guards work like regular Elixir guards and the only variables accessible
+in the guard are <code class="inline">conn</code>, the <code class="inline">action</code> as an atom and the <code class="inline">controller</code> as an
+alias.</p>
+<h2>Controllers are pipes</h2>
+<p>Like routers, controllers are pipes, but they are wired to dispatch
+to a particular function which is called an action.
+For example, the route:</p>
+<pre><code class="elixir">get &quot;/users/:id&quot;, UserController, :show</code></pre>
+<p>will invoke <code class="inline">UserController</code> as a pipe:</p>
+<pre><code class="elixir">UserController.call(conn, :show)</code></pre>
+<p>which will trigger the pipe pipeline and which will eventually
+invoke the inner action pipe that dispatches to the <code class="inline">show/2</code>
+function in the <code class="inline">UserController</code>.
+As controllers are pipes, they implement both <code class="inline">init/1</code> and
+<code class="inline">call/2</code>, and it also provides a function named <code class="inline">action/2</code>
+which is responsible for dispatching the appropriate action
+after the pipe stack (and is also overridable).</p>
+
+        </section>
+      
+
+      
+        <section id="summary" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#summary">
+              <i class="icon-link"></i>
+            </a>
+            Summary
+          </h1>
+          
+  <div class="summary-types summary">
+    <h2>
+      <a href="#types">Types</a>
+    </h2>
+    <div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:response/0">response()</a>
+  </div>
+  
+</div>
+
+  </div>
+
+
+          
+
+          
+  <div class="summary-macros summary">
+    <h2>
+      <a href="#macros">Macros</a>
+    </h2>
+    <div class="summary-row">
+  <div class="summary-signature">
+    <a href="#pipe/1">pipe(pipe)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Stores a pipe to be executed as part of the pipe pipeline</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#pipe/2">pipe(pipe, opts)</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Stores a pipe with the given options to be executed as part of
+the pipe pipeline</p>
+</div>
+  
+</div>
+
+  </div>
+
+
+          
+
+        </section>
+      
+
+      
+        <section id="types" class="types details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#types">
+              <i class="icon-link"></i>
+            </a>
+            Types
+          </h1>
+          <div class="types-list">
+            <div id="t:response/0" class="type-detail">
+  <pre><code class="elixir"><a href="#t:response/0">response</a> :: :ok | :close_connection</code></pre>
+  
+</div>
+
+          </div>
+        </section>
+      
+
+      
+
+      
+        <section id="macros" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#macros">
+              <i class="icon-link"></i>
+            </a>
+            Macros
+          </h1>
+          <div class="detail" id="pipe/1">
+  <div class="detail-header">
+    <a href="#pipe/1" class="detail-link" title="Link to this macro">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">pipe(pipe)</span>
+      
+  </div>
+  
+  <section class="docstring">
+    <p>Stores a pipe to be executed as part of the pipe pipeline.</p>
+
+  </section>
+</div>
+<div class="detail" id="pipe/2">
+  <div class="detail-header">
+    <a href="#pipe/2" class="detail-link" title="Link to this macro">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">pipe(pipe, opts)</span>
+      
+  </div>
+  
+  <section class="docstring">
+    <p>Stores a pipe with the given options to be executed as part of
+the pipe pipeline.</p>
+
+  </section>
+</div>
+
+        </section>
+      
+
+      
+        <footer class="footer">
+      <p>
+        <span class="line">
+          Built using
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" rel="help" target="_blank">ExDoc</a> (v0.11.4),
+        </span>
+        <span class="line">
+          designed by
+          <a href="https://twitter.com/dignifiedquire" target="_blank" title="@dignifiedquire">Friedel Ziegelmayer</a>.
+          </span>
+      </p>
+      <button class="night-mode-toggle" />
+    </footer>
+  </div>
+</section>
+</div>
+  <script src="dist/app-6d2e071366.js"></script>
+  </body>
+</html>
+

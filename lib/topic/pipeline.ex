@@ -1,3 +1,14 @@
+defmodule Skyline.ActionClauseError do
+  defexception [message: nil, plug_status: 400]
+
+  def exception(opts) do
+    controller = Keyword.fetch!(opts, :controller)
+    action = Keyword.fetch!(opts, :action)
+    msg = "bad request to #{inspect controller}.#{action}, " <>
+          "no matching action clause to process request"
+    %Skyline.ActionClauseError{message: msg}
+  end
+end
 defmodule Skyline.WrapperError do
   @moduledoc """
   Wraps the connection in an error which is meant

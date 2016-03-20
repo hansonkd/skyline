@@ -1,6 +1,6 @@
 defmodule Skyline.Topic.Router.Route do
   # This module defines the Route struct that is used
-  # throughout Phoenix's router. This struct is private
+  # throughout Skyline's router. This struct is private
   # as it contains internal routing information.
   @moduledoc false
 
@@ -93,8 +93,8 @@ defmodule Skyline.Topic.Router.Route do
   defp build_pipes(route) do
     quote do
       var!(conn)
-      |> Skyline.Topic.Conn.put_private(:phoenix_pipelines, unquote(route.pipe_through))
-      |> Skyline.Topic.Conn.put_private(:phoenix_route, fn conn ->
+      |> Skyline.Topic.Conn.put_private(:skyline_pipelines, unquote(route.pipe_through))
+      |> Skyline.Topic.Conn.put_private(:skyline_route, fn conn ->
         # We need to store this in a variable so the compiler
         # does not see a call and then suddenly start tracking
         # changes in the controller.

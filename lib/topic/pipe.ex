@@ -47,8 +47,8 @@ defmodule Skyline.Topic.Pipe do
          ret
        %Skyline.Topic.Conn{} = conn ->
          unquote(acc)
-       {:ok, qos} = n -> n
-       :ok -> :ok
+       {:topic_qos, qos} = n -> n
+       :do_nothing -> :do_nothing
        a ->
          raise unquote(error_message)
      end

@@ -6,9 +6,8 @@ defmodule Skyline.Topic.Controller.Default.PublishController do
     opts
   end
 
-  def publish(%Conn{message: msg, topic: topic, qos: qos, client: client}, _opts) do
-    Skyline.Topic.Utils.publish(topic, qos, msg, client)
-    :ok
+  def publish(%Conn{} = conn, _opts) do
+    conn
   end
 
 end

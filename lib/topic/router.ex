@@ -29,14 +29,14 @@ defmodule Skyline.Topic.Router do
 
     defp prelude() do
      quote do
-       Module.register_attribute __MODULE__, :phoenix_routes, accumulate: true
+       Module.register_attribute __MODULE__, :skyline_routes, accumulate: true
 
        #import Skyline.Topic.Pipeline
        import Skyline.Topic.Router
        import Skyline.Topic.Router.Route
 
        # Set up initial scope
-       @phoenix_pipeline nil
+       @skyline_pipeline nil
        Skyline.Topic.Scope.init(__MODULE__)
        @before_compile unquote(__MODULE__)
      end
@@ -59,18 +59,13 @@ defmodule Skyline.Topic.Router do
        """
        def call(conn, opts), do: do_call(conn, opts)
 
-       def to_function(opts \\ nil) do
-         nopts = init(opts)
-         fn(conn) -> call(conn, nopts) end
-       end
-
        defp match_route(conn, []) do
          match_route(conn, conn.method, Enum.map(conn.path_info, &URI.decode/1))
        end
 
        defp dispatch(conn, []) do
          try do
-           conn.private.phoenix_route.(conn)
+           conn.private.skyline_route.(conn)
          catch
            kind, reason ->
              Skyline.WrapperError.reraise(conn, kind, reason)
@@ -85,14 +80,14 @@ defmodule Skyline.Topic.Router do
       block =
         quote do
           pipe = unquote(pipe)
-          @phoenix_pipeline []
+          @skyline_pipeline []
           unquote(block)
         end
 
       compiler =
         quote unquote: false do
           Skyline.Topic.Scope.pipeline(__MODULE__, pipe)
-          {conn, body} = Skyline.Topic.Pipe.compile(__ENV__, @phoenix_pipeline, [])
+          {conn, body} = Skyline.Topic.Pipe.compile(__ENV__, @skyline_pipeline, [])
           def unquote(pipe)(unquote(conn), _) do
             try do
               unquote(body)
@@ -101,7 +96,7 @@ defmodule Skyline.Topic.Router do
                 Skyline.WrapperError.reraise(unquote(conn), kind, reason)
             end
           end
-          @phoenix_pipeline nil
+          @skyline_pipeline nil
         end
 
       quote do
@@ -115,7 +110,7 @@ defmodule Skyline.Topic.Router do
     end
 
     defmacro __before_compile__(env) do
-      routes = env.module |> Module.get_attribute(:phoenix_routes) |> Enum.reverse
+      routes = env.module |> Module.get_attribute(:skyline_routes) |> Enum.reverse
       routes_with_exprs = Enum.map(routes, &{&1, Skyline.Topic.Router.Route.exprs(&1)})
 
       #Helpers.define(env, routes_with_exprs)
@@ -128,8 +123,8 @@ defmodule Skyline.Topic.Router do
         quote do
           unquote(conn) =
             update_in unquote(conn).private,
-              &(&1 |> Map.put(:phoenix_pipelines, [])
-                   |> Map.put(:phoenix_router, __MODULE__))
+              &(&1 |> Map.put(:skyline_pipelines, [])
+                   |> Map.put(:skyline_router, __MODULE__))
           unquote(pipeline)
         end
 
@@ -160,32 +155,42 @@ defmodule Skyline.Topic.Router do
       end
     end
 
-    defmacro match(verb, path, pipe, pipe_opts, options \\ []) do
-      add_route(verb, path, pipe, pipe_opts, options)
+    defmacro match(verb, path, controller, pipe_opts, options \\ []) do
+      add_route(verb, path, controller, pipe_opts, options)
     end
 
     for verb <- @incoming_message_types do
      @doc """
      Generates a route to handle a #{verb} request to the given path.
      """
-     defmacro unquote(verb)(path, pipe, options \\ []) do
+     defmacro unquote(verb)(path, controller, options \\ []) do
        verb = unquote(verb)
        quote bind_quoted: binding do
-         match(verb, path, pipe, verb, options)
+         match(verb, path, controller, verb, options)
        end
      end
     end
 
+    defmacro resource(path, pipe, options \\ []) do
+
+      for verb <- @incoming_message_types do
+
+        quote bind_quoted: binding do
+          match(verb, path, pipe, verb, options)
+        end
+      end
+    end
+
     defp add_route(verb, path, pipe, pipe_opts, options) do
       quote do
-        @phoenix_routes Skyline.Topic.Scope.route(__MODULE__, unquote(verb), unquote(path),
+        @skyline_routes Skyline.Topic.Scope.route(__MODULE__, unquote(verb), unquote(path),
                                     unquote(pipe), unquote(pipe_opts), unquote(options))
       end
     end
 
     defmacro pipe_through(pipes) do
         quote do
-          if pipeline = @phoenix_pipeline do
+          if pipeline = @skyline_pipeline do
             raise "cannot pipe_through inside a pipeline"
           else
             Skyline.Topic.Scope.pipe_through(__MODULE__, unquote(pipes))
@@ -245,8 +250,8 @@ defmodule Skyline.Topic.Router do
 
     defmacro pipe(pipe, opts \\ []) do
       quote do
-        if pipeline = @phoenix_pipeline do
-          @phoenix_pipeline [{unquote(pipe), unquote(opts), true}|pipeline]
+        if pipeline = @skyline_pipeline do
+          @skyline_pipeline [{unquote(pipe), unquote(opts), true}|pipeline]
         else
           raise "cannot define pipe at the router level, pipe must be defined inside a pipeline"
         end

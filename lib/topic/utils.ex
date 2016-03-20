@@ -6,6 +6,7 @@ defmodule Skyline.Topic.Utils do
   alias Skyline.Client
   alias Skyline.Msg.{PublishReq, Subscribe}
   alias Skyline.Subscription
+  alias Skyline.Topic.Conn
 
   use Skyline.Amnesia.Topic.TopicDatabase
   alias Skyline.Amnesia.Topic.TopicDatabase.StoredTopic
@@ -13,8 +14,13 @@ defmodule Skyline.Topic.Utils do
   @doc """
   Deliver the message to all subscribers, retain if necassary.
   """
-  @spec publish(String.t, Skyline.qos_type, PublishReq.t, Client.t) :: Client.t
-  def publish(topic, qos, %PublishReq{message: body, retain: retain} = msg, %Client{sess_pid: sess_pid, client_id: client_id}) do
+  @spec publish(Skyline.Conn.t) :: :ok
+  def publish(%Conn{message: %PublishReq{message: body,
+                                        retain: retain} = msg,
+                    topic: topic,
+                    qos: qos,
+                    client: %Client{sess_pid: sess_pid,
+                                    client_id: client_id}}) do
     if retain do
       Amnesia.transaction do
         case StoredTopic.read(topic) do
@@ -31,8 +37,12 @@ defmodule Skyline.Topic.Utils do
   @doc """
   Sets up a subsription to the topic and register with tree dispatcher.
   """
-  @spec subscribe(String.t, Skyline.qos_type, Subscribe.t, Client.t) :: Client.t
-  def subscribe(topic, qos, %Subscribe{}, %Client{sess_pid: sess_pid, client_id: client_id}) do
+  @spec subscribe(Skyline.Conn.t) :: Skyline.qos_type
+  def subscribe(%Conn{topic: topic,
+                      qos: qos,
+                      message: %Subscribe{},
+                      client: %Client{sess_pid: sess_pid,
+                                      client_id: client_id}}) do
       case Subscription.start_link({client_id, sess_pid, topic, qos}) do
         {:ok, _pid} -> qos
         {:error, {:already_started, pid}} ->

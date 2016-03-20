@@ -53,10 +53,11 @@ defmodule Skyline.Client do
             case msg do
               nil ->
                 Logger.error "Failed reading data #{inspect data}"
+                {:noreply, state}
               _ -> process_msg(msg, state)
             end
 
-            {:noreply, state}
+
         other -> Logger.warn "Recieved #{inspect other} instead of bytes. Closing."
                  {:stop, :normal, state}
       end
@@ -83,7 +84,9 @@ defmodule Skyline.Client do
     def terminate(reason, %Client{socket: socket, sess_pid: sess_pid}) do
       Logger.debug "#{inspect socket} terminated becuase of #{inspect reason}"
       Socket.close(socket)
-      GenServer.stop(sess_pid, :normal, :infinity)
+      if sess_pid && Process.alive?(sess_pid) do
+        GenServer.stop(sess_pid, :normal, :infinity)
+      end
       :ok
     end
 

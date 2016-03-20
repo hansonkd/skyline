@@ -9,7 +9,7 @@ def on_connect(client, userdata, flags, rc):
 
     # Subscribing in on_connect() means that if we lose the connection and
     # reconnect then subscriptions will be renewed.
-    client.subscribe("$SYS1", qos=1)
+    client.subscribe("user/bob/cool", qos=1)
 
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
@@ -25,6 +25,7 @@ client = client.Client()
 client.on_connect = on_connect
 client.on_message = on_message
 client.on_log = on_log
+client.username_pw_set("bob", password=None)
 client.connect("localhost", 8000, 60)
 
 #client.publish("SYS1", "uioiu")

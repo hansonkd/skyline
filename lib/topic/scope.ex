@@ -2,8 +2,8 @@ defmodule Skyline.Topic.Scope do
   alias Skyline.Topic.Scope
   @moduledoc false
 
-  @stack :phoenix_router_scopes
-  @pipes :phoenix_pipeline_scopes
+  @stack :skyline_router_scopes
+  @pipes :skyline_pipeline_scopes
 
   defstruct path: nil, alias: nil, pipes: [], private: %{}, assigns: %{}
 
@@ -136,7 +136,7 @@ defmodule Skyline.Topic.Scope do
 
   defp get_attribute(module, attr) do
     Module.get_attribute(module, attr) ||
-      raise "Phoenix router scope was not initialized"
+      raise "Skyline router scope was not initialized"
   end
 
   defp update_attribute(module, attr, fun) do

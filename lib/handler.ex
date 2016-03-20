@@ -4,6 +4,7 @@ defmodule Skyline.Handler do
 
   alias Skyline.Client
   alias Skyline.Msg.{PublishReq, SubAck, PubAck, PingResp, Subscribe, PingReq, Unsubscribe, UnsubAck}
+  alias Skyline.Topic.Conn
 
   def handle_msg(%PingReq{}, sess_pid, _state) do
     cast_msg(sess_pid,  PingResp.new())
@@ -16,7 +17,17 @@ defmodule Skyline.Handler do
   end
 
   def handle_msg(%PublishReq{topic: topic, qos: qos} = msg, %Client{app_config: config} = state) do
-    config.router.call(Skyline.Topic.Conn.conn(topic, qos, msg, state, :publish), nil)
+    case config.router.call(Conn.conn(topic, qos, msg, state, :publish), nil) do
+      %Conn{} = ret_conn->
+            Skyline.Topic.Utils.publish(ret_conn)
+      :do_nothing ->
+            :ok
+      {:close_connection, _reason} = n ->
+            n
+      other ->
+        raise "Expected Skyline.Conn, :do_nothing, or {:close_connection, reason}" <>
+              " in return value for subsribe. Got #{inspect other}"
+    end
     :ok
   end
 
@@ -42,12 +53,18 @@ defmodule Skyline.Handler do
     :ok
   end
   defp handle_subscribe([{topic, qos}|topics], msg, qos_list, %Client{app_config: config} = state) do
-    conn = Skyline.Topic.Conn.conn(topic, qos, msg, state, :subscribe)
+    conn = Conn.conn(topic, qos, msg, state, :subscribe)
     case config.router.call(conn, nil) do
-      {:ok, qos} ->
+      %Conn{} = ret_conn ->
+          qos = Skyline.Topic.Utils.subscribe(ret_conn)
+          handle_subscribe(topics, msg, [qos | qos_list], state)
+      {:topic_qos, qos} ->
           handle_subscribe(topics, msg, [qos | qos_list], state)
       {:close_connection, _reason} = n ->
           n
+      other ->
+        raise "Expected Skyline.Conn, {:topic_qos, qos}, or {:close_connection, reason}" <>
+              " in return value for subsribe. Got #{inspect other}"
     end
   end
 

@@ -6,12 +6,12 @@ import time
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code "+str(rc))
     time.sleep(2)
-    client.publish("SYS1", "i 1313 so", retain=True, qos=1)
-    client.publish("SYS1", "Last", retain=True, qos=1)
+    client.publish("user/bob/location", "home", retain=True, qos=1)
+    client.publish("user/bob/location", "work", retain=True, qos=1)
 
     # Subscribing in on_connect() means that if we lose the connection and
     # reconnect then subscriptions will be renewed.
-    client.subscribe("SYS1")
+    client.subscribe("user/bob/location")
 
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
@@ -26,6 +26,7 @@ client = client.Client()
 client.on_connect = on_connect
 client.on_message = on_message
 client.on_log = on_log
+client.username_pw_set("bob", password=None)
 client.connect("localhost", 8000, 60)
 
 
