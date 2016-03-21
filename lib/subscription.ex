@@ -10,7 +10,8 @@ defmodule Skyline.Subscription do
             qos: nil,
             current_msg: nil,
             msg_queue: :queue.new,
-            qos_pid: nil
+            qos_pid: nil,
+            auth_info: nil
 
 
 
@@ -23,9 +24,9 @@ defmodule Skyline.Subscription do
   alias Skyline.Amnesia.Topic.TopicDatabase.StoredTopic
 
 
-  def start_link({client_id, sess_pid, topic, qos}, _opts \\ []) do
+  def start_link(client_id, sess_pid, topic, qos, auth_info, _opts \\ []) do
     name = {client_id, topic}
-    state = %Subscription{client_id: client_id, sess_pid: sess_pid, topic: topic, qos: qos}
+    state = %Subscription{client_id: client_id, sess_pid: sess_pid, topic: topic, qos: qos, auth_info: auth_info}
     GenServer.start_link(__MODULE__, state, name: {:global, name})
   end
 
@@ -53,13 +54,13 @@ defmodule Skyline.Subscription do
     GenServer.cast(self, :process_queue)
     {:noreply, %{state | msg_queue: new_queue}}
   end
-  def handle_cast(:process_queue, %Subscription{msg_queue: msg_queue, qos_pid: qos_pid} = state) do
+  def handle_cast(:process_queue, %Subscription{msg_queue: msg_queue, client_id: client_id, sess_pid: sess_pid, qos_pid: qos_pid} = state) do
 
     new_qos_pid = if not is_pid(qos_pid) || not Process.alive?(qos_pid) do
       case :queue.out(msg_queue) do
           {{:value, msg}, _new_queue} ->
             mod = qos_to_qos_mod(state.qos)
-            {:ok, pid} = mod.start(state.sess_pid, self, state.client_id, msg)
+            {:ok, pid} = mod.start(sess_pid, self, client_id, msg)
             pid
           _ -> nil
         end
@@ -69,13 +70,16 @@ defmodule Skyline.Subscription do
 
     {:noreply, %{state | qos_pid: new_qos_pid}}
   end
-  def handle_cast({:finish_msg, msg_id}, %Subscription{msg_queue: msg_queue} = state) do
+  def handle_cast({:finish_msg, msg_id}, %Subscription{msg_queue: msg_queue,
+                                                       client_id: client_id,
+                                                       auth_info: auth_info} = state) do
      new_queue = case :queue.out(msg_queue) do
-        {{:value, msg}, new_queue} ->
+        {{:value, msg}, trimmed} ->
           if msg.msg_id == msg_id do
             # Only "finish" if it was the right message.
-            new_queue
+            trimmed
           else
+            Skyline.Events.error(client_id, auth_info, "Tried to finish message but expected #{msg.msg_id} but got #{msg_id}")
             msg_queue
           end
         _ -> msg_queue
@@ -101,6 +105,7 @@ defmodule Skyline.Subscription do
     case qos do
       :fire_and_forget -> Skyline.Qos.Outgoing.Qos0
       :at_least_once -> Skyline.Qos.Outgoing.Qos1
+      :exactly_once -> Skyline.Qos.Outgoing.Qos2
     end
   end
 end

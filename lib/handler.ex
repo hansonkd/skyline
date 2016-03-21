@@ -1,18 +1,34 @@
 defmodule Skyline.Handler do
   # Functions to help dispatch messages.
   @moduledoc false
+  require Logger
 
   alias Skyline.Client
-  alias Skyline.Msg.{PublishReq, SubAck, PubAck, PingResp, Subscribe, PingReq, Unsubscribe, UnsubAck}
+  alias Skyline.Msg.{PublishReq, SubAck, PubAck, PubRel, PubRec, PubComp, PingResp, Subscribe, PingReq, Unsubscribe, UnsubAck}
   alias Skyline.Topic.Conn
 
-  def handle_msg(%PingReq{}, sess_pid, _state) do
+  def handle_msg(%PingReq{}, %Client{sess_pid: sess_pid} ) do
     cast_msg(sess_pid,  PingResp.new())
     :ok
   end
 
   def handle_msg(%PubAck{msg_id: msg_id} = msg, %Client{client_id: client_id} ) do
     GenServer.cast({:global, {:qos_send, client_id, msg_id}}, {:next, msg})
+    :ok
+  end
+
+  def handle_msg(%PubComp{msg_id: msg_id} = msg, %Client{client_id: client_id} ) do
+    GenServer.cast({:global, {:qos_send, client_id, msg_id}}, {:next, msg})
+    :ok
+  end
+
+  def handle_msg(%PubRec{msg_id: msg_id} = msg, %Client{client_id: client_id} ) do
+    GenServer.cast({:global, {:qos_send, client_id, msg_id}}, {:next, msg})
+    :ok
+  end
+
+  def handle_msg(%PubRel{msg_id: msg_id} = msg, %Client{client_id: client_id} ) do
+    GenServer.cast({:global, {:qos_recv, client_id, msg_id}}, {:next, msg})
     :ok
   end
 

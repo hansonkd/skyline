@@ -11,6 +11,7 @@ defmodule Skyline.Session do
   use GenServer
   require Logger
 
+  import Socket
   alias Skyline.Session
 
   @spec start_link(Skyline.socket, String.t, [key: any]) :: GenServer.on_start
@@ -24,8 +25,9 @@ defmodule Skyline.Session do
     {:ok, state}
   end
 
-  def handle_cast({:msg, msg}, %Session{socket: socket, client_id: client_id} = state) do
+  def handle_cast({:msg, msg}, %Session{socket: socket, auth_info: auth_info, client_id: client_id} = state) do
     Logger.debug "Sending message #{inspect msg} to #{inspect client_id}"
+    Skyline.Events.write_message(client_id, auth_info, msg)
     Skyline.Socket.send(socket, msg)
     {:noreply, state}
   end

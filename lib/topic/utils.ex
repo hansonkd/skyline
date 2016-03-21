@@ -42,8 +42,9 @@ defmodule Skyline.Topic.Utils do
                       qos: qos,
                       message: %Subscribe{},
                       client: %Client{sess_pid: sess_pid,
-                                      client_id: client_id}}) do
-      case Subscription.start_link({client_id, sess_pid, topic, qos}) do
+                                      client_id: client_id,
+                                      auth_info: auth_info}}) do
+      case Subscription.start_link(client_id, sess_pid, topic, qos, auth_info) do
         {:ok, _pid} -> qos
         {:error, {:already_started, pid}} ->
            {:ok, top_qos} = GenServer.call(pid, {:reset, qos})
@@ -55,6 +56,7 @@ defmodule Skyline.Topic.Utils do
     case qos do
       :fire_and_forget -> Skyline.Qos.Incoming.Qos0
       :at_least_once -> Skyline.Qos.Incoming.Qos1
+      :exactly_once -> Skyline.Qos.Incoming.Qos2
     end
   end
 end

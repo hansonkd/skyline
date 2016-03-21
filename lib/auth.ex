@@ -1,6 +1,6 @@
 defmodule Skyline.Auth do
   @moduledoc false
-  
+
   alias Skyline.Msg.{Connect, ConnAck}
   alias Skyline.Session
 

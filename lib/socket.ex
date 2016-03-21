@@ -30,12 +30,15 @@ defmodule Skyline.Socket do
     def recv(socket, nr, timeout \\ :infinity) do
       Socket.Stream.recv(socket, nr, timeout: timeout)
     end
+    def read_bytes(socket, 0) do
+      <<>>
+    end
     def read_bytes(socket, nr, timeout \\ :infinity) do
-        result = case recv(socket, nr, timeout) do
-          {:ok, bytes} -> bytes
-          any ->
-            any
-        end
-        result
+      result = case recv(socket, nr, timeout) do
+        {:ok, bytes} -> bytes
+        any ->
+          any
       end
+      result
+    end
 end

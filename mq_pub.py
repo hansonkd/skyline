@@ -6,8 +6,8 @@ import time
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code "+str(rc))
     time.sleep(2)
-    client.publish("user/bob/location", "home", retain=True, qos=1)
-    client.publish("user/bob/location", "work", retain=True, qos=1)
+    client.publish("user/bob/location", "home", retain=True, qos=2)
+    client.publish("user/bob/location", "work", retain=True, qos=2)
 
     # Subscribing in on_connect() means that if we lose the connection and
     # reconnect then subscriptions will be renewed.

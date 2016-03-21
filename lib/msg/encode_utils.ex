@@ -3,7 +3,7 @@ defmodule Skyline.Msg.Encode.Utils do
 
     # Common methods for encoding
 
-    
+
     use Bitwise
 
     @doc "Encode messages that don't have attributes"
@@ -14,7 +14,7 @@ defmodule Skyline.Msg.Encode.Utils do
 
     @doc "Encode messages that have a message_id"
     @spec basic_with_msg_id(Skyline.msg_with_id, pos_integer) :: binary
-    def basic_with_msg_id(msg_type, msg_id) when msg_type in [:pub_ack, :pub_rec, :pub_comp, :unsub_ack] do
+    def basic_with_msg_id(msg_type, msg_id) when msg_type in [:pub_ack, :pub_rec, :pub_comp, :unsub_ack, :pub_rel] do
         <<msg_type_to_binary(msg_type) :: size(4), 0 :: size(4), 0x02, msg_id(msg_id) :: binary>>
     end
 

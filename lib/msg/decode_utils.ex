@@ -17,6 +17,8 @@ defmodule Skyline.Msg.Decode.Utils do
     @spec decode_fixheader(binary, Skyline.socket) :: FixedHeader.t
     defp decode_fixheader(<<type :: size(4), dup :: size(1), qos :: size(2),
                  retain :: size(1), len :: size(8)>>, socket) do
+
+      IO.puts("#{binary_to_msg_type(type)} #{inspect len}")
       FixedHeader.new(
         binary_to_msg_type(type),
         (dup == 1),
@@ -35,6 +37,8 @@ defmodule Skyline.Msg.Decode.Utils do
         :disconnect -> Msg.Disconnect
         :pub_ack -> Msg.PubAck
         :pub_rec -> Msg.PubRec
+        :pub_rel -> Msg.PubRel
+        :pub_comp -> Msg.PubComp
         :subscribe -> Msg.Subscribe
         :unsubscribe -> Msg.Unsubscribe
         :sub_ack -> Msg.SubAck
