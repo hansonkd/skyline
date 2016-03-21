@@ -5,7 +5,7 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.11.4">
-    <title>Skyline.Topic.Utils – skyline v0.0.1</title>
+    <title>Skyline.Events.Errors – skyline v0.0.1</title>
     <link rel="stylesheet" href="dist/app-1e374caa3d.css" />
     <script src="dist/sidebar_items.js"></script>
   </head>
@@ -64,14 +64,27 @@
 
       <h1>
         <small class="visible-xs">skyline v0.0.1</small>
-        Skyline.Topic.Utils
+        Skyline.Events.Errors
         
         
       </h1>
 
       
         <section id="moduledoc" class="docstring">
-          <p>Utility functions for building Publish and Subscribe Controllers.</p>
+          <p>GenEvent server to handle client errors.</p>
+<p>An app can hook into the Errors event system by calling <a href="#add_handler/2"><code class="inline">add_handler/2</code></a></p>
+<pre><code class="elixir">defmodule Example.EventHandler do
+  use GenEvent
+  require Logger
+  alias Skyline.Events.Errors
+  def init() do
+      Errors.add_handler(Example.EventHandler, nil)
+  end
+  def handle_event({:error, {client_id, auth_info, exception}}, st) do
+    Logger.error &quot;Recieved Exception: (#{client_id}, #{inspect auth_info}): #{inspect exception}&quot;
+    {:ok, st}
+  end
+end</code></pre>
 
         </section>
       
@@ -93,20 +106,14 @@
     </h2>
     <div class="summary-row">
   <div class="summary-signature">
-    <a href="#publish/1">publish(conn)</a>
+    <a href="#add_handler/2">add_handler(handler, init)</a>
   </div>
-  
-    <div class="summary-synopsis"><p>Deliver the message to all subscribers, retain if necassary</p>
-</div>
   
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#subscribe/1">subscribe(conn)</a>
+    <a href="#start_link/0">start_link()</a>
   </div>
-  
-    <div class="summary-synopsis"><p>Sets up a subsription to the topic and register with tree dispatcher</p>
-</div>
   
 </div>
 
@@ -130,50 +137,30 @@
             </a>
             Functions
           </h1>
-          <div class="detail" id="publish/1">
+          <div class="detail" id="add_handler/2">
   <div class="detail-header">
-    <a href="#publish/1" class="detail-link" title="Link to this function">
+    <a href="#add_handler/2" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">publish(conn)</span>
+    <span class="signature">add_handler(handler, init)</span>
       
   </div>
   
-    <div class="specs">
-      <h4 class="specs-title">Specs</h4>
-      <div class="specs-list">
-        
-          <pre><code class="elixir">publish(Skyline.Conn.t) :: :ok</code></pre>
-        
-      </div>
-    </div>
-  
   <section class="docstring">
-    <p>Deliver the message to all subscribers, retain if necassary.</p>
-
+    
   </section>
 </div>
-<div class="detail" id="subscribe/1">
+<div class="detail" id="start_link/0">
   <div class="detail-header">
-    <a href="#subscribe/1" class="detail-link" title="Link to this function">
+    <a href="#start_link/0" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">subscribe(conn)</span>
+    <span class="signature">start_link()</span>
       
   </div>
   
-    <div class="specs">
-      <h4 class="specs-title">Specs</h4>
-      <div class="specs-list">
-        
-          <pre><code class="elixir">subscribe(Skyline.Conn.t) :: <a href="Skyline.html#t:qos_type/0">Skyline.qos_type</a></code></pre>
-        
-      </div>
-    </div>
-  
   <section class="docstring">
-    <p>Sets up a subsription to the topic and register with tree dispatcher.</p>
-
+    
   </section>
 </div>
 

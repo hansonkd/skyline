@@ -1,7 +1,11 @@
-defmodule Mix.Tasks.CreateDb do
+defmodule Mix.Tasks.Skyline.CreateDb do
+  @moduledoc """
+  Initiates Topic storage and in-memory Tree based dispatching for Topic subscriptions.
+  """
+  
   use Mix.Task
   use Skyline.Amnesia.Topic.TopicDatabase
-  use Skyline.Amnesia.Router.TreeDatabase
+  use Skyline.Amnesia.Dispatch.TreeDatabase
 
   def run(_) do
     # This creates the mnesia schema, this has to be done on every node before

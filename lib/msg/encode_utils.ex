@@ -1,7 +1,7 @@
 defmodule Skyline.Msg.Encode.Utils do
     @moduledoc false
 
-    # Common methods for encoding
+    # Common pipes for encoding
 
 
     use Bitwise

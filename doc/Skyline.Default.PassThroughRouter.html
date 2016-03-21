@@ -5,7 +5,7 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.11.4">
-    <title>Skyline.Topic.Utils – skyline v0.0.1</title>
+    <title>Skyline.Default.PassThroughRouter – skyline v0.0.1</title>
     <link rel="stylesheet" href="dist/app-1e374caa3d.css" />
     <script src="dist/sidebar_items.js"></script>
   </head>
@@ -64,14 +64,14 @@
 
       <h1>
         <small class="visible-xs">skyline v0.0.1</small>
-        Skyline.Topic.Utils
+        Skyline.Default.PassThroughRouter
         
         
       </h1>
 
       
         <section id="moduledoc" class="docstring">
-          <p>Utility functions for building Publish and Subscribe Controllers.</p>
+          <p>A router that lets all messages pass-through.</p>
 
         </section>
       
@@ -93,19 +93,19 @@
     </h2>
     <div class="summary-row">
   <div class="summary-signature">
-    <a href="#publish/1">publish(conn)</a>
+    <a href="#call/2">call(conn, opts)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Deliver the message to all subscribers, retain if necassary</p>
+    <div class="summary-synopsis"><p>Callback implementation for <a href="Skyline.Topic.Pipe.html#c:call/2"><code class="inline">Skyline.Topic.Pipe.call/2</code></a></p>
 </div>
   
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#subscribe/1">subscribe(conn)</a>
+    <a href="#init/1">init(opts)</a>
   </div>
   
-    <div class="summary-synopsis"><p>Sets up a subsription to the topic and register with tree dispatcher</p>
+    <div class="summary-synopsis"><p>Callback implementation for <a href="Skyline.Topic.Pipe.html#c:init/1"><code class="inline">Skyline.Topic.Pipe.init/1</code></a></p>
 </div>
   
 </div>
@@ -130,49 +130,31 @@
             </a>
             Functions
           </h1>
-          <div class="detail" id="publish/1">
+          <div class="detail" id="call/2">
   <div class="detail-header">
-    <a href="#publish/1" class="detail-link" title="Link to this function">
+    <a href="#call/2" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">publish(conn)</span>
+    <span class="signature">call(conn, opts)</span>
       
   </div>
   
-    <div class="specs">
-      <h4 class="specs-title">Specs</h4>
-      <div class="specs-list">
-        
-          <pre><code class="elixir">publish(Skyline.Conn.t) :: :ok</code></pre>
-        
-      </div>
-    </div>
-  
   <section class="docstring">
-    <p>Deliver the message to all subscribers, retain if necassary.</p>
+    <p>Callback implementation for <a href="Skyline.Topic.Pipe.html#c:call/2"><code class="inline">Skyline.Topic.Pipe.call/2</code></a>.</p>
 
   </section>
 </div>
-<div class="detail" id="subscribe/1">
+<div class="detail" id="init/1">
   <div class="detail-header">
-    <a href="#subscribe/1" class="detail-link" title="Link to this function">
+    <a href="#init/1" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">subscribe(conn)</span>
+    <span class="signature">init(opts)</span>
       
   </div>
   
-    <div class="specs">
-      <h4 class="specs-title">Specs</h4>
-      <div class="specs-list">
-        
-          <pre><code class="elixir">subscribe(Skyline.Conn.t) :: <a href="Skyline.html#t:qos_type/0">Skyline.qos_type</a></code></pre>
-        
-      </div>
-    </div>
-  
   <section class="docstring">
-    <p>Sets up a subsription to the topic and register with tree dispatcher.</p>
+    <p>Callback implementation for <a href="Skyline.Topic.Pipe.html#c:init/1"><code class="inline">Skyline.Topic.Pipe.init/1</code></a>.</p>
 
   </section>
 </div>

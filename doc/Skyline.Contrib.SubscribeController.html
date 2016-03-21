@@ -5,7 +5,7 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.11.4">
-    <title>Skyline.Topic.Controller.Subscribe – skyline v0.0.1</title>
+    <title>Skyline.Contrib.SubscribeController – skyline v0.0.1</title>
     <link rel="stylesheet" href="dist/app-1e374caa3d.css" />
     <script src="dist/sidebar_items.js"></script>
   </head>
@@ -64,13 +64,16 @@
 
       <h1>
         <small class="visible-xs">skyline v0.0.1</small>
-        Skyline.Topic.Controller.Subscribe
-        
-          <small>behaviour</small>
+        Skyline.Contrib.SubscribeController
         
         
       </h1>
 
+      
+        <section id="moduledoc" class="docstring">
+          <p>A pass-through controller that subscribes to topics as it recieves them.</p>
+
+        </section>
       
 
       
@@ -84,29 +87,23 @@
           
 
           
-
-          
-
-          
-  <div class="summary-callbacks summary">
+  <div class="summary-functions summary">
     <h2>
-      <a href="#callbacks">Callbacks</a>
+      <a href="#functions">Functions</a>
     </h2>
     <div class="summary-row">
   <div class="summary-signature">
-    <a href="#c:init/1">init(any)</a>
-  </div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#c:subscribe/2">subscribe(arg0, any)</a>
+    <a href="#subscribe/2">subscribe(conn, opts)</a>
   </div>
   
 </div>
 
   </div>
 
+
+          
+
+          
 
         </section>
       
@@ -114,56 +111,21 @@
       
 
       
-
-      
-
-      
-        <section id="callbacks" class="details-list">
+        <section id="functions" class="details-list">
           <h1 class="section-heading">
-            <a class="hover-link" href="#callbacks">
+            <a class="hover-link" href="#functions">
               <i class="icon-link"></i>
             </a>
-            Callbacks
+            Functions
           </h1>
-          <div class="detail" id="c:init/1">
+          <div class="detail" id="subscribe/2">
   <div class="detail-header">
-    <a href="#c:init/1" class="detail-link" title="Link to this callback">
+    <a href="#subscribe/2" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">init(any)</span>
+    <span class="signature">subscribe(conn, opts)</span>
       
   </div>
-  
-    <div class="specs">
-      <h4 class="specs-title">Specs</h4>
-      <div class="specs-list">
-        
-          <pre><code class="elixir">init(any) :: any</code></pre>
-        
-      </div>
-    </div>
-  
-  <section class="docstring">
-    
-  </section>
-</div>
-<div class="detail" id="c:subscribe/2">
-  <div class="detail-header">
-    <a href="#c:subscribe/2" class="detail-link" title="Link to this callback">
-      <i class="icon-link"></i>
-    </a>
-    <span class="signature">subscribe(arg0, any)</span>
-      
-  </div>
-  
-    <div class="specs">
-      <h4 class="specs-title">Specs</h4>
-      <div class="specs-list">
-        
-          <pre><code class="elixir">subscribe(<a href="Skyline.Topic.Conn.html#t:t/0">Skyline.Topic.Conn.t</a>, any) :: <a href="Skyline.Topic.Controller.html#t:response/0">Skyline.Topic.Controller.response</a></code></pre>
-        
-      </div>
-    </div>
   
   <section class="docstring">
     
@@ -171,6 +133,10 @@
 </div>
 
         </section>
+      
+
+      
+
       
         <footer class="footer">
       <p>

@@ -1,7 +1,14 @@
 defmodule Skyline.AppConfig do
-  @moduledoc """
-  Config that is used to authorize and handle messages.
-  """
-  defstruct auth: nil,
-            router: nil
+    @doc false
+  
+    defstruct auth_opts: nil,
+              router: nil
+            
+    @doc false
+    defmacro __using__(_) do
+     quote do
+       @before_compile unquote(__MODULE__)
+     end
+    end
+
 end

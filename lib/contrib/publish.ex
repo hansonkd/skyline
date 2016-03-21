@@ -1,5 +1,8 @@
-defmodule Skyline.Topic.Controller.Default.PublishController do
+defmodule Skyline.Contrib.PublishController do
+  @moduledoc "A pass-through publish controller that publishes all messages as it recieves them."
+  
   use Skyline.Topic.Controller
+  
   alias Skyline.Topic.Conn
 
   def init(opts) do

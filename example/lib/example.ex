@@ -30,17 +30,12 @@ defmodule MessageHandler do
 
 end
 
-defmodule SkylineApp do
+defmodule Example do
   import Skyline.AppConfig
-  alias Skyline.Events.{Errors, Incoming, Outgoing, Auth}
 
   def init() do
-
-    Errors.add_handler(MessageHandler, nil)
-    Incoming.add_handler(MessageHandler, nil)
-    Outgoing.add_handler(MessageHandler, nil)
-    Auth.add_handler(MessageHandler, nil)
-
+    Example.EventHandler.init
+    
     %Skyline.AppConfig{
       auth: %AuthConfig{admins: ["admin"]},
       router: SkylineApp.Router

@@ -109,9 +109,9 @@ defmodule Skyline.Client do
                 {:close_connection, reason} ->
                     Skyline.Events.error(client_id, auth_info, reason)
                     {:stop, :normal, state}
-                :ok ->
+                %Client{} = new_state->
                     GenServer.cast(self, :verified_loop)
-                    {:noreply, state}
+                    {:noreply, new_state}
             end
       end
     end

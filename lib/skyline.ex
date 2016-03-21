@@ -2,7 +2,6 @@ defmodule Skyline do
 
   use Application
 
-
   import Supervisor.Spec, warn: false
 
   alias Skyline.Msg

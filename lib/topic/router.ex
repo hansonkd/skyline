@@ -1,4 +1,5 @@
 defmodule Skyline.Topic.Router do
+    
     defmodule NoRouteError do
       @moduledoc """
       Exception raised when no route is found.
@@ -10,13 +11,77 @@ defmodule Skyline.Topic.Router do
         router = Keyword.fetch!(opts, :router)
         path   = "/" <> Enum.join(conn.path_info, "/")
 
-        %NoRouteError{message: "no route found for #{conn.method} #{path} (#{inspect router})",
+        %NoRouteError{message: "no route found for #{conn.action} #{path} (#{inspect router})",
                       conn: conn, router: router}
       end
     end
 
+    @moduledoc """
+     Defines a Skyline router.
+     
+     Skyline router is a simplified version of Phoenix's so don't be 
+     surprised if there are simularities.
+     The router provides a set of macros for generating routes
+     that dispatch to specific controllers and actions. Those
+     macros are named after message types publish and subscribe. For example:
+         defmodule MyApp.Router do
+           use Skyline.Router
+           publish "/topic/:topic", PublishController
+         end
+     The `publish/2` macro above accepts a request of format `"/topic/VALUE"` and
+     dispatches it to `PublishController.publish/2`.
+     Routes can also match glob-like patterns, routing any path with a common
+     base to the same controller. For example:
+         publish "/dynamic*anything", DynamicController
+     
+     Skyline's router is extremely efficient, as it relies on Elixir
+     pattern matching for matching routes and serving requests.
+
+     ### Scopes and Resources
+     The router also supports scoping of routes:
+         scope "/api/v1" do
+           subscribe "/devices/:id", DeviceController
+         end
+     For example, the route above will match on the path `"/api/v1/devices/:id"`
+     and the named route will be `api_v1_page_path`, as expected from the
+     values given to `scope/2` option.
+     Skyline also provides a `resources/2` macro that allows developers
+     to shortcut `publish/3` and `subscribe/3`:
+         defmodule MyApp.Router do
+           use Skyline.Router
+           resources "/devices", DeviceController
+           resources "/users", UserController
+         end
+     Check `scope/2` and `resources/2` for more information.
+     ## Pipelines and pipes
+     Once a request arrives at the Skyline router, it performs
+     a series of transformations through pipelines until the
+     request is dispatched to a desired end-point.
+     Such transformations are defined via pipes, as defined
+     in `Skyline.Pipe`.
+     Once a pipeline is defined, it can be piped through per scope.
+     For example:
+         defmodule MyApp.Router do
+           use Skyline.Router
+           pipeline :session do
+             pipe :fetch_session
+           end
+           scope "/" do
+             pipe_through :session
+             # session related routes and resources
+           end
+         end
+     `Skyline.Router` imports functions from both `Skyline.Conn` and `Skyline.Controller`
+     to help define pipes. In the example above, `fetch_session/2`
+     comes from `Skyline.Conn` while `accepts/2` comes from `Skyline.Controller`.
+     Note that router pipelines are only invoked after a route is found.
+     No pipe is invoked in case no matches were found.
+     """
+     
     @incoming_message_types [:publish, :subscribe]
     import Skyline.Topic.Scope
+    
+    
 
     @doc false
     defmacro __using__(_) do
@@ -30,8 +95,9 @@ defmodule Skyline.Topic.Router do
     defp prelude() do
      quote do
        Module.register_attribute __MODULE__, :skyline_routes, accumulate: true
-
-       #import Skyline.Topic.Pipeline
+       
+       @behavior Skyline.Topic.Pipe
+       
        import Skyline.Topic.Router
        import Skyline.Topic.Router.Route
 
@@ -44,7 +110,7 @@ defmodule Skyline.Topic.Router do
 
    defp match_dispatch() do
      quote location: :keep do
-       #@behaviour Pipe
+       @behaviour Skyline.Topic.Pipe
 
        @doc """
        Callback required by Pipe that initializes the router
@@ -60,7 +126,7 @@ defmodule Skyline.Topic.Router do
        def call(conn, opts), do: do_call(conn, opts)
 
        defp match_route(conn, []) do
-         match_route(conn, conn.method, Enum.map(conn.path_info, &URI.decode/1))
+         match_route(conn, conn.action, Enum.map(conn.path_info, &URI.decode/1))
        end
 
        defp dispatch(conn, []) do
@@ -131,7 +197,7 @@ defmodule Skyline.Topic.Router do
       # line: -1 is used here to avoid warnings if forwarding to root path
       no_match =
         quote line: -1 do
-          defp match_route(conn, _method, _path_info) do
+          defp match_route(conn, _action, _path_info) do
             raise NoRouteError, conn: conn, router: __MODULE__
           end
         end

@@ -72,6 +72,11 @@
       </h1>
 
       
+        <section id="moduledoc" class="docstring">
+          <p>Defines the methods used by Skyline to connect and authorize a new client.</p>
+
+        </section>
+      
 
       
         <section id="summary" class="details-list">
@@ -112,6 +117,10 @@
     <a href="#new_connection/2">new_connection(mod, con_msg)</a>
   </div>
   
+    <div class="summary-synopsis"><p>Processes a connect message and either returns <code class="inline">{:ok, auth_info}</code> or <code class="inline">{:error, conn_ack_type}</code> where
+auth_info is what is passed to <code class="inline">Skyline.Conn</code> whenever a message is recieved</p>
+</div>
+  
 </div>
 
   </div>
@@ -135,7 +144,7 @@
           <div class="types-list">
             <div id="t:connection_response/0" class="type-detail">
   <pre><code class="elixir"><a href="#t:connection_response/0">connection_response</a> ::
-  {:ok, any} |
+  {:ok, term} |
   {:error, <a href="Skyline.html#t:conn_ack_type/0">Skyline.conn_ack_type</a>}</code></pre>
   
 </div>
@@ -175,7 +184,9 @@
     </div>
   
   <section class="docstring">
-    
+    <p>Processes a connect message and either returns <code class="inline">{:ok, auth_info}</code> or <code class="inline">{:error, conn_ack_type}</code> where
+auth_info is what is passed to <code class="inline">Skyline.Conn</code> whenever a message is recieved.</p>
+
   </section>
 </div>
 

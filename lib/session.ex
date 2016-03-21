@@ -11,7 +11,6 @@ defmodule Skyline.Session do
   use GenServer
   require Logger
 
-  import Socket
   alias Skyline.Session
 
   @spec start_link(Skyline.socket, String.t, [key: any]) :: GenServer.on_start

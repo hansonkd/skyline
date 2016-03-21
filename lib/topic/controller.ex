@@ -1,7 +1,9 @@
 
 defmodule Skyline.Topic.Controller do
   @moduledoc """
-  This module implements the controller pipeline responsible for handling requests.
+  Implements the controller pipeline responsible for handling 
+  publish and subscribe messages.
+  
   ## The pipeline
   The goal of a controller is to receive a request and invoke the desired
   action. The whole flow of the controller is managed by a single pipeline:
@@ -9,9 +11,9 @@ defmodule Skyline.Topic.Controller do
         use Skyline.Topic.Controller
         require Logger
         pipe :log_message, "before action"
-        def show(conn, _params) do
-          Logger.debug "show/2"
-          send_resp(conn, 200, "OK")
+        def publish(conn, _params) do
+          Logger.debug "publish/2"
+          conn
         end
         defp log_message(conn, msg) do
           Logger.debug msg
@@ -21,12 +23,12 @@ defmodule Skyline.Topic.Controller do
   When invoked, this pipeline will print:
       before action
       show/2
-  As any other pipeline, we can halt at any step by calling
-  `Skyline.Topic.Conn.halt/1` (which is by default imported into controllers).
+  As any other pipeline, we can halt at any step by returning
+  {:close_connection, reason} where reason can be an exception or a string.
   If we change `log_message/2` to:
       def log_message(conn, msg) do
         Logger.debug msg
-        halt(conn)
+        {:close_connection, "Halt pipe"}
       end
   it will print only:
       before action
@@ -35,20 +37,19 @@ defmodule Skyline.Topic.Controller do
   ## Guards
   `pipe/2` supports guards, allowing a developer to configure a pipe to only
   run in some particular action:
-      pipe :log_message, "before show and edit" when action in [:show, :edit]
-      pipe :log_message, "before all but index" when not action in [:index]
-  The first pipe will run only when action is show or edit.
-  The second pipe will always run, except for the index action.
+      pipe :log_message, "before publish" when action == :publish
+  The first pipe will run only when action is publish.
   Those guards work like regular Elixir guards and the only variables accessible
   in the guard are `conn`, the `action` as an atom and the `controller` as an
   alias.
+  
   ## Controllers are pipes
   Like routers, controllers are pipes, but they are wired to dispatch
   to a particular function which is called an action.
   For example, the route:
-      get "/users/:id", UserController, :show
+      subscribe "/users/:id", UserController
   will invoke `UserController` as a pipe:
-      UserController.call(conn, :show)
+      UserController.call(conn, :subscribe)
   which will trigger the pipe pipeline and which will eventually
   invoke the inner action pipe that dispatches to the `show/2`
   function in the `UserController`.
@@ -57,17 +58,17 @@ defmodule Skyline.Topic.Controller do
   which is responsible for dispatching the appropriate action
   after the pipe stack (and is also overridable).
   """
-
-  @type response :: :ok | :close_connection
-
+  
   @doc false
   defmacro __using__(_) do
     quote do
-      #@behaviour Pipe
-
+     
       import Skyline.Topic.Controller
       import Skyline.Topic.Pipe
       Module.register_attribute(__MODULE__, :pipes, accumulate: true)
+      
+      @behaviour Skyline.Topic.Pipe
+      
       @before_compile Skyline.Topic.Controller
 
       @doc false
@@ -78,14 +79,14 @@ defmodule Skyline.Topic.Controller do
       @doc false
       def call(conn, action) do
         conn = update_in conn.private,
-                 &(&1 |> Map.put(:phoenix_controller, __MODULE__)
-                      |> Map.put(:phoenix_action, action))
+                 &(&1 |> Map.put(:skyline_controller, __MODULE__)
+                      |> Map.put(:skyline_action, action))
 
         controller_pipeline(conn, action)
       end
 
       @doc false
-      def action(%{private: %{phoenix_action: action}} = conn, _options) do
+      def action(%{private: %{skyline_action: action}} = conn, _options) do
         apply(__MODULE__, action, [conn, conn.params])
       end
 
@@ -108,7 +109,7 @@ defmodule Skyline.Topic.Controller do
         catch
           kind, reason ->
             Skyline.Topic.Controller.__catch__(
-              kind, reason, __MODULE__, conn.private.phoenix_action, System.stacktrace
+              kind, reason, __MODULE__, conn.private.skyline_action, System.stacktrace
             )
         end
       end

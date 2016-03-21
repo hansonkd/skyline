@@ -5,7 +5,7 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.11.4">
-    <title>Mix.Tasks.TestRouter – skyline v0.0.1</title>
+    <title>Skyline.Events.Outgoing – skyline v0.0.1</title>
     <link rel="stylesheet" href="dist/app-1e374caa3d.css" />
     <script src="dist/sidebar_items.js"></script>
   </head>
@@ -64,11 +64,29 @@
 
       <h1>
         <small class="visible-xs">skyline v0.0.1</small>
-        Mix.Tasks.TestRouter
+        Skyline.Events.Outgoing
         
         
       </h1>
 
+      
+        <section id="moduledoc" class="docstring">
+          <p>GenEvent server to hook into <em>all</em> outbound messages as they will appear to the client.</p>
+<p>An app can hook into the Outgoing event system by calling <a href="#add_handler/2"><code class="inline">add_handler/2</code></a></p>
+<pre><code class="elixir">defmodule Example.EventHandler do
+  use GenEvent
+  require Logger
+  alias Skyline.Events.Outgoing
+  def init() do
+      Outgoing.add_handler(Example.EventHandler, nil)
+  end
+  def handle_event({:outgoing_message, {client_id, auth_info, message}}, st) do
+    Logger.debug &quot;Sending message (#{client_id}, #{inspect auth_info}): #{inspect message}&quot;
+    {:ok, st}
+  end
+end</code></pre>
+
+        </section>
       
 
       
@@ -88,50 +106,13 @@
     </h2>
     <div class="summary-row">
   <div class="summary-signature">
-    <a href="#call/2">call(conn, opts)</a>
-  </div>
-  
-    <div class="summary-synopsis"><p>Callback invoked by Pipe on every request</p>
-</div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#init/1">init(opts)</a>
-  </div>
-  
-    <div class="summary-synopsis"><p>Callback required by Pipe that initializes the router
-for serving web requests</p>
-</div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#mypipeline/2">mypipeline(conn, )</a>
+    <a href="#add_handler/2">add_handler(handler, init)</a>
   </div>
   
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#run/1">run()</a>
-  </div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#to_function/1">to_function(opts \\ nil)</a>
-  </div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#what/2">what(msg, opts)</a>
-  </div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#whati/2">whati(msg, opts)</a>
+    <a href="#start_link/0">start_link()</a>
   </div>
   
 </div>
@@ -156,41 +137,12 @@ for serving web requests</p>
             </a>
             Functions
           </h1>
-          <div class="detail" id="call/2">
+          <div class="detail" id="add_handler/2">
   <div class="detail-header">
-    <a href="#call/2" class="detail-link" title="Link to this function">
+    <a href="#add_handler/2" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">call(conn, opts)</span>
-      
-  </div>
-  
-  <section class="docstring">
-    <p>Callback invoked by Pipe on every request.</p>
-
-  </section>
-</div>
-<div class="detail" id="init/1">
-  <div class="detail-header">
-    <a href="#init/1" class="detail-link" title="Link to this function">
-      <i class="icon-link"></i>
-    </a>
-    <span class="signature">init(opts)</span>
-      
-  </div>
-  
-  <section class="docstring">
-    <p>Callback required by Pipe that initializes the router
-for serving web requests.</p>
-
-  </section>
-</div>
-<div class="detail" id="mypipeline/2">
-  <div class="detail-header">
-    <a href="#mypipeline/2" class="detail-link" title="Link to this function">
-      <i class="icon-link"></i>
-    </a>
-    <span class="signature">mypipeline(conn, )</span>
+    <span class="signature">add_handler(handler, init)</span>
       
   </div>
   
@@ -198,51 +150,12 @@ for serving web requests.</p>
     
   </section>
 </div>
-<div class="detail" id="run/1">
+<div class="detail" id="start_link/0">
   <div class="detail-header">
-    <a href="#run/1" class="detail-link" title="Link to this function">
+    <a href="#start_link/0" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">run()</span>
-      
-  </div>
-  
-  <section class="docstring">
-    
-  </section>
-</div>
-<div class="detail" id="to_function/1">
-  <div class="detail-header">
-    <a href="#to_function/1" class="detail-link" title="Link to this function">
-      <i class="icon-link"></i>
-    </a>
-    <span class="signature">to_function(opts \\ nil)</span>
-      
-  </div>
-  
-  <section class="docstring">
-    
-  </section>
-</div>
-<div class="detail" id="what/2">
-  <div class="detail-header">
-    <a href="#what/2" class="detail-link" title="Link to this function">
-      <i class="icon-link"></i>
-    </a>
-    <span class="signature">what(msg, opts)</span>
-      
-  </div>
-  
-  <section class="docstring">
-    
-  </section>
-</div>
-<div class="detail" id="whati/2">
-  <div class="detail-header">
-    <a href="#whati/2" class="detail-link" title="Link to this function">
-      <i class="icon-link"></i>
-    </a>
-    <span class="signature">whati(msg, opts)</span>
+    <span class="signature">start_link()</span>
       
   </div>
   

@@ -1,7 +1,7 @@
 defmodule Skyline.Msg.Decode.Utils do
     @moduledoc false
 
-    # Common methods for decoding
+    # Common pipes for decoding
 
     use Bitwise
     alias Skyline.Msg.FixedHeader

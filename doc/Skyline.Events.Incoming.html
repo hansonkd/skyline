@@ -5,7 +5,7 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.11.4">
-    <title>Skyline.Auth.NoAuth – skyline v0.0.1</title>
+    <title>Skyline.Events.Incoming – skyline v0.0.1</title>
     <link rel="stylesheet" href="dist/app-1e374caa3d.css" />
     <script src="dist/sidebar_items.js"></script>
   </head>
@@ -64,11 +64,30 @@
 
       <h1>
         <small class="visible-xs">skyline v0.0.1</small>
-        Skyline.Auth.NoAuth
+        Skyline.Events.Incoming
         
         
       </h1>
 
+      
+        <section id="moduledoc" class="docstring">
+          <p>GenEvent server to hook into <em>all</em> incoming messages direct from the client 
+(before pipelines, controllers, etc).</p>
+<p>An app can hook into the Incoming event system by calling <a href="#add_handler/2"><code class="inline">add_handler/2</code></a></p>
+<pre><code class="elixir">defmodule Example.EventHandler do
+  use GenEvent
+  require Logger
+  alias Skyline.Events.Incoming
+  def init() do
+      Incoming.add_handler(Example.EventHandler, nil)
+  end
+  def handle_event({:incoming_message, {client_id, auth_info, message}}, st) do
+    Logger.debug &quot;Accepted message (#{client_id}, #{inspect auth_info}): #{inspect message}&quot;
+    {:ok, st}
+  end
+end</code></pre>
+
+        </section>
       
 
       
@@ -88,7 +107,13 @@
     </h2>
     <div class="summary-row">
   <div class="summary-signature">
-    <a href="#init/0">init()</a>
+    <a href="#add_handler/2">add_handler(handler, init)</a>
+  </div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#start_link/0">start_link()</a>
   </div>
   
 </div>
@@ -113,12 +138,25 @@
             </a>
             Functions
           </h1>
-          <div class="detail" id="init/0">
+          <div class="detail" id="add_handler/2">
   <div class="detail-header">
-    <a href="#init/0" class="detail-link" title="Link to this function">
+    <a href="#add_handler/2" class="detail-link" title="Link to this function">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">init()</span>
+    <span class="signature">add_handler(handler, init)</span>
+      
+  </div>
+  
+  <section class="docstring">
+    
+  </section>
+</div>
+<div class="detail" id="start_link/0">
+  <div class="detail-header">
+    <a href="#start_link/0" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">start_link()</span>
       
   </div>
   

@@ -15,7 +15,7 @@ defmodule Skyline.Topic.Dispatcher do
     # 
     # No benchmarks have been done to see if one is more efficient then the other.
 
-    use Skyline.Amnesia.Router.TreeDatabase
+    use Skyline.Amnesia.Dispatch.TreeDatabase
     require Exquisite
     require Amnesia
 
@@ -27,7 +27,7 @@ defmodule Skyline.Topic.Dispatcher do
     end
 
     @doc "Cast a message to all pid's registered with the topic"
-    @spec broadcast_msg(String.t, any) :: :ok
+    @spec broadcast_msg(String.t, Skyline.skyline_msg) :: :ok
     def broadcast_msg(topic, msg) do
       Enum.each(collect_pids(topic), fn(pid) -> GenServer.cast(pid, msg) end)
       :ok

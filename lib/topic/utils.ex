@@ -19,8 +19,7 @@ defmodule Skyline.Topic.Utils do
                                         retain: retain} = msg,
                     topic: topic,
                     qos: qos,
-                    client: %Client{sess_pid: sess_pid,
-                                    client_id: client_id}}) do
+                    private: %{sess_pid: sess_pid, client_id: client_id}}) do
     if retain do
       Amnesia.transaction do
         case StoredTopic.read(topic) do
@@ -30,7 +29,7 @@ defmodule Skyline.Topic.Utils do
       end
     end
     mod = qos_to_qos_mod(qos)
-    {:ok, _pid} = mod.start(sess_pid, client_id, msg)
+    {:ok, _pid} = mod.start(sess_pid, client_id, %{msg | topic: topic})
     :ok
   end
 
@@ -41,9 +40,8 @@ defmodule Skyline.Topic.Utils do
   def subscribe(%Conn{topic: topic,
                       qos: qos,
                       message: %Subscribe{},
-                      client: %Client{sess_pid: sess_pid,
-                                      client_id: client_id,
-                                      auth_info: auth_info}}) do
+                      auth_info: auth_info,
+                      private: %{sess_pid: sess_pid, client_id: client_id}}) do
       case Subscription.start_link(client_id, sess_pid, topic, qos, auth_info) do
         {:ok, _pid} -> qos
         {:error, {:already_started, pid}} ->

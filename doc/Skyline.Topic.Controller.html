@@ -71,7 +71,8 @@
 
       
         <section id="moduledoc" class="docstring">
-          <p>This module implements the controller pipeline responsible for handling requests.</p>
+          <p>Implements the controller pipeline responsible for handling 
+publish and subscribe messages.</p>
 <h2>The pipeline</h2>
 <p>The goal of a controller is to receive a request and invoke the desired
 action. The whole flow of the controller is managed by a single pipeline:</p>
@@ -79,9 +80,9 @@ action. The whole flow of the controller is managed by a single pipeline:</p>
   use Skyline.Topic.Controller
   require Logger
   pipe :log_message, &quot;before action&quot;
-  def show(conn, _params) do
-    Logger.debug &quot;show/2&quot;
-    send_resp(conn, 200, &quot;OK&quot;)
+  def publish(conn, _params) do
+    Logger.debug &quot;publish/2&quot;
+    conn
   end
   defp log_message(conn, msg) do
     Logger.debug msg
@@ -91,12 +92,12 @@ end</code></pre>
 <p>When invoked, this pipeline will print:</p>
 <pre><code class="elixir">before action
 show/2</code></pre>
-<p>As any other pipeline, we can halt at any step by calling
-<code class="inline">Skyline.Topic.Conn.halt/1</code> (which is by default imported into controllers).
+<p>As any other pipeline, we can halt at any step by returning
+{:close_connection, reason} where reason can be an exception or a string.
 If we change <code class="inline">log_message/2</code> to:</p>
 <pre><code class="elixir">def log_message(conn, msg) do
   Logger.debug msg
-  halt(conn)
+  {:close_connection, &quot;Halt pipe&quot;}
 end</code></pre>
 <p>it will print only:</p>
 <pre><code class="elixir">before action</code></pre>
@@ -105,10 +106,8 @@ will never be invoked.</p>
 <h2>Guards</h2>
 <p><a href="#pipe/2"><code class="inline">pipe/2</code></a> supports guards, allowing a developer to configure a pipe to only
 run in some particular action:</p>
-<pre><code class="elixir">pipe :log_message, &quot;before show and edit&quot; when action in [:show, :edit]
-pipe :log_message, &quot;before all but index&quot; when not action in [:index]</code></pre>
-<p>The first pipe will run only when action is show or edit.
-The second pipe will always run, except for the index action.
+<pre><code class="elixir">pipe :log_message, &quot;before publish&quot; when action == :publish</code></pre>
+<p>The first pipe will run only when action is publish.
 Those guards work like regular Elixir guards and the only variables accessible
 in the guard are <code class="inline">conn</code>, the <code class="inline">action</code> as an atom and the <code class="inline">controller</code> as an
 alias.</p>
@@ -116,9 +115,9 @@ alias.</p>
 <p>Like routers, controllers are pipes, but they are wired to dispatch
 to a particular function which is called an action.
 For example, the route:</p>
-<pre><code class="elixir">get &quot;/users/:id&quot;, UserController, :show</code></pre>
+<pre><code class="elixir">subscribe &quot;/users/:id&quot;, UserController</code></pre>
 <p>will invoke <code class="inline">UserController</code> as a pipe:</p>
-<pre><code class="elixir">UserController.call(conn, :show)</code></pre>
+<pre><code class="elixir">UserController.call(conn, :subscribe)</code></pre>
 <p>which will trigger the pipe pipeline and which will eventually
 invoke the inner action pipe that dispatches to the <code class="inline">show/2</code>
 function in the <code class="inline">UserController</code>.
@@ -139,19 +138,6 @@ after the pipe stack (and is also overridable).</p>
             Summary
           </h1>
           
-  <div class="summary-types summary">
-    <h2>
-      <a href="#types">Types</a>
-    </h2>
-    <div class="summary-row">
-  <div class="summary-signature">
-    <a href="#t:response/0">response()</a>
-  </div>
-  
-</div>
-
-  </div>
-
 
           
 
@@ -188,22 +174,6 @@ the pipe pipeline</p>
         </section>
       
 
-      
-        <section id="types" class="types details-list">
-          <h1 class="section-heading">
-            <a class="hover-link" href="#types">
-              <i class="icon-link"></i>
-            </a>
-            Types
-          </h1>
-          <div class="types-list">
-            <div id="t:response/0" class="type-detail">
-  <pre><code class="elixir"><a href="#t:response/0">response</a> :: :ok | :close_connection</code></pre>
-  
-</div>
-
-          </div>
-        </section>
       
 
       

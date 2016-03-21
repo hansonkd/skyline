@@ -1,5 +1,6 @@
 defmodule Skyline.Events do
-
+  @moduledoc false
+  
   use GenEvent
 
   def error(client_id, auth_info, reason) do

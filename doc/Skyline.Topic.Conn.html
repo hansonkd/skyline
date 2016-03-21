@@ -70,6 +70,40 @@
       </h1>
 
       
+        <section id="moduledoc" class="docstring">
+          <p>Holds the message and auth information to be passed to pipes and controllers.</p>
+<p>The auth_info you returned in your auth config can be retrieved and manipulated for subsequenet messages:</p>
+<pre><code class="elixir">def some_pipe(%Conn{auth_info: MyAuth{username: username} = auth} = conn, _opts) do
+    Logger.debug &quot;Hi, #{username}, you are now SomeOtherUser!&quot;
+    %{conn | message: %{msg | body &lt;&gt; &quot; woah&quot;}, auth_info: %{auth | username: &quot;SomeOtherUser&quot;}}
+end</code></pre>
+<p>Or filter people out</p>
+<pre><code class="elixir">def some_pipe(%Conn{auth_info: MyAuth{username: username}} = conn, _opts) do
+    if username == &quot;admin&quot; do
+        conn
+    else
+        {:close_connection, &quot;Not cool enough&quot;}
+    end
+end</code></pre>
+<p>To change the body of a Publish message, you can might do</p>
+<pre><code class="elixir">def some_pipe(%Conn{message: %PubReq{message: body} = msg} = conn, _opts) do
+    %{conn | message: %{msg | body &lt;&gt; &quot; woah&quot;}}
+end</code></pre>
+<p><code class="inline">Conn.topic</code> and <code class="inline">Conn.qos</code> are the requested topic and Qos of the message. These can be manipulated in either publish
+or subscribe events. You can transform the topic name or downgrade the Qos handling for the message. Changing the topic will
+not affect routing.</p>
+<p>During a Publish event, the message will have a <code class="inline">%PublishReq{topic: String}</code> param. Changing this does nothing
+If you want to affect what topic the
+message is sent to, change <code class="inline">topic</code> in <code class="inline">%Conn{}</code>. Before Skyline dispatches the message, it will take whatever topic is
+in <code class="inline">%Conn{}</code> and put it on the message, although the topic the client recieves is the subscription topic and not what topic 
+the message was published to.</p>
+<p>During a Subscribe event, the message will have <code class="inline">%Subscribe{topics: [String]}</code>. Manipulating the message will not
+have an effect on how Skyline handles the returned <code class="inline">%Conn{}</code>. This is because Skyline iterates through all the topics
+in a message and makes a call for each one. Therefore to change what topic is subscribed, alter <code class="inline">topic</code> in <code class="inline">%Conn{}</code>.
+When Skyline creates the subscriber process it will look at <code class="inline">conn.topic</code>.</p>
+
+        </section>
+      
 
       
         <section id="summary" class="details-list">
@@ -80,27 +114,21 @@
             Summary
           </h1>
           
-
-          
-  <div class="summary-functions summary">
+  <div class="summary-types summary">
     <h2>
-      <a href="#functions">Functions</a>
+      <a href="#types">Types</a>
     </h2>
     <div class="summary-row">
   <div class="summary-signature">
-    <a href="#conn/5">conn(topic, qos, message, client, method)</a>
-  </div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#put_private/3">put_private(conn, key, value)</a>
+    <a href="#t:t/0">t()</a>
   </div>
   
 </div>
 
   </div>
 
+
+          
 
           
 
@@ -110,43 +138,23 @@
       
 
       
-
-      
-        <section id="functions" class="details-list">
+        <section id="types" class="types details-list">
           <h1 class="section-heading">
-            <a class="hover-link" href="#functions">
+            <a class="hover-link" href="#types">
               <i class="icon-link"></i>
             </a>
-            Functions
+            Types
           </h1>
-          <div class="detail" id="conn/5">
-  <div class="detail-header">
-    <a href="#conn/5" class="detail-link" title="Link to this function">
-      <i class="icon-link"></i>
-    </a>
-    <span class="signature">conn(topic, qos, message, client, method)</span>
-      
-  </div>
+          <div class="types-list">
+            <div id="t:t/0" class="type-detail">
+  <pre><code class="elixir"><a href="#t:t/0">t</a> :: %Skyline.Topic.Conn{action: term, auth_info: term, message: <a href="Skyline.html#t:skyline_msg/0">Skyline.skyline_msg</a>, params: term, path_info: [<a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>], private: term, qos: <a href="Skyline.html#t:qos_type/0">Skyline.qos_type</a>, topic: <a href="http://elixir-lang.org/docs/stable/elixir/String.html#t:t/0">String.t</a>}</code></pre>
   
-  <section class="docstring">
-    
-  </section>
-</div>
-<div class="detail" id="put_private/3">
-  <div class="detail-header">
-    <a href="#put_private/3" class="detail-link" title="Link to this function">
-      <i class="icon-link"></i>
-    </a>
-    <span class="signature">put_private(conn, key, value)</span>
-      
-  </div>
-  
-  <section class="docstring">
-    
-  </section>
 </div>
 
+          </div>
         </section>
+      
+
       
 
       

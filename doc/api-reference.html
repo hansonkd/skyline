@@ -83,27 +83,17 @@
       <h1 class="section-heading">Modules</h1>
       <div class="summary">
         <div class="summary-row">
-  <div class="summary-signature"><a href="Inline.html">Inline</a></div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature"><a href="Mix.Tasks.CreateDb.html">Mix.Tasks.CreateDb</a></div>
-  
-</div>
-<div class="summary-row">
   <div class="summary-signature"><a href="Mix.Tasks.DestroyDb.html">Mix.Tasks.DestroyDb</a></div>
   
+    <div class="summary-synopsis"><p>Destroys what was setup in <a href="Mix.Tasks.Skyline.CreateDb.html"><code class="inline">Mix.Tasks.Skyline.CreateDb</code></a></p>
 </div>
-<div class="summary-row">
-  <div class="summary-signature"><a href="Mix.Tasks.TestRouter.html">Mix.Tasks.TestRouter</a></div>
   
 </div>
 <div class="summary-row">
-  <div class="summary-signature"><a href="Mix.Tasks.TestTree.html">Mix.Tasks.TestTree</a></div>
+  <div class="summary-signature"><a href="Mix.Tasks.Skyline.CreateDb.html">Mix.Tasks.Skyline.CreateDb</a></div>
   
+    <div class="summary-synopsis"><p>Initiates Topic storage and in-memory Tree based dispatching for Topic subscriptions</p>
 </div>
-<div class="summary-row">
-  <div class="summary-signature"><a href="MyPlug.html">MyPlug</a></div>
   
 </div>
 <div class="summary-row">
@@ -118,7 +108,69 @@
   
 </div>
 <div class="summary-row">
-  <div class="summary-signature"><a href="Skyline.Auth.NoAuth.html">Skyline.Auth.NoAuth</a></div>
+  <div class="summary-signature"><a href="Skyline.Contrib.NoAuth.html">Skyline.Contrib.NoAuth</a></div>
+  
+    <div class="summary-synopsis"><p>An auth system that accepts all connections and returns a <code class="inline">nil</code> auth_info</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Skyline.Contrib.PublishController.html">Skyline.Contrib.PublishController</a></div>
+  
+    <div class="summary-synopsis"><p>A pass-through publish controller that publishes all messages as it recieves them</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Skyline.Contrib.ResourceController.html">Skyline.Contrib.ResourceController</a></div>
+  
+    <div class="summary-synopsis"><p>A pass-through resource controller that compbines 
+   Skyline.Contrib.PublishController with 
+   Skyline.Contrib.SubscribeController</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Skyline.Contrib.SubscribeController.html">Skyline.Contrib.SubscribeController</a></div>
+  
+    <div class="summary-synopsis"><p>A pass-through controller that subscribes to topics as it recieves them</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Skyline.Default.PassThroughRouter.html">Skyline.Default.PassThroughRouter</a></div>
+  
+    <div class="summary-synopsis"><p>A router that lets all messages pass-through</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Skyline.Events.Auth.html">Skyline.Events.Auth</a></div>
+  
+    <div class="summary-synopsis"><p>GenEvent server to handle connect and disconnect events</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Skyline.Events.Errors.html">Skyline.Events.Errors</a></div>
+  
+    <div class="summary-synopsis"><p>GenEvent server to handle client errors</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Skyline.Events.Incoming.html">Skyline.Events.Incoming</a></div>
+  
+    <div class="summary-synopsis"><p>GenEvent server to hook into <em>all</em> incoming messages direct from the client 
+(before pipelines, controllers, etc)</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Skyline.Events.Outgoing.html">Skyline.Events.Outgoing</a></div>
+  
+    <div class="summary-synopsis"><p>GenEvent server to hook into <em>all</em> outbound messages as they will appear to the client</p>
+</div>
   
 </div>
 <div class="summary-row">
@@ -138,86 +190,30 @@
 <div class="summary-row">
   <div class="summary-signature"><a href="Skyline.Topic.Conn.html">Skyline.Topic.Conn</a></div>
   
+    <div class="summary-synopsis"><p>Holds the message and auth information to be passed to pipes and controllers</p>
+</div>
+  
 </div>
 <div class="summary-row">
   <div class="summary-signature"><a href="Skyline.Topic.Controller.html">Skyline.Topic.Controller</a></div>
   
-    <div class="summary-synopsis"><p>This module implements the controller pipeline responsible for handling requests.</p>
-<h2>The pipeline</h2>
-<p>The goal of a controller is to receive a request and invoke the desired
-action. The whole flow of the controller is managed by a single pipeline:</p>
-<pre><code class="elixir">defmodule UserController do
-  use Skyline.Topic.Controller
-  require Logger
-  pipe :log_message, &quot;before action&quot;
-  def show(conn, _params) do
-    Logger.debug &quot;show/2&quot;
-    send_resp(conn, 200, &quot;OK&quot;)
-  end
-  defp log_message(conn, msg) do
-    Logger.debug msg
-    conn
-  end
-end</code></pre>
-<p>When invoked, this pipeline will print:</p>
-<pre><code class="elixir">before action
-show/2</code></pre>
-<p>As any other pipeline, we can halt at any step by calling
-<code class="inline">Skyline.Topic.Conn.halt/1</code> (which is by default imported into controllers).
-If we change <code class="inline">log_message/2</code> to:</p>
-<pre><code class="elixir">def log_message(conn, msg) do
-  Logger.debug msg
-  halt(conn)
-end</code></pre>
-<p>it will print only:</p>
-<pre><code class="elixir">before action</code></pre>
-<p>As the rest of the pipeline (the action and the after action pipe)
-will never be invoked.</p>
-<h2>Guards</h2>
-<p><a href="#pipe/2"><code class="inline">pipe/2</code></a> supports guards, allowing a developer to configure a pipe to only
-run in some particular action:</p>
-<pre><code class="elixir">pipe :log_message, &quot;before show and edit&quot; when action in [:show, :edit]
-pipe :log_message, &quot;before all but index&quot; when not action in [:index]</code></pre>
-<p>The first pipe will run only when action is show or edit.
-The second pipe will always run, except for the index action.
-Those guards work like regular Elixir guards and the only variables accessible
-in the guard are <code class="inline">conn</code>, the <code class="inline">action</code> as an atom and the <code class="inline">controller</code> as an
-alias.</p>
-<h2>Controllers are pipes</h2>
-<p>Like routers, controllers are pipes, but they are wired to dispatch
-to a particular function which is called an action.
-For example, the route:</p>
-<pre><code class="elixir">get &quot;/users/:id&quot;, UserController, :show</code></pre>
-<p>will invoke <code class="inline">UserController</code> as a pipe:</p>
-<pre><code class="elixir">UserController.call(conn, :show)</code></pre>
-<p>which will trigger the pipe pipeline and which will eventually
-invoke the inner action pipe that dispatches to the <code class="inline">show/2</code>
-function in the <code class="inline">UserController</code>.
-As controllers are pipes, they implement both <code class="inline">init/1</code> and
-<code class="inline">call/2</code>, and it also provides a function named <code class="inline">action/2</code>
-which is responsible for dispatching the appropriate action
-after the pipe stack (and is also overridable)</p>
+    <div class="summary-synopsis"><p>Implements the controller pipeline responsible for handling 
+publish and subscribe messages</p>
 </div>
   
 </div>
 <div class="summary-row">
-  <div class="summary-signature"><a href="Skyline.Topic.Controller.Default.PublishController.html">Skyline.Topic.Controller.Default.PublishController</a></div>
+  <div class="summary-signature"><a href="Skyline.Topic.Pipe.html">Skyline.Topic.Pipe</a></div>
   
+    <div class="summary-synopsis"><p>The pipe specification for transforming <code class="inline">Skyline.Conn</code></p>
 </div>
-<div class="summary-row">
-  <div class="summary-signature"><a href="Skyline.Topic.Controller.Default.SubscribeController.html">Skyline.Topic.Controller.Default.SubscribeController</a></div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature"><a href="Skyline.Topic.Controller.Publish.html">Skyline.Topic.Controller.Publish</a></div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature"><a href="Skyline.Topic.Controller.Subscribe.html">Skyline.Topic.Controller.Subscribe</a></div>
   
 </div>
 <div class="summary-row">
   <div class="summary-signature"><a href="Skyline.Topic.Router.html">Skyline.Topic.Router</a></div>
+  
+    <div class="summary-synopsis"><p>Defines a Skyline router</p>
+</div>
   
 </div>
 <div class="summary-row">
@@ -237,6 +233,31 @@ after the pipe stack (and is also overridable)</p>
       <h1 class="section-heading">Exceptions</h1>
       <div class="summary">
         <div class="summary-row">
+  <div class="summary-signature"><a href="Skyline.ActionClauseError.html">Skyline.ActionClauseError</a></div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Skyline.AlreadyConnected.html">Skyline.AlreadyConnected</a></div>
+  
+    <div class="summary-synopsis"><p>Exception raised when client tries to reconnect in same socket</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Skyline.MalformedMessage.html">Skyline.MalformedMessage</a></div>
+  
+    <div class="summary-synopsis"><p>Exception raised when incoming message cannot be read</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Skyline.QosError.html">Skyline.QosError</a></div>
+  
+    <div class="summary-synopsis"><p>Exception raised when there was an error during the Qos process</p>
+</div>
+  
+</div>
+<div class="summary-row">
   <div class="summary-signature"><a href="Skyline.Topic.Pipe.InvalidSpecError.html">Skyline.Topic.Pipe.InvalidSpecError</a></div>
   
 </div>
@@ -267,6 +288,9 @@ Used by both <code class="inline">Pipe.Debugger</code> and <code class="inline">
       <div class="summary">
         <div class="summary-row">
   <div class="summary-signature"><a href="Skyline.Auth.Protocol.html">Skyline.Auth.Protocol</a></div>
+  
+    <div class="summary-synopsis"><p>Defines the methods used by Skyline to connect and authorize a new client</p>
+</div>
   
 </div>
 <div class="summary-row">

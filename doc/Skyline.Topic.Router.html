@@ -70,6 +70,66 @@
       </h1>
 
       
+        <section id="moduledoc" class="docstring">
+          <p>Defines a Skyline router.</p>
+<p>Skyline router is a simplified version of Phoenix’s so don’t be 
+surprised if there are simularities.
+The router provides a set of macros for generating routes
+that dispatch to specific controllers and actions. Those
+macros are named after message types publish and subscribe. For example:</p>
+<pre><code class="elixir">defmodule MyApp.Router do
+  use Skyline.Router
+  publish &quot;/topic/:topic&quot;, PublishController
+end</code></pre>
+<p>The <code class="inline">publish/2</code> macro above accepts a request of format <code class="inline">&quot;/topic/VALUE&quot;</code> and
+dispatches it to <code class="inline">PublishController.publish/2</code>.
+Routes can also match glob-like patterns, routing any path with a common
+base to the same controller. For example:</p>
+<pre><code class="elixir">publish &quot;/dynamic*anything&quot;, DynamicController</code></pre>
+<p>Skyline’s router is extremely efficient, as it relies on Elixir
+pattern matching for matching routes and serving requests.</p>
+<h3>Scopes and Resources</h3>
+<p>The router also supports scoping of routes:</p>
+<pre><code class="elixir">scope &quot;/api/v1&quot; do
+  subscribe &quot;/devices/:id&quot;, DeviceController
+end</code></pre>
+<p>For example, the route above will match on the path <code class="inline">&quot;/api/v1/devices/:id&quot;</code>
+and the named route will be <code class="inline">api_v1_page_path</code>, as expected from the
+values given to <a href="#scope/2"><code class="inline">scope/2</code></a> option.
+Skyline also provides a <code class="inline">resources/2</code> macro that allows developers
+to shortcut <a href="#publish/3"><code class="inline">publish/3</code></a> and <a href="#subscribe/3"><code class="inline">subscribe/3</code></a>:</p>
+<pre><code class="elixir">defmodule MyApp.Router do
+  use Skyline.Router
+  resources &quot;/devices&quot;, DeviceController
+  resources &quot;/users&quot;, UserController
+end</code></pre>
+<p>Check <a href="#scope/2"><code class="inline">scope/2</code></a> and <code class="inline">resources/2</code> for more information.</p>
+<h2>Pipelines and pipes</h2>
+<p>Once a request arrives at the Skyline router, it performs
+a series of transformations through pipelines until the
+request is dispatched to a desired end-point.
+Such transformations are defined via pipes, as defined
+in <code class="inline">Skyline.Pipe</code>.
+Once a pipeline is defined, it can be piped through per scope.
+For example:</p>
+<pre><code class="elixir">defmodule MyApp.Router do
+  use Skyline.Router
+  pipeline :session do
+    pipe :fetch_session
+  end
+  scope &quot;/&quot; do
+    pipe_through :session
+    # session related routes and resources
+  end
+end</code></pre>
+<p><code class="inline">Skyline.Router</code> imports functions from both <code class="inline">Skyline.Conn</code> and <code class="inline">Skyline.Controller</code>
+to help define pipes. In the example above, <code class="inline">fetch_session/2</code>
+comes from <code class="inline">Skyline.Conn</code> while <code class="inline">accepts/2</code> comes from <code class="inline">Skyline.Controller</code>.
+Note that router pipelines are only invoked after a route is found.
+No pipe is invoked in case no matches were found.</p>
+
+        </section>
+      
 
       
         <section id="summary" class="details-list">
@@ -90,7 +150,7 @@
     </h2>
     <div class="summary-row">
   <div class="summary-signature">
-    <a href="#match/5">match(verb, path, pipe, pipe_opts, options \\ [])</a>
+    <a href="#match/5">match(verb, path, controller, pipe_opts, options \\ [])</a>
   </div>
   
 </div>
@@ -114,11 +174,17 @@
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#publish/3">publish(path, pipe, options \\ [])</a>
+    <a href="#publish/3">publish(path, controller, options \\ [])</a>
   </div>
   
     <div class="summary-synopsis"><p>Generates a route to handle a publish request to the given path</p>
 </div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#resource/3">resource(path, pipe, options \\ [])</a>
+  </div>
   
 </div>
 <div class="summary-row">
@@ -155,7 +221,7 @@ end</code></pre>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#subscribe/3">subscribe(path, pipe, options \\ [])</a>
+    <a href="#subscribe/3">subscribe(path, controller, options \\ [])</a>
   </div>
   
     <div class="summary-synopsis"><p>Generates a route to handle a subscribe request to the given path</p>
@@ -188,7 +254,7 @@ end</code></pre>
     <a href="#match/5" class="detail-link" title="Link to this macro">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">match(verb, path, pipe, pipe_opts, options \\ [])</span>
+    <span class="signature">match(verb, path, controller, pipe_opts, options \\ [])</span>
       
   </div>
   
@@ -240,13 +306,26 @@ end</code></pre>
     <a href="#publish/3" class="detail-link" title="Link to this macro">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">publish(path, pipe, options \\ [])</span>
+    <span class="signature">publish(path, controller, options \\ [])</span>
       
   </div>
   
   <section class="docstring">
     <p>Generates a route to handle a publish request to the given path.</p>
 
+  </section>
+</div>
+<div class="detail" id="resource/3">
+  <div class="detail-header">
+    <a href="#resource/3" class="detail-link" title="Link to this macro">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">resource(path, pipe, options \\ [])</span>
+      
+  </div>
+  
+  <section class="docstring">
+    
   </section>
 </div>
 <div class="detail" id="scope/2">
@@ -303,7 +382,7 @@ end</code></pre>
     <a href="#subscribe/3" class="detail-link" title="Link to this macro">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">subscribe(path, pipe, options \\ [])</span>
+    <span class="signature">subscribe(path, controller, options \\ [])</span>
       
   </div>
   

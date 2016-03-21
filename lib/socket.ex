@@ -13,7 +13,7 @@ defmodule Skyline.Socket do
 				                        mode: :active])
     end
 
-    @doc "An exposed helper method for sending a message to a socket"
+    @doc "An exposed helper pipe for sending a message to a socket"
     @spec send(Skyline.socket, Skyline.skyline_msg) :: :ok
     def send(socket, msg) do
       send_binary_to_socket(socket, Encode.encode(msg))

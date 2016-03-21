@@ -1,4 +1,4 @@
-defmodule Skyline.Amnesia.Router do
+defmodule Skyline.Amnesia.Dispatch do
   @moduledoc false
   use Amnesia
 
