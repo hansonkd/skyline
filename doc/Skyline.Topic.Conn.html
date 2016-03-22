@@ -86,17 +86,18 @@ end</code></pre>
     end
 end</code></pre>
 <p>To change the body of a Publish message, you can might do</p>
-<pre><code class="elixir">def some_pipe(%Conn{message: %PubReq{message: body} = msg} = conn, _opts) do
-    %{conn | message: %{msg | body &lt;&gt; &quot; woah&quot;}}
+<pre><code class="elixir">def exciting_pipe(%Conn{message: %PubReq{message: body} = msg} = conn, _opts) do
+    %{conn | message: %{msg | body &lt;&gt; &quot;!!!!!!!&quot;}}
 end</code></pre>
 <p><code class="inline">Conn.topic</code> and <code class="inline">Conn.qos</code> are the requested topic and Qos of the message. These can be manipulated in either publish
 or subscribe events. You can transform the topic name or downgrade the Qos handling for the message. Changing the topic will
 not affect routing.</p>
-<p>During a Publish event, the message will have a <code class="inline">%PublishReq{topic: String}</code> param. Changing this does nothing
+<p>During a Publish event, the message will have a <code class="inline">%PublishReq{topic: String}</code> param. Changing this does nothing.
 If you want to affect what topic the
 message is sent to, change <code class="inline">topic</code> in <code class="inline">%Conn{}</code>. Before Skyline dispatches the message, it will take whatever topic is
-in <code class="inline">%Conn{}</code> and put it on the message, although the topic the client recieves is the subscription topic and not what topic 
-the message was published to.</p>
+in <code class="inline">%Conn{}</code> and put it on the message, although the topic the client recieves is the subscription topic and not the topic 
+the message was published to, accoring to the MQTT spec. If the client subscribes to <code class="inline">something/+/woah</code> and a message was 
+sent to <code class="inline">something/cool/woah</code>, the publish message the client recieves is <code class="inline">something/+/woah</code>.</p>
 <p>During a Subscribe event, the message will have <code class="inline">%Subscribe{topics: [String]}</code>. Manipulating the message will not
 have an effect on how Skyline handles the returned <code class="inline">%Conn{}</code>. This is because Skyline iterates through all the topics
 in a message and makes a call for each one. Therefore to change what topic is subscribed, alter <code class="inline">topic</code> in <code class="inline">%Conn{}</code>.

@@ -19,8 +19,8 @@ defmodule Skyline.Client do
     alias Skyline.Msg.Decode.Utils, as: Decoder
     alias Skyline.Msg.{Connect, Disconnect}
 
-    def start_link(client, app, _opts \\ []) do
-      state = %Client{socket: client, app_config: app.init}
+    def start_link(client, app_config, _opts \\ []) do
+      state = %Client{socket: client, app_config: app_config}
       GenServer.start_link(__MODULE__, state)
     end
 

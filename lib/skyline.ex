@@ -38,10 +38,18 @@ defmodule Skyline do
     {:ok, _pid} = Skyline.Events.Auth.start_link()
 
     port = Application.fetch_env!(:skyline, :port)
-    app = Application.fetch_env!(:skyline, :app)
-
+    
+    auth_mod = Application.fetch_env!(:skyline, :auth_module)
+    router_mod = Application.fetch_env!(:skyline, :router_module)
+    
+    app_config = %Skyline.AppConfig{
+        auth_module: auth_mod,
+        auth_opts: auth_mod.init,
+        router_module: router_mod,
+        router_opts: router_mod.init,
+    }
     children = [
-      worker(Skyline.Acceptor, [app, port])
+      worker(Skyline.Acceptor, [app_config, port])
     ]
 
     opts = [strategy: :one_for_one, name: Skyline.Supervisor]

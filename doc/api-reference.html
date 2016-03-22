@@ -92,7 +92,7 @@
 <div class="summary-row">
   <div class="summary-signature"><a href="Mix.Tasks.Skyline.CreateDb.html">Mix.Tasks.Skyline.CreateDb</a></div>
   
-    <div class="summary-synopsis"><p>Initiates Topic storage and in-memory Tree based dispatching for Topic subscriptions</p>
+    <div class="summary-synopsis"><p>Initiates on-disk Topic storage and in-memory Tree based dispatching for Topic subscriptions</p>
 </div>
   
 </div>
@@ -101,9 +101,9 @@
   
 </div>
 <div class="summary-row">
-  <div class="summary-signature"><a href="Skyline.AppConfig.html">Skyline.AppConfig</a></div>
+  <div class="summary-signature"><a href="Skyline.Auth.AuthHandler.html">Skyline.Auth.AuthHandler</a></div>
   
-    <div class="summary-synopsis"><p>Config that is used to authorize and handle messages</p>
+    <div class="summary-synopsis"><p>Defines the methods used by Skyline to connect and authorize a new client</p>
 </div>
   
 </div>
@@ -111,6 +111,13 @@
   <div class="summary-signature"><a href="Skyline.Contrib.NoAuth.html">Skyline.Contrib.NoAuth</a></div>
   
     <div class="summary-synopsis"><p>An auth system that accepts all connections and returns a <code class="inline">nil</code> auth_info</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Skyline.Contrib.PassThroughRouter.html">Skyline.Contrib.PassThroughRouter</a></div>
+  
+    <div class="summary-synopsis"><p>A router that lets all messages pass-through</p>
 </div>
   
 </div>
@@ -125,8 +132,8 @@
   <div class="summary-signature"><a href="Skyline.Contrib.ResourceController.html">Skyline.Contrib.ResourceController</a></div>
   
     <div class="summary-synopsis"><p>A pass-through resource controller that compbines 
-   Skyline.Contrib.PublishController with 
-   Skyline.Contrib.SubscribeController</p>
+   <a href="Skyline.Contrib.PublishController.html"><code class="inline">Skyline.Contrib.PublishController</code></a> with 
+   <a href="Skyline.Contrib.SubscribeController.html"><code class="inline">Skyline.Contrib.SubscribeController</code></a></p>
 </div>
   
 </div>
@@ -134,13 +141,6 @@
   <div class="summary-signature"><a href="Skyline.Contrib.SubscribeController.html">Skyline.Contrib.SubscribeController</a></div>
   
     <div class="summary-synopsis"><p>A pass-through controller that subscribes to topics as it recieves them</p>
-</div>
-  
-</div>
-<div class="summary-row">
-  <div class="summary-signature"><a href="Skyline.Default.PassThroughRouter.html">Skyline.Default.PassThroughRouter</a></div>
-  
-    <div class="summary-synopsis"><p>A router that lets all messages pass-through</p>
 </div>
   
 </div>
@@ -170,6 +170,13 @@
   <div class="summary-signature"><a href="Skyline.Events.Outgoing.html">Skyline.Events.Outgoing</a></div>
   
     <div class="summary-synopsis"><p>GenEvent server to hook into <em>all</em> outbound messages as they will appear to the client</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature"><a href="Skyline.Msg.Connect.html">Skyline.Msg.Connect</a></div>
+  
+    <div class="summary-synopsis"><p>Connect MQTT Message</p>
 </div>
   
 </div>
@@ -287,13 +294,6 @@ Used by both <code class="inline">Pipe.Debugger</code> and <code class="inline">
       <h1 class="section-heading">Protocols</h1>
       <div class="summary">
         <div class="summary-row">
-  <div class="summary-signature"><a href="Skyline.Auth.Protocol.html">Skyline.Auth.Protocol</a></div>
-  
-    <div class="summary-synopsis"><p>Defines the methods used by Skyline to connect and authorize a new client</p>
-</div>
-  
-</div>
-<div class="summary-row">
   <div class="summary-signature"><a href="Skyline.Msg.Encode.html">Skyline.Msg.Encode</a></div>
   
     <div class="summary-synopsis"><p>Protocol for converting messages into binary</p>

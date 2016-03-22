@@ -1,14 +1,16 @@
-defmodule UserGuard do
+defmodule Example.Pipe.UserGuard do
   alias Skyline.Topic.Conn
   alias Skyline.Client
+  
+  alias Example.User
 
   def init(opts) do
     opts
   end
 
   def call(%Conn{topic: topic,
-                client: %Client{auth_info: %MyAuth{username: auth_user, is_admin: is_admin}},
-                params: %{"username" => username}} = conn, opts) do
+                 auth_info: %User{username: auth_user, is_admin: is_admin},
+                 params: %{"username" => username}} = conn, opts) do
 
     if (auth_user == username) or is_admin do
       IO.puts "User #{auth_user} is accessing #{username}"

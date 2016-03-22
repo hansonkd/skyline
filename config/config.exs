@@ -30,4 +30,5 @@ use Mix.Config
 #     import_config "#{Mix.env}.exs"
 config :skyline,
     port: 8000,
-    app: nil
+    auth_module: Skyline.Contrib.NoAuth,
+    router_module: Skyline.Contrib.PassThroughRouter

@@ -29,8 +29,9 @@ defmodule Skyline.Topic.Conn do
   During a Publish event, the message will have a `%PublishReq{topic: String}` param. Changing this does nothing.
   If you want to affect what topic the
   message is sent to, change `topic` in `%Conn{}`. Before Skyline dispatches the message, it will take whatever topic is
-  in `%Conn{}` and put it on the message, although the topic the client recieves is the subscription topic and not what topic 
-  the message was published to.
+  in `%Conn{}` and put it on the message, although the topic the client recieves is the subscription topic and not the topic 
+  the message was published to, accoring to the MQTT spec. If the client subscribes to `something/+/woah` and a message was 
+  sent to `something/cool/woah`, the publish message the client recieves is `something/+/woah`.
   
   During a Subscribe event, the message will have `%Subscribe{topics: [String]}`. Manipulating the message will not
   have an effect on how Skyline handles the returned `%Conn{}`. This is because Skyline iterates through all the topics

@@ -5,11 +5,11 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.11.4">
-    <title>Skyline.Auth.Protocol – skyline v0.0.1</title>
+    <title>Skyline.Auth.AuthHandler – skyline v0.0.1</title>
     <link rel="stylesheet" href="dist/app-1e374caa3d.css" />
     <script src="dist/sidebar_items.js"></script>
   </head>
-  <body data-type="protocols">
+  <body data-type="modules">
 
     <div class="main">
 <button class="sidebar-toggle">
@@ -64,9 +64,9 @@
 
       <h1>
         <small class="visible-xs">skyline v0.0.1</small>
-        Skyline.Auth.Protocol
+        Skyline.Auth.AuthHandler
         
-          <small>protocol</small>
+          <small>behaviour</small>
         
         
       </h1>
@@ -97,24 +97,31 @@
   </div>
   
 </div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#t:t/0">t()</a>
-  </div>
-  
-</div>
 
   </div>
 
 
           
-  <div class="summary-functions summary">
+
+          
+
+          
+  <div class="summary-callbacks summary">
     <h2>
-      <a href="#functions">Functions</a>
+      <a href="#callbacks">Callbacks</a>
     </h2>
     <div class="summary-row">
   <div class="summary-signature">
-    <a href="#new_connection/2">new_connection(mod, con_msg)</a>
+    <a href="#c:init/0">init()</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Initializes AuthHandler options. Gets passed to <code class="inline">new_connection/2</code></p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#c:new_connection/2">new_connection(arg0, term)</a>
   </div>
   
     <div class="summary-synopsis"><p>Processes a connect message and either returns <code class="inline">{:ok, auth_info}</code> or <code class="inline">{:error, conn_ack_type}</code> where
@@ -125,10 +132,6 @@ auth_info is what is passed to <code class="inline">Skyline.Conn</code> whenever
 
   </div>
 
-
-          
-
-          
 
         </section>
       
@@ -148,29 +151,29 @@ auth_info is what is passed to <code class="inline">Skyline.Conn</code> whenever
   {:error, <a href="Skyline.html#t:conn_ack_type/0">Skyline.conn_ack_type</a>}</code></pre>
   
 </div>
-<div id="t:t/0" class="type-detail">
-  <pre><code class="elixir"><a href="#t:t/0">t</a> :: term</code></pre>
-  
-</div>
 
           </div>
         </section>
       
 
       
-        <section id="functions" class="details-list">
+
+      
+
+      
+        <section id="callbacks" class="details-list">
           <h1 class="section-heading">
-            <a class="hover-link" href="#functions">
+            <a class="hover-link" href="#callbacks">
               <i class="icon-link"></i>
             </a>
-            Functions
+            Callbacks
           </h1>
-          <div class="detail" id="new_connection/2">
+          <div class="detail" id="c:init/0">
   <div class="detail-header">
-    <a href="#new_connection/2" class="detail-link" title="Link to this function">
+    <a href="#c:init/0" class="detail-link" title="Link to this callback">
       <i class="icon-link"></i>
     </a>
-    <span class="signature">new_connection(mod, con_msg)</span>
+    <span class="signature">init()</span>
       
   </div>
   
@@ -178,7 +181,30 @@ auth_info is what is passed to <code class="inline">Skyline.Conn</code> whenever
       <h4 class="specs-title">Specs</h4>
       <div class="specs-list">
         
-          <pre><code class="elixir">new_connection(Skyline.Auth.Protocol, Skyline.Msg.Connect.t) :: <a href="#t:connection_response/0">connection_response</a></code></pre>
+          <pre><code class="elixir">init :: term</code></pre>
+        
+      </div>
+    </div>
+  
+  <section class="docstring">
+    <p>Initializes AuthHandler options. Gets passed to <code class="inline">new_connection/2</code>.</p>
+
+  </section>
+</div>
+<div class="detail" id="c:new_connection/2">
+  <div class="detail-header">
+    <a href="#c:new_connection/2" class="detail-link" title="Link to this callback">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">new_connection(arg0, term)</span>
+      
+  </div>
+  
+    <div class="specs">
+      <h4 class="specs-title">Specs</h4>
+      <div class="specs-list">
+        
+          <pre><code class="elixir">new_connection(<a href="Skyline.Msg.Connect.html#t:t/0">Skyline.Msg.Connect.t</a>, term) :: <a href="#t:connection_response/0">connection_response</a></code></pre>
         
       </div>
     </div>
@@ -186,15 +212,12 @@ auth_info is what is passed to <code class="inline">Skyline.Conn</code> whenever
   <section class="docstring">
     <p>Processes a connect message and either returns <code class="inline">{:ok, auth_info}</code> or <code class="inline">{:error, conn_ack_type}</code> where
 auth_info is what is passed to <code class="inline">Skyline.Conn</code> whenever a message is recieved.</p>
+<p>The second parameter are the opts from <code class="inline">init/0</code>.</p>
 
   </section>
 </div>
 
         </section>
-      
-
-      
-
       
         <footer class="footer">
       <p>

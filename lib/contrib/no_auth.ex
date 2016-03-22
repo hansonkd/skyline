@@ -7,10 +7,9 @@ defmodule Skyline.Contrib.NoAuth do
   def init() do
     %__MODULE__{}
   end
-end
-
-defimpl Skyline.Auth.Protocol, for: Skyline.Contrib.NoAuth do
-  def new_connection(_self, _con_msg) do
-    {:ok, nil}
+  
+  def new_connection(_con_msg, opts) do
+    {:ok, opts}
   end
+  
 end

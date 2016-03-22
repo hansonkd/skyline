@@ -29,10 +29,8 @@ defmodule Skyline.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [{:connection, "1.0.2" },
-     {:gproc, "~> 0.5"},
      {:socket, "~> 0.3"},
      {:amnesia, github: "meh/amnesia", tag: :master},
-     {:ranch, "~> 1.1"},
      {:dialyxir, "~> 0.3", only: [:dev]},
      {:ex_doc, "~> 0.11", only: :dev},
      {:earmark, ">= 0.0.0", only: :dev}]

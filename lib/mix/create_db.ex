@@ -1,6 +1,6 @@
 defmodule Mix.Tasks.Skyline.CreateDb do
   @moduledoc """
-  Initiates Topic storage and in-memory Tree based dispatching for Topic subscriptions.
+  Initiates on-disk Topic storage and in-memory Tree based dispatching for Topic subscriptions.
   """
   
   use Mix.Task

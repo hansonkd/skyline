@@ -1,16 +1,19 @@
-defmodule Example.MyAuth do
+defmodule Example.User do
   @moduledoc "Info about authenticated user passed in Skyline.Conn"
   defstruct username: nil, is_admin: false
 end
-defmodule Example.AuthConfig do
-  @moduledoc "Configuration passed to Skyline AppConfig"
+defmodule Example.DumbAuth do
   defstruct admins: []
-end
-defimpl Skyline.Auth.Protocol, for: Example.AuthConfig do
+  
+  @behaviour Skyline.Auth.AuthHandler
   alias Skyline.Msg.Connect
-  def new_connection(%AuthConfig{admins: admins}, %Connect{user_name: username}) do
+  
+  def init() do
+      %Example.DumbAuth{admins: ["admin"]}
+  end
+  def new_connection(%Connect{user_name: username}, %Example.DumbAuth{admins: admins}) do
     if username && String.length(username) > 0 do
-      {:ok, %MyAuth{username: username, is_admin: username in admins}}
+      {:ok, %Example.User{username: username, is_admin: username in admins}}
     else
       IO.puts "Rejecting connection. No username."
       {:error, :bad_user}

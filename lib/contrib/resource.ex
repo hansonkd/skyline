@@ -1,8 +1,8 @@
 defmodule Skyline.Contrib.ResourceController do
   @moduledoc """
-     A pass-through resource controller that compbines 
-     Skyline.Contrib.PublishController with 
-     Skyline.Contrib.SubscribeController
+     A pass-through resource controller that combines 
+     `Skyline.Contrib.PublishController` with 
+     `Skyline.Contrib.SubscribeController`
   """
   
   use Skyline.Topic.Controller

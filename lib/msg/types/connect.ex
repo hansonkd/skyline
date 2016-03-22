@@ -1,9 +1,9 @@
 defmodule Skyline.Msg.Connect do
-  @moduledoc false
+  @moduledoc """
+  Connect MQTT Message
 
-  # Connect MQTT Message
-  # 
-  # http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718028
+  http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718028
+  """
 
   defstruct client_id: "",
             user_name: "",

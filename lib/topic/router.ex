@@ -25,7 +25,7 @@ defmodule Skyline.Topic.Router do
      that dispatch to specific controllers and actions. Those
      macros are named after message types publish and subscribe. For example:
          defmodule MyApp.Router do
-           use Skyline.Router
+           use Skyline.Topic.Router
            publish "/topic/:topic", PublishController
          end
      The `publish/2` macro above accepts a request of format `"/topic/VALUE"` and
@@ -45,14 +45,14 @@ defmodule Skyline.Topic.Router do
      For example, the route above will match on the path `"/api/v1/devices/:id"`
      and the named route will be `api_v1_page_path`, as expected from the
      values given to `scope/2` option.
-     Skyline also provides a `resources/2` macro that allows developers
+     Skyline also provides a `resource/2` macro that allows developers
      to shortcut `publish/3` and `subscribe/3`:
          defmodule MyApp.Router do
-           use Skyline.Router
-           resources "/devices", DeviceController
-           resources "/users", UserController
+           use Skyline.Topic.Router
+           resource "/devices", DeviceController
+           resource "/users", UserController
          end
-     Check `scope/2` and `resources/2` for more information.
+     Check `scope/2` and `resource/2` for more information.
      ## Pipelines and pipes
      Once a request arrives at the Skyline router, it performs
      a series of transformations through pipelines until the
@@ -62,7 +62,7 @@ defmodule Skyline.Topic.Router do
      Once a pipeline is defined, it can be piped through per scope.
      For example:
          defmodule MyApp.Router do
-           use Skyline.Router
+           use Skyline.Topic.Router
            pipeline :session do
              pipe :fetch_session
            end
@@ -71,7 +71,7 @@ defmodule Skyline.Topic.Router do
              # session related routes and resources
            end
          end
-     `Skyline.Router` imports functions from both `Skyline.Conn` and `Skyline.Controller`
+     `Skyline.Topic.Router` imports functions from both `Skyline.Conn` and `Skyline.Controller`
      to help define pipes. In the example above, `fetch_session/2`
      comes from `Skyline.Conn` while `accepts/2` comes from `Skyline.Controller`.
      Note that router pipelines are only invoked after a route is found.
@@ -116,7 +116,7 @@ defmodule Skyline.Topic.Router do
        Callback required by Pipe that initializes the router
        for serving web requests.
        """
-       def init(opts) do
+       def init(opts \\ nil) do
          opts
        end
 

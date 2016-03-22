@@ -29,5 +29,6 @@ use Mix.Config
 #
 #     import_config "#{Mix.env}.exs"
 config :skyline,
-  app: SkylineApp,
-  port: 8000
+  port: 8000,
+  auth_module: Example.DumbAuth,
+  router_module: Example.Router

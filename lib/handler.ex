@@ -6,6 +6,7 @@ defmodule Skyline.Handler do
   alias Skyline.Client
   alias Skyline.Msg.{PublishReq, SubAck, PubAck, PubRel, PubRec, PubComp, PingResp, Subscribe, PingReq, Unsubscribe, UnsubAck}
   alias Skyline.Topic.Conn
+  alias Skyline.AppConfig
 
   def handle_msg(%PingReq{}, %Client{sess_pid: sess_pid} = state) do
     cast_msg(sess_pid,  PingResp.new())
@@ -32,8 +33,9 @@ defmodule Skyline.Handler do
     state
   end
 
-  def handle_msg(%PublishReq{topic: topic, qos: qos} = msg, %Client{app_config: config} = state) do
-    case config.router.call(Conn.conn(topic, qos, msg, :publish, state), nil) do
+  def handle_msg(%PublishReq{topic: topic, qos: qos} = msg,
+                 %Client{app_config: %AppConfig{router_module: router_mod, router_opts: router_opts}} = state) do
+    case router_mod.call(Conn.conn(topic, qos, msg, :publish, state), router_opts) do
       %Conn{auth_info: auth_info} = ret_conn->
             Skyline.Topic.Utils.publish(ret_conn)
             %{state | auth_info: auth_info}
