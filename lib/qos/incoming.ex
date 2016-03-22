@@ -4,7 +4,7 @@ defmodule Incoming do
   defmacro __using__(_opts) do
     quote do
       def timeout do
-        Application.get_env(:qos_timeout, 15000)
+        Application.get_env(:skyline, :qos_timeout, 15000)
       end
       def bcast_msg(msg) do
         Skyline.Topic.Dispatcher.broadcast_msg(msg.topic, {:publish, msg})

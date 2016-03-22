@@ -70,10 +70,11 @@ defmodule Skyline.Handler do
     cast_msg(sess_pid, SubAck.new(Enum.reverse(qos_list), msg_id))
     state
   end
-  defp handle_subscribe([{topic, qos}|topics], msg, qos_list, 
-                        %Client{app_config: config} = state) do
+  defp handle_subscribe([{topic, qos}|topics], msg, qos_list,
+                        %Client{app_config: %AppConfig{router_module: router_mod,
+                                                       router_opts: router_opts}} = state) do
     conn = Conn.conn(topic, qos, msg, :subscribe, state)
-    case config.router.call(conn, nil) do
+    case router_mod.call(conn, router_opts) do
       %Conn{auth_info: auth_info} = ret_conn ->
           qos = Skyline.Topic.Utils.subscribe(ret_conn)
           handle_subscribe(topics, msg, [qos | qos_list], %{state | auth_info: auth_info})

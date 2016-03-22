@@ -14,7 +14,7 @@ defmodule Skyline.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger, :connection, :socket, :amnesia],
+    [applications: [:logger, :socket, :amnesia],
      mod: {Skyline, []}]
   end
 
@@ -28,8 +28,7 @@ defmodule Skyline.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   defp deps do
-    [{:connection, "1.0.2" },
-     {:socket, "~> 0.3"},
+    [{:socket, "~> 0.3"},
      {:amnesia, github: "meh/amnesia", tag: :master},
      {:dialyxir, "~> 0.3", only: [:dev]},
      {:ex_doc, "~> 0.11", only: :dev},

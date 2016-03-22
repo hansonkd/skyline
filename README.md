@@ -1,10 +1,10 @@
-# SkylineMQ 
+# SkylineMQ
 
-A fast, hackable MQTT message broker with a dash of Pheonix. 
+A fast, hackable MQTT message broker with a dash of Phoenix.
 
 ## Goal
 
-When looking around at a MQTT packages, almost all of them were static packages that you configure with hooks. Skyline aims to be a framework for building brokers, not configuring brokers.
+Skyline aims to be a framework for building brokers, not configuring brokers.
 
 It is also a mechanism for plugging into outside events, like building an Adapter for Phoenix Channels (not implemented yet).
 
@@ -25,7 +25,7 @@ Sending a message with the topic `device/thermostat/temperature` will match all 
 
 `device/computer/temperature` will match 2 and 3.
 
-`device/thermostat/termerature/kelvin` will match 3 and 4.
+`device/thermostat/temperature/kelvin` will match 3 and 4.
 
 
 ## How it works
@@ -76,25 +76,27 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
 
 The auth_module requires you implement the `Skyline.Auth.AuthHandler` behaviour. It needs an `init/0` method that initializes the options and a `new_connection/2` method that either denies the connection by passing back one of the MQTT auth connack statuses or the `auth_info` that will be passed to every call to the Router.
 
-        defmodule Example.User do
-          @moduledoc "Info about authenticated user passed in Skyline.Conn"
-          defstruct username: nil, is_admin: false
-        end
-        defmodule Example.DumbAuth do
-          defstruct admins: []
-          @behaviour Skyline.Auth.AuthHandler
-          def init() do
-              %Example.DumbAuth{admins: ["admin"]}
-          end
-          def new_connection(%Connect{user_name: username}, %AuthConfig{admins: admins}) do
-            if username && String.length(username) > 0 do
-              {:ok, %Example.User{username: username, is_admin: username in admins}}
-            else
-              IO.puts "Rejecting connection. No username."
-              {:error, :bad_user}
-            end
-          end
-        end
+```elixir
+defmodule Example.User do
+  @moduledoc "Info about authenticated user passed in Skyline.Conn"
+  defstruct username: nil, is_admin: false
+end
+defmodule Example.DumbAuth do
+  defstruct admins: []
+  @behaviour Skyline.Auth.AuthHandler
+  def init() do
+      %Example.DumbAuth{admins: ["admin"]}
+  end
+  def new_connection(%Connect{user_name: username}, %AuthConfig{admins: admins}) do
+    if username && String.length(username) > 0 do
+      {:ok, %Example.User{username: username, is_admin: username in admins}}
+    else
+      IO.puts "Rejecting connection. No username."
+      {:error, :bad_user}
+    end
+  end
+end
+```
 
 For more information visit the docs on `Skyline.Auth.AuthHandler`
 
@@ -102,14 +104,14 @@ For more information visit the docs on `Skyline.Auth.AuthHandler`
 
 The routing mechanism of Skyline is a trimmed down version of Phoenix's Router/Plug modules. Plug was renamed to Pipe to avoid confusion.
 
-```
+```elixir
 defmodule Example.Router do
   use Skyline.Topic.Router
-  
+
   pipeline :userpipeline do
     pipe Example.Pipe.UserGuard, []
   end
-  
+
   # Typically MQTT topics that start with $ are for admins, but not required.
   resource("$*admin", Admin)
 
@@ -134,27 +136,27 @@ For more information visit the docs on `Skyline.Topic.Router`
 
 The Controller implmentation is also a trimmed down version of Pheonix's controller.
 
-```
+```elixir
 defmodule Example.Controller.Admin do
   use Skyline.Topic.Controller
   alias Skyline.Topic.Conn
   alias Example.User
-  
+
   pipe :admin_only, []
-  
+
   def init(opts) do
     opts
   end
-  
+
   def subscribe(conn, _opts) do
     # Do something meaningful like log access or recompute statistics
     conn
   end
-  
+
   def publish(_conn, _opts) do
     {:close_connection, "Admin Topics are read only."}
   end
-  
+
   def admin_only(%Conn{topic: topic,
                        auth_info: %User{username: username,
                                         is_admin: is_admin}} = conn, opts) do
@@ -172,7 +174,7 @@ end
 
 You can subscribe to incoming and outgoing messages, errors, logins and disconnects through the event system. This can be handy if you want to build a mailbox topic of all the errors a user has hit. Or simply expand functionality of topics based on other events.
 
-```
+```elixir
 defmodule Example.EventHandler do
   use GenEvent
   require Logger
@@ -181,7 +183,7 @@ defmodule Example.EventHandler do
       Errors.add_handler(Example.EventHandler, nil)
   end
   def handle_event({:error, {client_id, auth_info, exception}}, st) do
-    Logger.error "Recieved Exception: (#{client_id}, #{inspect auth_info}): #{inspect exception}"
+    Logger.error "Received Exception: (#{client_id}, #{inspect auth_info}): #{inspect exception}"
     {:ok, st}
   end
 end

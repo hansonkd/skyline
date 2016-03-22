@@ -1,7 +1,7 @@
 defmodule Example.Pipe.UserGuard do
   alias Skyline.Topic.Conn
   alias Skyline.Client
-  
+
   alias Example.User
 
   def init(opts) do

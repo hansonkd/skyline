@@ -4,7 +4,7 @@ defmodule Skyline.Msg.PublishDelivery do
   # Publish MQTT Message | Broker -> Client Publish
   #
   # http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718037
-  
+
   defstruct subscription_topic: "", # We have to send back the subscription pattern that picked it up.
             msg_id: nil,
             message: "",
@@ -43,7 +43,6 @@ defimpl Skyline.Msg.Encode, for: Skyline.Msg.PublishDelivery do
        false,
        byte_size(rest)
     )
-    ##IO.puts("\n\nEncode Publish #{inspect msg}\n\n")
     header <> rest
   end
 end

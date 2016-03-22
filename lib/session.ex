@@ -25,7 +25,6 @@ defmodule Skyline.Session do
   end
 
   def handle_cast({:msg, msg}, %Session{socket: socket, auth_info: auth_info, client_id: client_id} = state) do
-    Logger.debug "Sending message #{inspect msg} to #{inspect client_id}"
     Skyline.Events.write_message(client_id, auth_info, msg)
     Skyline.Socket.send(socket, msg)
     {:noreply, state}

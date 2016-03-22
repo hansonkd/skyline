@@ -57,8 +57,10 @@ defmodule Skyline.Client do
                 {:noreply, state}
               _ -> process_msg(msg, state)
             end
+        {:ok, nil} ->
+            {:noreply, state}
         other ->
-            Skyline.Events.error(client_id, auth_info, Skyline.MalformedMessage.exception(bytes_recieved: other))
+            Skyline.Events.error(client_id, auth_info, Skyline.MalformedMessage.exception(bytes_recieved: inspect other))
             {:stop, :normal, state}
       end
     end
