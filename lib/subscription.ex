@@ -37,6 +37,7 @@ defmodule Skyline.Subscription do
   end
   def handle_call({:reset, new_qos}, _from, state) do
     new_state = %{state | qos: new_qos, msg_queue: :queue.new}
+    check_for_stored_message(new_state)
     {:reply, {:ok, new_qos}, new_state}
   end
   def handle_call(:get_qos, _from, %Subscription{qos: qos} = state) do

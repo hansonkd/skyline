@@ -2,7 +2,7 @@ defmodule Example.EventHandler do
   use GenEvent
   
   require Logger
-  
+
   alias Skyline.Events.{Errors, Incoming, Outgoing, Auth}
   alias Example.EventHandler
 
@@ -16,7 +16,7 @@ defmodule Example.EventHandler do
       Outgoing.add_handler(EventHandler, nil)
       # :connect, :disconnect events
       Auth.add_handler(EventHandler, nil)
-      
+
   end
 
   # Callbacks

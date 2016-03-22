@@ -6,15 +6,15 @@ defmodule Skyline.Msg.ConnAck do
 
   @behaviour Skyline.Msg.Decode
 
-  defstruct status: :ok
+  defstruct status: :ok, session_present: false
   @type t :: %__MODULE__{status: Skyline.conn_ack_type}
 
   @doc """
   Construct a new ConnAck.
   """
   @spec new(Skyline.conn_ack_type) :: __MODULE__.t
-  def new(status) do
-    %__MODULE__{status: status}
+  def new(status, session_present \\ false) do
+    %__MODULE__{status: status, session_present: session_present}
   end
 
   @spec decode_body(binary, Skyline.Msg.FixedHeader.t) :: __MODULE__.t
@@ -42,10 +42,15 @@ defimpl Skyline.Msg.Encode, for: Skyline.Msg.ConnAck do
   alias Skyline.Msg.Encode.Utils
 
   def encode(msg) do
+    session_present_flag = if msg.session_present do
+      0x01
+    else
+      0x00
+    end
     <<Utils.msg_type_to_binary(:conn_ack) :: size(4),
       0 :: size(4),
       0x02,
-      0x00,
+      session_present_flag,
       conn_ack_status(msg.status)>>
 
   end

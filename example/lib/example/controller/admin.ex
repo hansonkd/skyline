@@ -2,11 +2,11 @@ defmodule Example.Controller.Admin do
   use Skyline.Topic.Controller
   alias Skyline.Topic.Conn
   alias Skyline.Client
-  
+
   alias Example.User
-  
+
   pipe :admin_only, []
-  
+
   def init(opts) do
     opts
   end

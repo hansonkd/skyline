@@ -8,7 +8,8 @@ defmodule Skyline.Client do
               keep_alive_server_ms: nil,
               sess_pid: nil,
               auth_info: nil,
-              app_config: nil
+              app_config: nil,
+              persistent_session: false
 
     use GenServer
 
@@ -67,16 +68,11 @@ defmodule Skyline.Client do
 
     def handle_cast({:authenticate, %Connect{client_id: client_id} = msg}, %Client{socket: socket} = state) do
         case Skyline.Auth.connect(socket, msg, state) do
-          {:ok, res_msg, sess_pid, auth_info} ->
-              GenServer.cast(sess_pid, {:msg, res_msg})
+          {res_msg, %Client{auth_info: auth_info} = client} ->
               Skyline.Events.connect(client_id, auth_info)
+              Socket.send(socket, res_msg)
               GenServer.cast(self, :verified_loop)
-              new_state = %{
-                state | client_id: msg.client_id,
-                        keep_alive_server_ms: msg.keep_alive_server_ms,
-                        sess_pid: sess_pid,
-                        auth_info: auth_info}
-              {:noreply, new_state}
+              {:noreply, client}
           {:error, emsg} ->
               Socket.send(socket, emsg)
               {:stop, :normal, state}

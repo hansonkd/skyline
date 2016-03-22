@@ -2,10 +2,11 @@ defmodule Mix.Tasks.Skyline.CreateDb do
   @moduledoc """
   Initiates on-disk Topic storage and in-memory Tree based dispatching for Topic subscriptions.
   """
-  
+
   use Mix.Task
   use Skyline.Amnesia.Topic.TopicDatabase
   use Skyline.Amnesia.Dispatch.TreeDatabase
+  use Skyline.Amnesia.Session.SessionDatabase
 
   def run(_) do
     # This creates the mnesia schema, this has to be done on every node before
@@ -22,10 +23,12 @@ defmodule Mix.Tasks.Skyline.CreateDb do
     #
     # In this case it will keep a ram and disk copy on the current node.
     TopicDatabase.create(disk: [node])
+    SessionDatabase.create(disk: [node])
     TreeDatabase.create()
 
     # This waits for the database to be fully created.
     TopicDatabase.wait
+    SessionDatabase.wait
     TreeDatabase.wait
 
     Amnesia.transaction do

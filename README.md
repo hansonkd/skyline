@@ -4,9 +4,11 @@ A fast, hackable MQTT message broker with a dash of Phoenix.
 
 ## Goal
 
-Skyline aims to be a framework for building brokers, not configuring brokers.
+Skyline aims to be a framework for building brokers, not configuring them.
 
-It is also a mechanism for plugging into outside events, like building an Adapter for Phoenix Channels (not implemented yet).
+The [MQTT protocol](http://mqtt.org) is pretty open in terms of what you can do with it. For example, the "$SYS/\*" topic path that is typically used for system statistics and reports but it is only a recommendation and how it is implemented is up to the broker. You can also automatically subscribe to additional topics if one topic is subscribed to, or publish additional messages.  Skyline is designed so what you build will adhere to the MQTT standard, but everything else is up to you!
+
+It also should be flexible enough to use Skyline as a Transport for Phoenix Channels so MQTT devices can talk directly to a Phoenix app (not implemented yet).
 
 ## MQTT in a nutshell
 
@@ -30,19 +32,27 @@ Sending a message with the topic `device/thermostat/temperature` will match all 
 
 ## How it works
 
-All Publish and Subscribe messages are passed through a Topic Router. With a router, you can change the topic name, manipulate auth information or change the message contents.
+All Publish and Subscribe messages are passed through a Topic Router. With a router, you can change the topic name, manipulate auth information or change the message contents. You can also extract variables from the topics like you would with Phoenix.
 
 Message transformations are accomplished in a style similar to Phoenix:
 
-         defmodule MyApp.Router do
-           use Skyline.Topic.Router
-           pipeline :session do
-             pipe :fetch_session
-           end
-           scope "" do
-             pipe_through :session
-           end
-         end
+```elixir
+ defmodule MyApp.Router do
+   use Skyline.Topic.Router
+
+   pipeline :session do
+     pipe :fetch_session
+   end
+
+   scope "" do
+     pipe_through :session
+     # Fills Skyline.Conn.params with "device_type"
+     resource "device/:device_type/status" StatusResource
+     # Catch-alls
+     resource "*catchall" EverythingElseResource
+   end
+ end
+```
 
 ## Installation
 
@@ -71,34 +81,10 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
 
         mix skyline.create_db
 
+  5.  (Optional) Make the docs:
 
-## Creating an AuthHandler
+        mix docs
 
-The auth_module requires you implement the `Skyline.Auth.AuthHandler` behaviour. It needs an `init/0` method that initializes the options and a `new_connection/2` method that either denies the connection by passing back one of the MQTT auth connack statuses or the `auth_info` that will be passed to every call to the Router.
-
-```elixir
-defmodule Example.User do
-  @moduledoc "Info about authenticated user passed in Skyline.Conn"
-  defstruct username: nil, is_admin: false
-end
-defmodule Example.DumbAuth do
-  defstruct admins: []
-  @behaviour Skyline.Auth.AuthHandler
-  def init() do
-      %Example.DumbAuth{admins: ["admin"]}
-  end
-  def new_connection(%Connect{user_name: username}, %AuthConfig{admins: admins}) do
-    if username && String.length(username) > 0 do
-      {:ok, %Example.User{username: username, is_admin: username in admins}}
-    else
-      IO.puts "Rejecting connection. No username."
-      {:error, :bad_user}
-    end
-  end
-end
-```
-
-For more information visit the docs on `Skyline.Auth.AuthHandler`
 
 ## Creating a Topic Router
 
@@ -112,13 +98,13 @@ defmodule Example.Router do
     pipe Example.Pipe.UserGuard, []
   end
 
-  # Typically MQTT topics that start with $ are for admins, but not required.
-  resource("$*admin", Admin)
+  # Typically MQTT topics that start with $ are for admins.
+  resource("$*admin", Example.Controller.Admin)
 
   scope "user/:username/", alias: Example.Controller do
     pipe_through :userpipeline
     resource("location", LocationResource)
-    # You can specify the publish and subscribe controllers seperately.
+    # You can specify the publish and subscribe controllers separately.
     # The can be two different modules or in one.
     publish("*other", UserNoMatchController)
     subscribe("*other", UserNoMatchController)
@@ -129,12 +115,44 @@ defmodule Example.Router do
 end
 ```
 
-I hope that future releases will make the routing more tuned to the needs of MQTT specifically.
 For more information visit the docs on `Skyline.Topic.Router`
+
+
+## Creating an AuthHandler
+
+The auth_module requires you implement the `Skyline.Auth.AuthHandler` behaviour. It needs an `init/0` method that initializes the options and a `new_connection/2` method that either denies the connection by passing back one of the MQTT auth connack statuses or the `auth_info` that will be passed to every call to the Router.
+
+```elixir
+defmodule Example.User do
+  @moduledoc "Info about authenticated user passed in Skyline.Conn"
+  defstruct username: nil, is_admin: false
+end
+defmodule Example.DumbAuth do
+  defstruct admins: []
+
+  @behaviour Skyline.Auth.AuthHandler
+
+  def init() do
+      %Example.DumbAuth{admins: ["admin"]}
+  end
+
+  def new_connection(%Connect{user_name: username}, %AuthConfig{admins: admins}) do
+    if username && String.length(username) > 0 do
+      {:ok, %Example.User{username: username, is_admin: username in admins}}
+    else
+      IO.puts "Rejecting connection. No username."
+      {:error, :bad_user}
+    end
+  end
+end
+```
+
+For more information visit the docs on `Skyline.Auth.AuthHandler`
+
 
 ## Creating a Controller
 
-The Controller implmentation is also a trimmed down version of Pheonix's controller.
+The Controller implementation is also a trimmed down version of Phoenix's controller.
 
 ```elixir
 defmodule Example.Controller.Admin do
@@ -157,6 +175,7 @@ defmodule Example.Controller.Admin do
     {:close_connection, "Admin Topics are read only."}
   end
 
+  # This pipe will close any non-admin connection accessing this topic.
   def admin_only(%Conn{topic: topic,
                        auth_info: %User{username: username,
                                         is_admin: is_admin}} = conn, opts) do
@@ -172,16 +191,19 @@ end
 
 #### Events
 
-You can subscribe to incoming and outgoing messages, errors, logins and disconnects through the event system. This can be handy if you want to build a mailbox topic of all the errors a user has hit. Or simply expand functionality of topics based on other events.
+You can subscribe to incoming and outgoing messages, errors, logins and disconnects through the event system. This can be handy if you want to build a mailbox topic of all the errors a user has hit or simply expand functionality of topics based on other events.
 
 ```elixir
 defmodule Example.EventHandler do
   use GenEvent
+
   require Logger
   alias Skyline.Events.Errors
+
   def init() do
       Errors.add_handler(Example.EventHandler, nil)
   end
+
   def handle_event({:error, {client_id, auth_info, exception}}, st) do
     Logger.error "Received Exception: (#{client_id}, #{inspect auth_info}): #{inspect exception}"
     {:ok, st}
@@ -198,9 +220,15 @@ This package is pre 0.1, as such the api is subject to change between releases. 
 #### MQTT 3.1 features missing
 * Last Will
 * Persistent Sessions
-* Needs to disconnect on errors more often.
+* Qos2 should be more robust (I would advise against using it as it is)
+* Handle protocol and other errors according to spec.
+* Topic validation
 
-#### Nice to haves
-* Websockets
-* More resiliant Qos handling
+#### ToDos (in order of importance)
 * Tests
+* More resilient QoS handling
+* Basic optimizations
+* Websockets
+* SSL
+* Phoenix Transport
+* Advanced optimizations

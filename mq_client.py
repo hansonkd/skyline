@@ -9,7 +9,7 @@ def on_connect(client, userdata, flags, rc):
 
     # Subscribing in on_connect() means that if we lose the connection and
     # reconnect then subscriptions will be renewed.
-    client.subscribe("user/bob/location", qos=2)
+    #client.subscribe("user/bob/location", qos=2)
 
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
@@ -21,7 +21,7 @@ def on_log(*args):
     print args
 
 
-client = client.Client()
+client = client.Client(client_id="bobolab", clean_session=False)
 client.on_connect = on_connect
 client.on_message = on_message
 client.on_log = on_log

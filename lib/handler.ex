@@ -4,9 +4,12 @@ defmodule Skyline.Handler do
   require Logger
 
   alias Skyline.Client
-  alias Skyline.Msg.{PublishReq, SubAck, PubAck, PubRel, PubRec, PubComp, PingResp, Subscribe, PingReq, Unsubscribe, UnsubAck}
+  alias Skyline.Msg.{PublishReq, SubAck, PubAck, PubRel, PubRec, PubComp,
+                     PingResp, Subscribe, PingReq, Unsubscribe, UnsubAck}
   alias Skyline.Topic.Conn
   alias Skyline.AppConfig
+
+  use Skyline.Amnesia.Session.SessionDatabase
 
   def handle_msg(%PingReq{}, %Client{sess_pid: sess_pid} = state) do
     cast_msg(sess_pid,  PingResp.new())
@@ -49,8 +52,18 @@ defmodule Skyline.Handler do
     end
   end
 
-  def handle_msg(%Subscribe{topics: topics} = msg, %Client{} = state) do
-    handle_subscribe(topics, msg, [], state)
+  def handle_msg(%Subscribe{topics: topics, msg_id: msg_id} = msg,
+                 %Client{sess_pid: sess_pid, client_id: client_id, persistent_session: persist} = state) do
+    case handle_subscribe(topics, msg, [], state) do
+      {qos_list, new_state} ->
+          cast_msg(sess_pid, SubAck.new(qos_list, msg_id))
+          if persist do
+            save_topics(client_id, topics)
+          end
+          new_state
+      other -> other
+    end
+
   end
 
   def handle_msg(%Unsubscribe{topics: topics, msg_id: msg_id}, %Client{sess_pid: sess_pid, client_id: client_id} = state) do
@@ -66,11 +79,10 @@ defmodule Skyline.Handler do
     state
   end
 
-  defp handle_subscribe([], %Subscribe{msg_id: msg_id}, qos_list, %Client{sess_pid: sess_pid} = state) do
-    cast_msg(sess_pid, SubAck.new(Enum.reverse(qos_list), msg_id))
-    state
+  def handle_subscribe([], %Subscribe{}, qos_list, %Client{sess_pid: sess_pid} = state) do
+    {Enum.reverse(qos_list), state}
   end
-  defp handle_subscribe([{topic, qos}|topics], msg, qos_list,
+  def handle_subscribe([{topic, qos}|topics], msg, qos_list,
                         %Client{app_config: %AppConfig{router_module: router_mod,
                                                        router_opts: router_opts}} = state) do
     conn = Conn.conn(topic, qos, msg, :subscribe, state)
@@ -92,4 +104,12 @@ defmodule Skyline.Handler do
     GenServer.cast(sess_pid, {:msg, msg})
   end
 
+  defp save_topics(client_id, new_topics) do
+    Amnesia.transaction do
+      case StoredSession.read(client_id) do
+        %StoredSession{topics: topics} = s ->
+          %{s | topics: Enum.uniq(topics ++ new_topics)} |> StoredSession.write
+      end
+    end
+  end
 end
