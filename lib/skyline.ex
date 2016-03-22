@@ -31,7 +31,8 @@ defmodule Skyline do
   def start(_type, _args) do
 
     :ets.new(:session_msg_ids, [:named_table, :public])
-
+    :ets.new(:msg_queues, [:named_table, :public])
+    
     {:ok, _pid} = Skyline.Events.Errors.start_link()
     {:ok, _pid} = Skyline.Events.Outgoing.start_link()
     {:ok, _pid} = Skyline.Events.Incoming.start_link()

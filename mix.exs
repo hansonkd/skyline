@@ -30,6 +30,7 @@ defmodule Skyline.Mixfile do
   defp deps do
     [{:socket, "~> 0.3"},
      {:amnesia, github: "meh/amnesia", tag: :master},
+     #{:ring_buffer, github: "mdevilliers/ring_buffer", tag: :master},
      {:dialyxir, "~> 0.3", only: [:dev]},
      {:ex_doc, "~> 0.11", only: :dev},
      {:earmark, ">= 0.0.0", only: :dev}]

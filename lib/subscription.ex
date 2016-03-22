@@ -13,8 +13,6 @@ defmodule Skyline.Subscription do
             qos_pid: nil,
             auth_info: nil
 
-
-
   use GenServer
 
   alias Skyline.Subscription
@@ -56,7 +54,6 @@ defmodule Skyline.Subscription do
     {:noreply, %{state | msg_queue: new_queue}}
   end
   def handle_cast(:process_queue, %Subscription{msg_queue: msg_queue, client_id: client_id, sess_pid: sess_pid, qos_pid: qos_pid} = state) do
-
     new_qos_pid = if not is_pid(qos_pid) || not Process.alive?(qos_pid) do
       case :queue.out(msg_queue) do
           {{:value, msg}, _new_queue} ->
@@ -66,9 +63,8 @@ defmodule Skyline.Subscription do
           _ -> nil
         end
     else
-      nil
+      qos_pid
     end
-
     {:noreply, %{state | qos_pid: new_qos_pid}}
   end
   def handle_cast({:finish_msg, msg_id}, %Subscription{msg_queue: msg_queue,

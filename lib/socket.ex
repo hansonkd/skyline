@@ -7,7 +7,7 @@ defmodule Skyline.Socket do
       Socket.TCP.listen!(port, [packet: 0,
 				                        reuseaddr: true,
                                 binary: true,
-                                nodelay: true,
+                                nodelay: false,
                                 active: true,
                                 backlog: 30,
 				                        mode: :active])
