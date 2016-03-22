@@ -1,32 +1,46 @@
 defmodule Skyline.Session do
   @moduledoc false
 
-  # Responsible for writing messages to a socket, starting up new subcriptions,
+  # starting up new subcriptions,
   # and managing the session.
 
-  defstruct socket: nil,
-            client_id: nil,
-            auth_info: nil
+  use Skyline.Amnesia.Session.SessionDatabase
 
-  use GenServer
-  require Logger
+  alias Skyline.Client
 
-  alias Skyline.Session
-
-  @spec start_link(Skyline.socket, String.t, [key: any]) :: GenServer.on_start
-  def start_link(socket, client_id, auth_info, _opts \\ []) do
-    new_state =  %Session{socket: socket, client_id: client_id, auth_info: auth_info}
-    GenServer.start_link(__MODULE__, new_state, name: {:global, {__MODULE__, client_id}})
+  def start_session(%Client{client_id: client_id, persistent_session: persist} = client) do
+    Amnesia.transaction do
+        fresh_session = %StoredSession{client_id: client_id, topics: []}
+        case StoredSession.read(client_id) do
+          nil ->
+              if persist do
+                fresh_session |> StoredSession.write
+              end
+              {false, client}
+          %StoredSession{topics: topics} = session ->
+            if persist do
+              sub_msg = Skyline.Msg.Subscribe.new(topics, 0)
+              case Skyline.Handler.handle_subscribe(topics, sub_msg, [], client) do
+                {:close_connection, reason} ->
+                    StoredSession.delete(session)
+                    fresh_session |> StoredSession.write
+                    {false, client}
+                {_qos, %Client{} = after_sub} ->
+                    {true, after_sub}
+              end
+            else
+                StoredSession.delete(session)
+                {false, client}
+            end
+        end
+    end
   end
 
-  def init(%Session{client_id: client_id} = state) do
-    :ets.insert(:session_msg_ids, {client_id, 0})
-    {:ok, state}
+  def handle_last_will(%Client{client_id: client_id, persistent_session: persist}) do
+
   end
 
-  def handle_cast({:msg, msg}, %Session{socket: socket, auth_info: auth_info, client_id: client_id} = state) do
-    Skyline.Events.write_message(client_id, auth_info, msg)
-    Skyline.Socket.send(socket, msg)
-    {:noreply, state}
+  def clear_last_will() do
+    
   end
 end

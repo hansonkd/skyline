@@ -3,6 +3,7 @@ defmodule Skyline.Handler do
   @moduledoc false
   require Logger
 
+  alias Skyline.Socket
   alias Skyline.Client
   alias Skyline.Msg.{PublishReq, SubAck, PubAck, PubRel, PubRec, PubComp,
                      PingResp, Subscribe, PingReq, Unsubscribe, UnsubAck}
@@ -11,8 +12,8 @@ defmodule Skyline.Handler do
 
   use Skyline.Amnesia.Session.SessionDatabase
 
-  def handle_msg(%PingReq{}, %Client{sess_pid: sess_pid} = state) do
-    cast_msg(sess_pid,  PingResp.new())
+  def handle_msg(%PingReq{}, %Client{socket: socket} = state) do
+    Socket.send(socket, PingResp.new())
     state
   end
 
@@ -53,10 +54,10 @@ defmodule Skyline.Handler do
   end
 
   def handle_msg(%Subscribe{topics: topics, msg_id: msg_id} = msg,
-                 %Client{sess_pid: sess_pid, client_id: client_id, persistent_session: persist} = state) do
+                 %Client{socket: socket, client_id: client_id, persistent_session: persist} = state) do
     case handle_subscribe(topics, msg, [], state) do
       {qos_list, new_state} ->
-          cast_msg(sess_pid, SubAck.new(qos_list, msg_id))
+          Socket.send(socket, SubAck.new(qos_list, msg_id))
           if persist do
             save_topics(client_id, topics)
           end
@@ -66,8 +67,8 @@ defmodule Skyline.Handler do
 
   end
 
-  def handle_msg(%Unsubscribe{topics: topics, msg_id: msg_id}, %Client{sess_pid: sess_pid, client_id: client_id} = state) do
-    :ok = GenServer.call(sess_pid, {:unsubscribe, topics})
+  def handle_msg(%Unsubscribe{topics: topics, msg_id: msg_id}, %Client{socket: socket, client_id: client_id} = state) do
+    #:ok = GenServer.call(sess_pid, {:unsubscribe, topics})
 
     for topic <- topics do
       pid = GenServer.whereis({:global, {client_id, topic}})
@@ -75,11 +76,11 @@ defmodule Skyline.Handler do
         :ok = GenServer.stop({client_id, topic})
       end
     end
-    cast_msg(sess_pid, UnsubAck.new(msg_id))
+    Socket.send(socket, UnsubAck.new(msg_id))
     state
   end
 
-  def handle_subscribe([], %Subscribe{}, qos_list, %Client{sess_pid: sess_pid} = state) do
+  def handle_subscribe([], %Subscribe{}, qos_list, %Client{} = state) do
     {Enum.reverse(qos_list), state}
   end
   def handle_subscribe([{topic, qos}|topics], msg, qos_list,
@@ -98,10 +99,6 @@ defmodule Skyline.Handler do
         raise "Expected Skyline.Conn, {:topic_qos, qos}, or {:close_connection, reason}" <>
               " in return value for subsribe. Got #{inspect other}"
     end
-  end
-
-  defp cast_msg(sess_pid, msg) do
-    GenServer.cast(sess_pid, {:msg, msg})
   end
 
   defp save_topics(client_id, new_topics) do

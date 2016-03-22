@@ -6,7 +6,6 @@ defmodule Skyline.Client do
     defstruct socket: nil,
               client_id: nil,
               keep_alive_server_ms: nil,
-              sess_pid: nil,
               auth_info: nil,
               app_config: nil,
               persistent_session: false
@@ -67,7 +66,7 @@ defmodule Skyline.Client do
     end
 
     def handle_cast({:authenticate, %Connect{client_id: client_id} = msg}, %Client{socket: socket} = state) do
-        case Skyline.Auth.connect(socket, msg, state) do
+        case Skyline.Auth.connect(msg, state) do
           {res_msg, %Client{auth_info: auth_info} = client} ->
               Skyline.Events.connect(client_id, auth_info)
               Socket.send(socket, res_msg)
@@ -84,13 +83,10 @@ defmodule Skyline.Client do
       {:stop, :normal, state}
     end
 
-    def terminate(reason, %Client{socket: socket, auth_info: auth_info, client_id: client_id, sess_pid: sess_pid}) do
+    def terminate(reason, %Client{socket: socket, auth_info: auth_info, client_id: client_id}) do
       Logger.debug "#{inspect socket} terminated becuase of #{inspect reason}"
       Socket.close(socket)
-      if sess_pid && Process.alive?(sess_pid) do
-        Skyline.Events.disconnect(client_id, auth_info)
-        GenServer.stop(sess_pid, :normal, :infinity)
-      end
+      Skyline.Events.disconnect(client_id, auth_info)
       :ok
     end
 

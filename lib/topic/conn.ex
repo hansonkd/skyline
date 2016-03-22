@@ -52,7 +52,7 @@ defmodule Skyline.Topic.Conn do
   end
 
   @doc false
-  def conn(topic, qos, message, action, %Client{sess_pid: sess_pid,
+  def conn(topic, qos, message, action, %Client{socket: socket,
                                                 client_id: client_id,
                                                 auth_info: auth_info}) do
     %__MODULE__{
@@ -62,7 +62,7 @@ defmodule Skyline.Topic.Conn do
       auth_info: auth_info,
       action: action,
       params: %{},
-      private: %{sess_pid: sess_pid, client_id: client_id},
+      private: %{socket: socket, client_id: client_id},
       path_info: Skyline.Topic.Pipe.Utils.split(topic)
     }
   end

@@ -2,7 +2,10 @@ defmodule Incoming do
   @moduledoc false
 
   defmacro __using__(_opts) do
+
     quote do
+      alias Skyline.Socket
+
       def timeout do
         Application.get_env(:skyline, :qos_timeout, 15000)
       end
@@ -22,7 +25,7 @@ defmodule Skyline.Qos.Incoming.Qos0 do
 
   use Incoming
 
-  def start(_sess_pid, _client_id, msg) do
+  def start(_socket, _client_id, msg) do
     #pid = spawn_link(fn() ->  bcast_msg(msg) end)
     bcast_msg(msg)
     {:ok, nil}
@@ -39,9 +42,9 @@ defmodule Skyline.Qos.Incoming.Qos1 do
   use Incoming
   alias Skyline.Msg.PubAck
 
-  def start(sess_pid, _client_id, msg) do
+  def start(socket, _client_id, msg) do
     bcast_msg(msg)
-    GenServer.cast(sess_pid, {:msg, PubAck.new(msg.msg_id)})
+    Socket.send(socket, PubAck.new(msg.msg_id))
     {:ok, nil}
   end
 
@@ -53,7 +56,7 @@ defmodule Skyline.Qos.Incoming.Qos2 do
   #
   # QoS2 requires a response message so we need an observer process
   defstruct msg: nil,
-            sess_pid: nil,
+            socket: nil,
             client_id: nil
 
   use GenServer
@@ -61,22 +64,23 @@ defmodule Skyline.Qos.Incoming.Qos2 do
 
   require Logger
 
+
   alias Skyline.Msg.{PubRec, PubRel, PubComp}
   alias Skyline.Qos.Incoming.Qos2
 
-  def start(sess_pid, client_id, msg) do
-    state = %Qos2{sess_pid: sess_pid, client_id: client_id,  msg: msg}
+  def start(socket, client_id, msg) do
+    state = %Qos2{socket: socket, client_id: client_id,  msg: msg}
     GenServer.start_link(__MODULE__, {msg, state}, name: {:global, {:qos_recv, client_id, msg.msg_id}})
   end
 
-  def init({msg, %Qos2{sess_pid: sess_pid} = state}) do
-    GenServer.cast(sess_pid, {:msg, PubRec.new(msg.msg_id)})
+  def init({msg, %Qos2{socket: socket} = state}) do
+    Socket.send(socket, PubRec.new(msg.msg_id))
     {:ok, state, timeout}
   end
 
-  def handle_cast({:next, %PubRel{}}, %Qos2{sess_pid: sess_pid, msg: msg} = state) do
+  def handle_cast({:next, %PubRel{}}, %Qos2{socket: socket, msg: msg} = state) do
     bcast_msg(msg)
-    GenServer.cast(sess_pid, {:msg, PubComp.new(msg.msg_id)})
+    Socket.send(socket, PubComp.new(msg.msg_id))
     {:stop, :normal, state}
   end
 
