@@ -22,8 +22,8 @@ defmodule Skyline.Auth do
 
     case auth_mod.new_connection(con_msg, auth_opts) do
       {:ok, auth_info} ->
-
-          :ets.insert(:session_msg_ids, {client_id, 0})
+          
+          :ets.insert(:session_msg_ids, {con_msg.client_id, 0})
 
           new_client = %{
             client | client_id: con_msg.client_id,
@@ -31,6 +31,7 @@ defmodule Skyline.Auth do
                      auth_info: auth_info,
                      persistent_session: not clean_session}
 
+          
           {loaded, final_client} = Session.start_session(new_client)
 
           {ConnAck.new(:ok, loaded), final_client}

@@ -23,9 +23,10 @@ defmodule Skyline.Acceptor do
   end
 
   defp do_listen(server, app_config) do
-    client = server |> Socket.TCP.accept!
-
-    {:ok, _pid} = Skyline.Client.start_link(client, app_config)
+    socket = server |> Socket.TCP.accept!
+    
+    IO.puts "Accepted"
+    {:ok, _pid} = Skyline.Client.start_link(socket, app_config)
 
     do_listen(server, app_config)
 

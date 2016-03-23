@@ -3,6 +3,8 @@ defmodule Skyline.Topic.Utils do
   Utility functions for building Publish and Subscribe Controllers.
   """
 
+  import Supervisor.Spec
+  
   alias Skyline.Client
   alias Skyline.Msg.{PublishReq, Subscribe}
   alias Skyline.Subscription
@@ -41,8 +43,12 @@ defmodule Skyline.Topic.Utils do
                       qos: qos,
                       message: %Subscribe{},
                       auth_info: auth_info,
-                      private: %{socket: socket, client_id: client_id}}) do
-      case Subscription.start_link(client_id, socket, topic, qos, auth_info) do
+                      private: %{socket: socket, 
+                                 client_id: client_id,
+                                 supervisor_pid: supervisor_pid}}) do
+      sub_worker = worker(Skyline.Subscription, [client_id, socket, topic, qos, auth_info], restart: :transient)
+      IO.inspect sub_worker
+      case Supervisor.start_child(supervisor_pid, sub_worker) do
         {:ok, _pid} -> qos
         {:error, {:already_started, pid}} ->
            {:ok, top_qos} = GenServer.call(pid, {:reset, qos})

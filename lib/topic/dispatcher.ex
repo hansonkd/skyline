@@ -31,7 +31,7 @@ defmodule Skyline.Topic.Dispatcher do
     def broadcast_msg(topic, msg) do
       Enum.each(collect_pids(topic),
                 fn({pid, name}) ->
-                    :ets_buffer.write_dedicated(name, msg)
+                    :ets_buffer.write(name, msg)
                     send(pid, :touch)
                 end
       )

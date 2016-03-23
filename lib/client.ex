@@ -8,28 +8,40 @@ defmodule Skyline.Client do
               keep_alive_server_ms: nil,
               auth_info: nil,
               app_config: nil,
-              persistent_session: false
+              persistent_session: false,
+              supervisor_pid: nil
 
     require Logger
+    
+    import Supervisor.Spec
 
     alias Skyline.Socket
     alias Skyline.Client
     alias Skyline.Msg.Decode.Utils, as: Decoder
     alias Skyline.Msg.{Connect, Disconnect}
 
-    def start_link(client, app_config, _opts \\ []) do
-      state = %Client{socket: client, app_config: app_config}
-      pid = spawn_link(fn() -> listen(state) end)
+    def start_link(socket, app_config, _opts \\ []) do
+      client = %Client{socket: socket, app_config: app_config}
+      IO.inspect client
+      pid = spawn_link(fn() -> init(client) end)
       {:ok, pid}
     end
+    
+    def init(%Client{client_id: client_id, app_config: app_config, socket: socket} = client) do
+        IO.puts "Hey"
+        #pid = Skyline.ClientSupervisor.start_link(:hey)
+        {:ok, pid} = Skyline.ClientSupervisor.start_link(socket, app_config)
+        IO.inspect {"WHAT?", pid}
+        listen(%{client | supervisor_pid: pid})
+    end
 
-    def listen(%Client{socket: socket, client_id: client_id} = state) do
+    def listen(%Client{socket: socket, client_id: client_id} = client) do
       case Socket.recv(socket, 2) do
         { :ok, data = <<_m :: size(16)>> } ->
             msg = Decoder.decode(data, socket)
             case msg do
               %Connect{} ->
-                authenticate(msg, state)
+                authenticate(msg, client)
               _other ->
                 Logger.warn "#{inspect socket} is not authorized. Closing."
                 {:close_connection, "unauthorized"}
@@ -82,21 +94,21 @@ defmodule Skyline.Client do
       :ok
     end
 
-    defp process_msg(msg, %Client{client_id: client_id, auth_info: auth_info} = state) do
+    defp process_msg(msg, %Client{client_id: client_id, auth_info: auth_info} = client) do
       Skyline.Events.accept_message(client_id, auth_info, msg)
       case msg do
         %Connect{} ->
             Skyline.Events.error(client_id, auth_info, Skyline.AlreadyConnected.exception(client_id: client_id))
-            {:stop, :normal, state}
+            {:stop, :normal, client}
         %Disconnect{} ->
-            {:stop, :normal, state}
+            {:stop, :normal, client}
         _other ->
-            case Skyline.Handler.handle_msg(msg, state) do
+            case Skyline.Handler.handle_msg(msg, client) do
                 {:close_connection, reason} ->
                     Skyline.Events.error(client_id, auth_info, reason)
                     {:close_connection, reason}
-                %Client{} = new_state->
-                    verified_loop(new_state)
+                %Client{} = new_client->
+                    verified_loop(new_client)
             end
       end
     end
