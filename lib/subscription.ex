@@ -14,10 +14,6 @@ defmodule Skyline.Subscription do
             auth_info: nil,
             name: nil
 
-
-
-  use GenServer
-
   alias Skyline.Subscription
   alias Skyline.Msg.PublishReq
 
@@ -28,31 +24,14 @@ defmodule Skyline.Subscription do
   def start_link(client_id, socket, topic, qos, auth_info, _opts \\ []) do
     name = String.to_atom(client_id <> "___" <> topic)
     state = %Subscription{client_id: client_id, name: name, socket: socket, topic: topic, qos: qos, auth_info: auth_info}
-    GenServer.start_link(__MODULE__, state)
+    pid = spawn_link(fn() -> init(state) end)
+    {:ok, pid}
   end
 
   def init(%Subscription{name: name, topic: topic} = state) do
     :ets_buffer.create_dedicated(name, :fifo)
-    Skyline.Topic.Dispatcher.add_topic_subscription(topic, name)
-    GenServer.cast(self, :check_for_stored_message)
-    {:ok, state, 500}
-  end
-  def handle_call({:reset, new_qos}, _from, state) do
-    new_state = %{state | qos: new_qos, msg_queue: :queue.new}
-    check_for_stored_message(new_state)
-    {:reply, {:ok, new_qos}, new_state}
-  end
-
-  def handle_cast(:check_for_stored_message, state) do
+    Skyline.Topic.Dispatcher.add_topic_subscription(topic, {self, name})
     check_for_stored_message(state)
-    {:noreply, state, 500}
-  end
-
-  def handle_cast(:process_queue, state) do
-
-    process_queue(state)
-
-    {:noreply, state, 500}
   end
 
   def handle_info(:timeout, state) do
@@ -71,10 +50,27 @@ defmodule Skyline.Subscription do
         if :ets_buffer.num_entries(name) > 0 do
           process_queue(state)
         end
-      _ -> :_
+      _ -> wait(state)
     end
   end
 
+  defp wait(state) do
+    receive do
+      :touch ->
+          qflush()
+          process_queue(state)
+      _ ->
+          wait(state)
+    end
+  end
+
+  defp qflush() do
+    receive do
+        _ -> qflush()
+    after 0 ->
+        :ok
+    end
+  end
 
   defp check_for_stored_message(state) do
     Amnesia.transaction do
@@ -82,8 +78,9 @@ defmodule Skyline.Subscription do
         %StoredTopic{topic_id: t, message: m} ->
             pub_req = %PublishReq{topic: t, message: m}
             :ets_buffer.write(state.name, {:publish, pub_req})
-            GenServer.cast(self, :process_queue)
-        nil -> nil
+            process_queue(state)
+        nil ->
+          wait(state)
       end
     end
   end

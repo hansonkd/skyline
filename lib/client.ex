@@ -10,8 +10,6 @@ defmodule Skyline.Client do
               app_config: nil,
               persistent_session: false
 
-    use GenServer
-
     require Logger
 
     alias Skyline.Socket
@@ -21,60 +19,54 @@ defmodule Skyline.Client do
 
     def start_link(client, app_config, _opts \\ []) do
       state = %Client{socket: client, app_config: app_config}
-      GenServer.start_link(__MODULE__, state)
+      pid = spawn_link(fn() -> listen(state) end)
+      {:ok, pid}
     end
 
-    def init(client) do
-      GenServer.cast(self, :listen)
-      {:ok, client}
-    end
-
-    def handle_cast(:listen, %Client{socket: socket, client_id: client_id} = state) do
+    def listen(%Client{socket: socket, client_id: client_id} = state) do
       case Socket.recv(socket, 2) do
         { :ok, data = <<_m :: size(16)>> } ->
             msg = Decoder.decode(data, socket)
             case msg do
               %Connect{} ->
-                GenServer.cast(self, {:authenticate, msg})
-                {:noreply, state}
+                authenticate(msg, state)
               _other ->
                 Logger.warn "#{inspect socket} is not authorized. Closing."
-                {:stop, :normal, state}
+                {:close_connection, "unauthorized"}
             end
         other ->
             Logger.warn "Got unexcected message: #{inspect other}. Closing."
-            {:stop, :normal, state}
+            {:close_connection, "unexcected"}
       end
     end
 
-    def handle_cast(:verified_loop, %Client{socket: socket, auth_info: auth_info, client_id: client_id, keep_alive_server_ms: ka_ms} = state) do
+    def verified_loop(%Client{socket: socket, auth_info: auth_info, client_id: client_id, keep_alive_server_ms: ka_ms} = client) do
       case Socket.recv(socket, 2, ka_ms) do
         { :ok, data = <<_m :: size(16)>> } ->
             msg = Decoder.decode(data, socket)
             case msg do
               nil ->
                 Skyline.Events.error(client_id, auth_info, Skyline.MalformedMessage.exception(bytes_recieved: data))
-                {:noreply, state}
-              _ -> process_msg(msg, state)
+                verified_loop(client)
+              _ -> process_msg(msg, client)
             end
         {:ok, nil} ->
-            {:noreply, state}
+            verified_loop(client)
         other ->
             Skyline.Events.error(client_id, auth_info, Skyline.MalformedMessage.exception(bytes_recieved: inspect other))
-            {:stop, :normal, state}
+            {:close_connection, Skyline.MalformedMessage.exception(bytes_recieved: inspect other)}
       end
     end
 
-    def handle_cast({:authenticate, %Connect{client_id: client_id} = msg}, %Client{socket: socket} = state) do
-        case Skyline.Auth.connect(msg, state) do
-          {res_msg, %Client{auth_info: auth_info} = client} ->
+    def authenticate(%Connect{client_id: client_id} = msg, %Client{socket: socket} = client) do
+        case Skyline.Auth.connect(msg, client) do
+          {res_msg, %Client{auth_info: auth_info} = new_client} ->
               Skyline.Events.connect(client_id, auth_info)
               Socket.send(socket, res_msg)
-              GenServer.cast(self, :verified_loop)
-              {:noreply, client}
+              verified_loop(new_client)
           {:error, emsg} ->
               Socket.send(socket, emsg)
-              {:stop, :normal, state}
+              {:close_connection, emsg, client}
         end
     end
 
@@ -102,10 +94,9 @@ defmodule Skyline.Client do
             case Skyline.Handler.handle_msg(msg, state) do
                 {:close_connection, reason} ->
                     Skyline.Events.error(client_id, auth_info, reason)
-                    {:stop, :normal, state}
+                    {:close_connection, reason}
                 %Client{} = new_state->
-                    GenServer.cast(self, :verified_loop)
-                    {:noreply, new_state}
+                    verified_loop(new_state)
             end
       end
     end
