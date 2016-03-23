@@ -32,7 +32,7 @@ defmodule Skyline.Subscription do
   end
 
   def init(%Subscription{name: name, topic: topic} = state) do
-    :ets_buffer.create(name, :fifo)
+    :ets_buffer.create_dedicated(name, :fifo)
     Skyline.Topic.Dispatcher.add_topic_subscription(topic, name)
     GenServer.cast(self, :check_for_stored_message)
     {:ok, state, 500}
@@ -61,7 +61,7 @@ defmodule Skyline.Subscription do
   end
 
   def process_queue(%Subscription{name: name, client_id: client_id, socket: socket, qos_pid: qos_pid} = state) do
-    case :ets_buffer.read(name) do
+    case :ets_buffer.read_dedicated(name) do
       [{:publish, msg}] ->
         :ets.update_counter(:session_msg_ids, client_id, 1)
         msg_id = :ets.update_counter(:session_msg_ids, client_id, 1)
