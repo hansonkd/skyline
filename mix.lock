@@ -3,6 +3,7 @@
   "dialyxir": {:hex, :dialyxir, "0.3.3"},
   "earmark": {:hex, :earmark, "0.2.1"},
   "emqttd": {:git, "https://github.com/emqtt/emqttd.git", "4cfa07d774ac825f61d2ea9bb6392807e65839b9", []},
+  "epocxy": {:git, "https://github.com/duomark/epocxy.git", "57e7b6fd3822b9235eba3d1a7a16c7ec9938c521", [tag: :master]},
   "esockd": {:git, "git://github.com/emqtt/esockd.git", "e6c27801bb5331d064081ef6d6af291a2878038c", [branch: "master"]},
   "ex_doc": {:hex, :ex_doc, "0.11.4"},
   "exquisite": {:hex, :exquisite, "0.1.6"},

@@ -12,7 +12,7 @@ defmodule Skyline.Topic.Dispatcher do
     # This makes write locks unecassary and lets you remove subscriptions and prune leaves without
     # walking the tree.
     # In emqttd trees, the nodes count the leaves by the value on the edge which gets mutated.
-    # 
+    #
     # No benchmarks have been done to see if one is more efficient then the other.
 
     use Skyline.Amnesia.Dispatch.TreeDatabase
@@ -29,7 +29,7 @@ defmodule Skyline.Topic.Dispatcher do
     @doc "Cast a message to all pid's registered with the topic"
     @spec broadcast_msg(String.t, Skyline.skyline_msg) :: :ok
     def broadcast_msg(topic, msg) do
-      Enum.each(collect_pids(topic), fn(pid) -> GenServer.cast(pid, msg) end)
+      Enum.each(collect_pids(topic), fn(name) -> :ets_buffer.write(name, msg) end)
       :ok
     end
 

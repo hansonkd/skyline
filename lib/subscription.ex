@@ -11,7 +11,8 @@ defmodule Skyline.Subscription do
             current_msg: nil,
             msg_queue: :queue.new,
             qos_pid: nil,
-            auth_info: nil
+            auth_info: nil,
+            name: nil
 
 
 
@@ -25,79 +26,63 @@ defmodule Skyline.Subscription do
 
 
   def start_link(client_id, socket, topic, qos, auth_info, _opts \\ []) do
-    name = {client_id, topic}
-    state = %Subscription{client_id: client_id, socket: socket, topic: topic, qos: qos, auth_info: auth_info}
-    GenServer.start_link(__MODULE__, state, name: {:global, name})
+    name = String.to_atom(client_id <> "___" <> topic)
+    state = %Subscription{client_id: client_id, name: name, socket: socket, topic: topic, qos: qos, auth_info: auth_info}
+    GenServer.start_link(__MODULE__, state)
   end
 
-  def init(%Subscription{topic: topic} = state) do
-    Skyline.Topic.Dispatcher.add_topic_subscription(topic, self)
+  def init(%Subscription{name: name, topic: topic} = state) do
+    :ets_buffer.create(name, :fifo)
+    Skyline.Topic.Dispatcher.add_topic_subscription(topic, name)
     GenServer.cast(self, :check_for_stored_message)
-    {:ok, state}
+    {:ok, state, 500}
   end
   def handle_call({:reset, new_qos}, _from, state) do
     new_state = %{state | qos: new_qos, msg_queue: :queue.new}
     check_for_stored_message(new_state)
     {:reply, {:ok, new_qos}, new_state}
   end
-  def handle_call(:get_qos, _from, %Subscription{qos: qos} = state) do
-    {:reply, {:ok, qos}, state}
-  end
+
   def handle_cast(:check_for_stored_message, state) do
     check_for_stored_message(state)
-    {:noreply, state}
+    {:noreply, state, 500}
   end
-  def handle_cast({:publish, %PublishReq{} = msg}, %Subscription{client_id: client_id} = state) do
-    :ets.update_counter(:session_msg_ids, client_id, 1)
-    msg_id = :ets.update_counter(:session_msg_ids, client_id, 1)
-    new_msg = PublishReq.convert_to_delivery(state.topic, state.qos, msg_id, false, msg)
-    new_queue = :queue.in(new_msg, state.msg_queue)
-    GenServer.cast(self, :process_queue)
-    {:noreply, %{state | msg_queue: new_queue}}
-  end
-  def handle_cast(:process_queue, %Subscription{msg_queue: msg_queue, client_id: client_id, socket: socket, qos_pid: qos_pid} = state) do
 
-    new_qos_pid = if not is_pid(qos_pid) || not Process.alive?(qos_pid) do
-      case :queue.out(msg_queue) do
-          {{:value, msg}, _new_queue} ->
-            mod = qos_to_qos_mod(state.qos)
-            {:ok, pid} = mod.start(socket, self, client_id, msg)
-            pid
-          _ -> nil
+  def handle_cast(:process_queue, state) do
+
+    process_queue(state)
+
+    {:noreply, state, 500}
+  end
+
+  def handle_info(:timeout, state) do
+    process_queue(state)
+    {:noreply, state, 500}
+  end
+
+  def process_queue(%Subscription{name: name, client_id: client_id, socket: socket, qos_pid: qos_pid} = state) do
+    case :ets_buffer.read(name) do
+      [{:publish, msg}] ->
+        :ets.update_counter(:session_msg_ids, client_id, 1)
+        msg_id = :ets.update_counter(:session_msg_ids, client_id, 1)
+        new_msg = PublishReq.convert_to_delivery(state.topic, state.qos, msg_id, false, msg)
+        mod = qos_to_qos_mod(state.qos)
+        {:ok, pid} = mod.start(socket, self, client_id, new_msg)
+        if :ets_buffer.num_entries(name) > 0 do
+          process_queue(state)
         end
-    else
-      nil
+      _ -> :_
     end
-
-    {:noreply, %{state | qos_pid: new_qos_pid}}
   end
 
-  def handle_cast({:finish_msg, msg_id}, %Subscription{msg_queue: msg_queue,
-                                                       client_id: client_id,
-                                                       auth_info: auth_info} = state) do
-     new_queue = case :queue.out(msg_queue) do
-        {{:value, msg}, trimmed} ->
-          if msg.msg_id == msg_id do
-            # Only "finish" if it was the right message.
-            trimmed
-          else
-            Skyline.Events.error(client_id, auth_info, "Tried to finish message but expected #{msg.msg_id} but got #{msg_id}")
-            msg_queue
-          end
-        _ -> msg_queue
-      end
-      if not :queue.is_empty(new_queue) do
-        GenServer.cast(self, :process_queue)
-      end
-      {:noreply, %{state | msg_queue: new_queue}}
-  end
 
   defp check_for_stored_message(state) do
     Amnesia.transaction do
       case StoredTopic.read(state.topic) do
         %StoredTopic{topic_id: t, message: m} ->
             pub_req = %PublishReq{topic: t, message: m}
-            GenServer.cast(self, {:publish, pub_req})
+            :ets_buffer.write(state.name, {:publish, pub_req})
+            GenServer.cast(self, :process_queue)
         nil -> nil
       end
     end

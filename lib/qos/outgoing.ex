@@ -26,12 +26,12 @@ defmodule Skyline.Qos.Outgoing.Qos0 do
   #
   # QoS0 is fire and forget so no observer process is needed.
   defstruct msg_queue: :queue.new
-  
+
   use Outgoing
 
   def start(socket, sub_id, _client_id, msg) do
     Socket.send(socket, msg)
-    GenServer.cast(sub_id, {:finish_msg, msg.msg_id})
+    #GenServer.cast(sub_id, {:finish_msg, msg.msg_id})
     {:ok, nil}
   end
 

@@ -1,5 +1,6 @@
 %{"amnesia": {:git, "https://github.com/meh/amnesia.git", "63f6aef1888b15669f80b5e06af32d151f23e4ff", [tag: :master]},
   "connection": {:hex, :connection, "1.0.2"},
+  "epocxy": {:git, "https://github.com/duomark/epocxy.git", "57e7b6fd3822b9235eba3d1a7a16c7ec9938c521", [tag: :master]},
   "exquisite": {:hex, :exquisite, "0.1.6"},
   "gproc": {:hex, :gproc, "0.5.0"},
   "ranch": {:hex, :ranch, "1.2.1"},
