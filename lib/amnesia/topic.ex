@@ -16,5 +16,12 @@ defmodule Skyline.Amnesia.Topic do
       @type t :: %StoredTopic{topic_id: String.t, message: String.t}
     end
 
+    # deftable SubscriptionQueue, [:client_id, :message], type: :set do
+    #   @moduledoc false
+    # 
+    #   # this isn't required, but it's always nice to spec things
+    #   @type t :: %StoredTopic{topic_id: String.t, message: String.t}
+    # end
+
   end
 end

@@ -3,16 +3,7 @@ defmodule Skyline.Subscription do
 
   # Manages QoS and queueing the messages for a certain subscribe Topic.
 
-
-  defstruct client_id: nil,
-            socket: nil,
-            topic: "",
-            qos: nil,
-            current_msg: nil,
-            msg_queue: :queue.new,
-            qos_pid: nil,
-            auth_info: nil,
-            name: nil
+  defstruct [:client_id, :socket, :topic, :auth_info, :name, :qos]
 
   alias Skyline.Subscription
   alias Skyline.Msg.PublishReq
@@ -29,7 +20,6 @@ defmodule Skyline.Subscription do
   end
 
   def init(%Subscription{name: name, topic: topic} = state) do
-    :ets_buffer.create(name, :fifo)
     Skyline.Topic.Dispatcher.add_topic_subscription(topic, {self, name})
     check_for_stored_message(state)
   end
@@ -39,29 +29,16 @@ defmodule Skyline.Subscription do
     {:noreply, state, 500}
   end
 
-  def process_queue(%Subscription{name: name, client_id: client_id, socket: socket, qos_pid: qos_pid} = state) do
-    case :ets_buffer.read(name) do
-      [{:publish, msg}] ->
+  def process_queue(%Subscription{name: name, client_id: client_id, socket: socket} = state) do
+    receive do
+      {:publish, msg} ->
         :ets.update_counter(:session_msg_ids, client_id, 1)
         msg_id = :ets.update_counter(:session_msg_ids, client_id, 1)
         new_msg = PublishReq.convert_to_delivery(state.topic, state.qos, msg_id, false, msg)
         mod = qos_to_qos_mod(state.qos)
         {:ok, pid} = mod.start(socket, self, client_id, new_msg)
-        if :ets_buffer.num_entries(name) > 0 do
-          process_queue(state)
-        end
-      _ -> wait(state)
     end
-  end
-
-  defp wait(state) do
-    receive do
-      :touch ->
-          qflush()
-          process_queue(state)
-      _ ->
-          wait(state)
-    end
+    process_queue(state)
   end
 
   defp qflush() do
@@ -78,11 +55,10 @@ defmodule Skyline.Subscription do
         %StoredTopic{topic_id: t, message: m} ->
             pub_req = %PublishReq{topic: t, message: m}
             :ets_buffer.write(state.name, {:publish, pub_req})
-            process_queue(state)
-        nil ->
-          wait(state)
+        nil -> :_
       end
     end
+    process_queue(state)
   end
 
   def qos_to_qos_mod(qos) do
