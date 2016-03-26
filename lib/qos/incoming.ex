@@ -9,8 +9,8 @@ defmodule Incoming do
       def timeout do
         Application.get_env(:skyline, :qos_timeout, 15000)
       end
-      def bcast_msg(msg) do
-        Skyline.Topic.Dispatcher.broadcast_msg(msg.topic, {:publish, msg})
+      def bcast_msg(client_id, msg) do
+        Skyline.Topic.Dispatcher.broadcast_msg(msg.topic, client_id, msg)
       end
     end
   end
@@ -25,9 +25,9 @@ defmodule Skyline.Qos.Incoming.Qos0 do
 
   use Incoming
 
-  def start(_socket, _client_id, msg) do
+  def start(_socket, client_id, msg) do
     #pid = spawn_link(fn() ->  bcast_msg(msg) end)
-    bcast_msg(msg)
+    bcast_msg(client_id, msg)
     {:ok, nil}
   end
 
@@ -42,8 +42,8 @@ defmodule Skyline.Qos.Incoming.Qos1 do
   use Incoming
   alias Skyline.Msg.PubAck
 
-  def start(socket, _client_id, msg) do
-    bcast_msg(msg)
+  def start(socket, client_id, msg) do
+    bcast_msg(client_id, msg)
     Socket.send(socket, PubAck.new(msg.msg_id))
     {:ok, nil}
   end
@@ -78,8 +78,8 @@ defmodule Skyline.Qos.Incoming.Qos2 do
     {:ok, state, timeout}
   end
 
-  def handle_cast({:next, %PubRel{}}, %Qos2{socket: socket, msg: msg} = state) do
-    bcast_msg(msg)
+  def handle_cast({:next, %PubRel{}}, %Qos2{socket: socket, client_id: client_id, msg: msg} = state) do
+    bcast_msg(client_id, msg)
     Socket.send(socket, PubComp.new(msg.msg_id))
     {:stop, :normal, state}
   end

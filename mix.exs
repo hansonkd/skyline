@@ -14,7 +14,7 @@ defmodule Skyline.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger, :socket, :amnesia],
+    [applications: [:logger, :socket, :amnesia, :con_cache],
      mod: {Skyline, []}]
   end
 
@@ -31,6 +31,7 @@ defmodule Skyline.Mixfile do
     [{:socket, "~> 0.3"},
      {:amnesia, github: "meh/amnesia", tag: :master},
      {:epocxy, github: "duomark/epocxy", tag: :master},
+     {:con_cache, "~> 0.11.0"},
      {:dialyxir, "~> 0.3", only: [:dev]},
      {:ex_doc, "~> 0.11", only: :dev},
      {:earmark, ">= 0.0.0", only: :dev}]

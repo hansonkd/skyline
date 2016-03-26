@@ -10,7 +10,7 @@ defmodule Skyline.Subscription do
 
   use Skyline.Amnesia.Topic.TopicDatabase
   alias Skyline.Amnesia.Topic.TopicDatabase.StoredTopic
-
+  require Logger
 
   def start_link(client_id, socket, topic, qos, auth_info, _opts \\ []) do
     name = String.to_atom(client_id <> "___" <> topic)
@@ -29,14 +29,17 @@ defmodule Skyline.Subscription do
     {:noreply, state, 500}
   end
 
-  def process_queue(%Subscription{name: name, client_id: client_id, socket: socket} = state) do
+  def process_queue(state) do
     receive do
-      {:publish, msg} ->
-        :ets.update_counter(:session_msg_ids, client_id, 1)
-        msg_id = :ets.update_counter(:session_msg_ids, client_id, 1)
-        new_msg = PublishReq.convert_to_delivery(state.topic, state.qos, msg_id, false, msg)
-        mod = qos_to_qos_mod(state.qos)
-        {:ok, pid} = mod.start(socket, self, client_id, new_msg)
+      {:publish_key, msg_key} ->
+          case ConCache.get(:msg_cache, msg_key) do
+            %PublishReq{} = msg ->
+                publish_msg(msg, state)
+                process_queue(state)
+            n ->
+              Logger.error "Could not find pubreq #{inspect msg_key}, got #{inspect n}"
+              process_queue(state)
+          end
     end
     process_queue(state)
   end
@@ -47,6 +50,13 @@ defmodule Skyline.Subscription do
     after 0 ->
         :ok
     end
+  end
+
+  defp publish_msg(msg, %Subscription{name: name, client_id: client_id, socket: socket} = state) do
+    msg_id = :ets.update_counter(:session_msg_ids, client_id, 1)
+    new_msg = PublishReq.convert_to_delivery(state.topic, state.qos, msg_id, false, msg)
+    mod = qos_to_qos_mod(state.qos)
+    {:ok, pid} = mod.start(socket, self, client_id, new_msg)
   end
 
   defp check_for_stored_message(state) do

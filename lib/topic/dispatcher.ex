@@ -27,12 +27,13 @@ defmodule Skyline.Topic.Dispatcher do
     end
 
     @doc "Cast a message to all pid's registered with the topic"
-    @spec broadcast_msg(String.t, Skyline.skyline_msg) :: :ok
-    def broadcast_msg(topic, msg) do
+    @spec broadcast_msg(String.t, String.t, Skyline.skyline_msg) :: :ok
+    def broadcast_msg(topic, client_id, msg) do
+      ConCache.put(:msg_cache, {client_id, msg.msg_id}, msg)
       Enum.each(collect_pids(topic),
                 fn({pid, name}) ->
                     #:ets_buffer.write(name, )
-                    send(pid, msg)
+                    send(pid, {:publish_key, {client_id, msg.msg_id}})
                 end
       )
       :ok
