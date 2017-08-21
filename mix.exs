@@ -32,6 +32,6 @@ defmodule Skyline.Mixfile do
      {:amnesia, "~> 0.2"},
      {:dialyxir, "~> 0.5", only: [:dev]},
      {:ex_doc, "~> 0.14", only: :dev},
-     {:earmark, ">= 1.2", only: :dev}]
+     {:earmark, "~> 1.2", only: :dev}]
   end
 end
