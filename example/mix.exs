@@ -5,7 +5,7 @@ defmodule Skylineapp.Mixfile do
     [app: :skylineapp,
      version: "0.0.1",
      elixir: "~> 1.5",
-     elixirc_paths: ["lib", ".."],
+     elixirc_paths: ["lib"],
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      deps: deps]
