@@ -29,7 +29,7 @@ defmodule Skylineapp.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-     {:skyline, path: "../../spotmq/"}
+     {:skyline, path: "../"}
     ]
   end
 end
