@@ -4,6 +4,8 @@ defmodule Skyline.Session do
   # starting up new subcriptions,
   # and managing the session.
 
+  require Amnesia.Helper
+
   use Skyline.Amnesia.Session.SessionDatabase
 
   alias Skyline.Client

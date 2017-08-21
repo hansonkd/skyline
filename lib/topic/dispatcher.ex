@@ -18,6 +18,7 @@ defmodule Skyline.Topic.Dispatcher do
     use Skyline.Amnesia.Dispatch.TreeDatabase
     require Exquisite
     require Amnesia
+    require Amnesia.Helper
 
     @doc "Register a subcsriber pid with a topic"
     @spec add_topic_subscription(String.t, pid) :: :ok

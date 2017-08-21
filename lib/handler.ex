@@ -2,6 +2,7 @@ defmodule Skyline.Handler do
   # Functions to help dispatch messages.
   @moduledoc false
   require Logger
+  require Amnesia.Helper
 
   alias Skyline.Socket
   alias Skyline.Client

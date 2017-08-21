@@ -13,7 +13,7 @@ defmodule Skyline.Subscription do
             qos_pid: nil,
             auth_info: nil
 
-
+  require Amnesia.Helper
 
   use GenServer
 
