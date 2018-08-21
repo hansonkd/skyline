@@ -4,7 +4,7 @@ defmodule Skylineapp.Mixfile do
   def project do
     [app: :skylineapp,
      version: "0.0.1",
-     elixir: "~> 1.2",
+     elixir: "~> 1.7",
      elixirc_paths: ["lib", ".."],
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
@@ -29,7 +29,7 @@ defmodule Skylineapp.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-     {:skyline, path: "../../spotmq/"}
+     {:skyline, path: "../"}
     ]
   end
 end

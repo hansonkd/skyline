@@ -25,7 +25,7 @@ defmodule Skyline.Client do
     end
 
     def init(client) do
-      GenServer.cast(self, :listen)
+      GenServer.cast(self(), :listen)
       {:ok, client}
     end
 

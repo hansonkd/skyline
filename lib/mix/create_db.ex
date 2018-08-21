@@ -2,6 +2,7 @@ defmodule Mix.Tasks.Skyline.CreateDb do
   @moduledoc """
   Initiates on-disk Topic storage and in-memory Tree based dispatching for Topic subscriptions.
   """
+  require Amnesia.Helper
 
   use Mix.Task
   use Skyline.Amnesia.Topic.TopicDatabase

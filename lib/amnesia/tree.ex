@@ -9,7 +9,7 @@ defmodule Skyline.Amnesia.Dispatch do
 
     deftable TreeEdge, [:node_path, :child_word, :subscriber_pid, :terminal], type: :bag do
       @moduledoc false
-      
+
       @type t :: %TreeEdge{node_path: String.t, child_word: String.t, subscriber_pid: Pid, terminal: boolean}
     end
   end
