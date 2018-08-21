@@ -35,7 +35,7 @@ defmodule Skyline.Client do
             msg = Decoder.decode(data, socket)
             case msg do
               %Connect{} ->
-                GenServer.cast(self, {:authenticate, msg})
+                GenServer.cast(self(), {:authenticate, msg})
                 {:noreply, state}
               _other ->
                 Logger.warn "#{inspect socket} is not authorized. Closing."
@@ -70,7 +70,7 @@ defmodule Skyline.Client do
           {res_msg, %Client{auth_info: auth_info} = client} ->
               Skyline.Events.connect(client_id, auth_info)
               Socket.send(socket, res_msg)
-              GenServer.cast(self, :verified_loop)
+              GenServer.cast(self(), :verified_loop)
               {:noreply, client}
           {:error, emsg} ->
               Socket.send(socket, emsg)
@@ -104,7 +104,7 @@ defmodule Skyline.Client do
                     Skyline.Events.error(client_id, auth_info, reason)
                     {:stop, :normal, state}
                 %Client{} = new_state->
-                    GenServer.cast(self, :verified_loop)
+                    GenServer.cast(self(), :verified_loop)
                     {:noreply, new_state}
             end
       end
