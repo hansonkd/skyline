@@ -1,3 +1,5 @@
+# Repository Has Problem Yet
+I'm trying solve issues but not promise to do it completely. 
 # SkylineMQ
 
 A fast, hackable MQTT message broker with a dash of Phoenix.
