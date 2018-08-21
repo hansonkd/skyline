@@ -76,7 +76,7 @@ defmodule Skyline.Topic.Dispatcher do
   @spec edge_exists(String.t, String.t) :: boolean
   defp edge_exists(path, word) do
     pos = TreeEdge.where!(
-      node_path() == path and child_word() == word,
+#      node_path() == path and child_word() == word,
       select: subscriber_pid,
       limit: 1
     )
@@ -89,7 +89,7 @@ defmodule Skyline.Topic.Dispatcher do
   @spec select_pids(String.t, String.t) :: [pid]
   defp select_pids(path, word) do
     TreeEdge.where!(
-      node_path() == path and child_word() == word and terminal() == true,
+#      node_path() == path and child_word() == word and terminal() == true,
       select: subscriber_pid
     )
     |> Amnesia.Selection.values
