@@ -1,6 +1,5 @@
 /_build
 /cover
-/deps
 erl_crash.dump
 *.ez
 Mnesia.nonode@nohost/*

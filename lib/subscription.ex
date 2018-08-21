@@ -1,6 +1,6 @@
 defmodule Skyline.Subscription do
   @moduledoc false
-
+  require Amnesia.Helper
   # Manages QoS and queueing the messages for a certain subscribe Topic.
 
 
