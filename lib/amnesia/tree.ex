@@ -1,7 +1,6 @@
 defmodule Skyline.Amnesia.Dispatch do
   @moduledoc false
   use Amnesia
-  require Amnsia.Helper
   # defines a database called Database, it's basically a defmodule with
   # some additional magic
   defdatabase TreeDatabase do
