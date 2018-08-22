@@ -23,7 +23,16 @@ defmodule Skyline.Events.Auth do
   use GenEvent
 
   def start_link() do
-    GenEvent.start_link(name: :skyline_auth_events)
+#    GenEvent.start_link(name: :skyline_auth_events) #Deprecated
+
+    GenServer.start_link(__MODULE__, :ok , name: :skyline_auth_events)
+    #Starts a new GenServer passing three arguments:
+    #1. The module where the server callbacks are implemented,
+    #in this case __MODULE__, meaning the current module
+    #2. The initialization arguments, in this case, the atom :ok
+    #3. A list of options which can be used to specify things like the name of the server.
+    #We can forward the list of options that we receive on start_link/1,
+    #which defaults to an empty list. We will customize it later on
   end
 
   def add_handler(handler, init) do
