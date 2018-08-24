@@ -66,7 +66,7 @@ defmodule Skyline.Qos.Outgoing.Qos1 do
 
   def init({msg, %Qos1{socket: socket} = state}) do
     Socket.send(socket, msg)
-    {:ok, %{state | msg: %{msg | duplicate: true}}, timeout()}
+    {:ok, %{state | msg: %{msg | duplicate: true}}, timeout}
   end
 
   def handle_cast({:next, %PubAck{msg_id: msg_id}}, %Qos1{sub_id: sub_id, msg: msg} = state) do
@@ -84,9 +84,9 @@ defmodule Skyline.Qos.Outgoing.Qos1 do
   end
 
   def handle_info(:timeout, %Qos1{socket: socket, msg: msg, sub_id: sub_id, tries: tries} = state) do
-    if tries < max_tries() do
+    if tries < max_tries do
         Socket.send(socket, msg)
-        {:noreply, %{state | tries: tries + 1}, timeout()}
+        {:noreply, %{state | tries: tries + 1}, timeout}
     else
         GenServer.cast(sub_id, {:finish_msg, msg.msg_id})
         {:stop, :normal, state}
@@ -124,7 +124,7 @@ defmodule Skyline.Qos.Outgoing.Qos2 do
 
   def init({msg, %Qos2{socket: socket} = state}) do
     Socket.send(socket, msg)
-    {:ok, %{state | msg: %{msg | duplicate: true}, expected: :pubrec}, timeout()}
+    {:ok, %{state | msg: %{msg | duplicate: true}, expected: :pubrec}, timeout}
   end
 
   def handle_cast({:next, %PubRec{msg_id: msg_id}}, %Qos2{socket: socket, msg: msg, expected: :pubrec} = state) do
@@ -155,9 +155,9 @@ defmodule Skyline.Qos.Outgoing.Qos2 do
 
   def handle_info(:timeout, %Qos2{socket: socket, sub_id: sub_id, msg: msg, tries: tries} = state) do
     Logger.error "Timed out"
-    if tries == :infinity or tries < max_tries() do
+    if tries == :infinity or tries < max_tries do
         Socket.send(socket, msg)
-        {:noreply, %{state | tries: tries + 1}, timeout()}
+        {:noreply, %{state | tries: tries + 1}, timeout}
     else
         GenServer.cast(sub_id, {:finish_msg, msg.msg_id})
         {:stop, :normal, state}

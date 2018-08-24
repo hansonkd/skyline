@@ -231,7 +231,7 @@ defmodule Skyline.Topic.Router do
      """
      defmacro unquote(verb)(path, controller, options \\ []) do
        verb = unquote(verb)
-       quote bind_quoted: binding() do
+       quote bind_quoted: binding do
          match(verb, path, controller, verb, options)
        end
      end
@@ -241,7 +241,7 @@ defmodule Skyline.Topic.Router do
 
       for verb <- @incoming_message_types do
 
-        quote bind_quoted: binding() do
+        quote bind_quoted: binding do
           match(verb, path, pipe, verb, options)
         end
       end

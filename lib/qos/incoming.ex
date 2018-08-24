@@ -75,7 +75,7 @@ defmodule Skyline.Qos.Incoming.Qos2 do
 
   def init({msg, %Qos2{socket: socket} = state}) do
     Socket.send(socket, PubRec.new(msg.msg_id))
-    {:ok, state, timeout()}
+    {:ok, state, timeout}
   end
 
   def handle_cast({:next, %PubRel{}}, %Qos2{socket: socket, msg: msg} = state) do
