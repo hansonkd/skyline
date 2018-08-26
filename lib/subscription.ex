@@ -1,6 +1,6 @@
 defmodule Skyline.Subscription do
   @moduledoc false
-
+  require Amnesia.Helper
   # Manages QoS and queueing the messages for a certain subscribe Topic.
 
 
@@ -31,8 +31,8 @@ defmodule Skyline.Subscription do
   end
 
   def init(%Subscription{topic: topic} = state) do
-    Skyline.Topic.Dispatcher.add_topic_subscription(topic, self)
-    GenServer.cast(self, :check_for_stored_message)
+    Skyline.Topic.Dispatcher.add_topic_subscription(topic, self())
+    GenServer.cast(self(), :check_for_stored_message)
     {:ok, state}
   end
   def handle_call({:reset, new_qos}, _from, state) do
@@ -52,7 +52,7 @@ defmodule Skyline.Subscription do
     msg_id = :ets.update_counter(:session_msg_ids, client_id, 1)
     new_msg = PublishReq.convert_to_delivery(state.topic, state.qos, msg_id, false, msg)
     new_queue = :queue.in(new_msg, state.msg_queue)
-    GenServer.cast(self, :process_queue)
+    GenServer.cast(self(), :process_queue)
     {:noreply, %{state | msg_queue: new_queue}}
   end
   def handle_cast(:process_queue, %Subscription{msg_queue: msg_queue, client_id: client_id, socket: socket, qos_pid: qos_pid} = state) do
@@ -61,7 +61,7 @@ defmodule Skyline.Subscription do
       case :queue.out(msg_queue) do
           {{:value, msg}, _new_queue} ->
             mod = qos_to_qos_mod(state.qos)
-            {:ok, pid} = mod.start(socket, self, client_id, msg)
+            {:ok, pid} = mod.start(socket, self(), client_id, msg)
             pid
           _ -> nil
         end
@@ -87,7 +87,7 @@ defmodule Skyline.Subscription do
         _ -> msg_queue
       end
       if not :queue.is_empty(new_queue) do
-        GenServer.cast(self, :process_queue)
+        GenServer.cast(self(), :process_queue)
       end
       {:noreply, %{state | msg_queue: new_queue}}
   end
@@ -97,7 +97,7 @@ defmodule Skyline.Subscription do
       case StoredTopic.read(state.topic) do
         %StoredTopic{topic_id: t, message: m} ->
             pub_req = %PublishReq{topic: t, message: m}
-            GenServer.cast(self, {:publish, pub_req})
+            GenServer.cast(self(), {:publish, pub_req})
         nil -> nil
       end
     end

@@ -2,6 +2,7 @@ defmodule Skyline.Topic.Utils do
   @moduledoc """
   Utility functions for building Publish and Subscribe Controllers.
   """
+  require Amnesia.Helper
 
   alias Skyline.Client
   alias Skyline.Msg.{PublishReq, Subscribe}

@@ -5,6 +5,7 @@ defmodule Skyline.Session do
   # and managing the session.
 
   use Skyline.Amnesia.Session.SessionDatabase
+  require Amnesia.Helper
 
   alias Skyline.Client
 
